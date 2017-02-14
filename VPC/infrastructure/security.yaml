@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    This template contains the security groups required by our entire stack.
+    We create them in a seperate nested template, so they can be referenced
+    by all of the other nested templates.
+
+Parameters:
+
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+
+    VPC:
+        Type: AWS::EC2::VPC::Id
+        Description: Choose which VPC the security groups should be deployed to
+
+    VpcCIDR:
+        Description: Please enter the IP range (CIDR notation) for this VPC
+        Type: String
+
+    BastionSecurityGroup:
+        Type: String
+        Description: A reference to the Security Group where the Bastion Hosts are in
+
+Resources:
+
+    RDSSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            VpcId: !Ref VPC
+            GroupDescription: Open database for access
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: '5432'
+                  ToPort: '5432'
+                  SourceSecurityGroupId: !Ref WorkerSecurityGroup
+                - IpProtocol: tcp
+                  FromPort: '5432'
+                  ToPort: '5432'
+                  SourceSecurityGroupId: !Ref BastionSecurityGroup
+
+
+#    NodeVpcSecurityGroup:
+#        Type: AWS::EC2::SecurityGroup
+#        Properties:
+#          VpcId: !Ref VPC
+#          GroupDescription: Node SecurityGroup
+#          SecurityGroupEgress:
+#          - CidrIp: 0.0.0.0/0
+#            FromPort: '8'
+#            IpProtocol: icmp
+#            ToPort: '0'
+#          - CidrIp: 0.0.0.0/0
+#            FromPort: '0'
+#            IpProtocol: udp
+#            ToPort: '65535'
+#          - CidrIp: 0.0.0.0/0
+#            FromPort: '0'
+#            IpProtocol: tcp
+#            ToPort: '2374'
+#          - CidrIp: 0.0.0.0/0
+#            FromPort: '2376'
+#            IpProtocol: tcp
+#            ToPort: '65535'
+#          SecurityGroupIngress:
+#          - CidrIp: !Ref VpcCIDR
+#            FromPort: '0'
+#            IpProtocol: "-1"
+#            ToPort: '65535'
+
+    WorkerSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            VpcId: !Ref VPC
+            GroupDescription: Swarm wide access
+            SecurityGroupIngress:
+            - CidrIp: !Ref VpcCIDR
+              FromPort: '0'
+              IpProtocol: "-1"
+              ToPort: '65535'
+
+    LogGroup:
+        Type: AWS::Logs::LogGroup
+        Properties: { RetentionInDays: 7 }
+
+Outputs:
+
+    RDSSecurityGroup:
+        Description: A reference to the security group for RDS instance
+        Value: !Ref RDSSecurityGroup
+
+    WorkerSecurityGroup:
+        Value: !Ref WorkerSecurityGroup
+
+    LogGroup:
+        Description: CoreOS Log Group Name
+        Value: !Ref LogGroup

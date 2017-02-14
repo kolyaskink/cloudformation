@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    This template deploys a VPC with public/private subnets and the appropriate Security Groups
+
+    TODO:
+    - SystemPrune
+    - CloudWatchLogs
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Bastion Host Properties
+      Parameters:
+      - KeyName
+      - BastionHostInstanceType
+      - SshFrom
+    ParameterLabels:
+        KeyName:
+            default: Which SSH key to use for connecting to cluster?
+        BastionHostInstanceType:
+            default: Node instance type?
+        SshFrom:
+            default: From which IP address access to bastion hosts?
+
+Parameters:
+    KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
+    BastionHostInstanceType:
+        Type: String
+        Default: t2.micro
+        AllowedValues:
+            - t2.micro
+            - m1.small
+            - m1.large
+        Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+    SshFrom:
+        Description: Lockdown SSH access to the bastion host (default can be accessed from anywhere)
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        Default: 212.67.170.162/32
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+    EnvironmentType:
+        Description: determines the type of the environment and thus whether it can be
+            shutdown without serious consequences
+        Type: String
+        Default: 'development'
+        AllowedValues:
+        - 'development'
+        - 'test'
+        - 'preproduction'
+        - 'production'
+Mappings:
+  VpcCidrs:
+    publicsubnet1:
+      cidr: 10.1.2.0/24
+    publicsubnet2:
+      cidr: 10.1.4.0/24
+    privatesubnet1:
+      cidr: 10.1.1.0/24
+    privatesubnet2:
+      cidr: 10.1.3.0/24
+    vpc:
+      cidr: 10.1.0.0/16
+
+Resources:
+
+    VPC:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb/jenkinsinfra/infrastructure/vpc.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
+                PublicSubnet1CIDR:          !FindInMap [VpcCidrs, publicsubnet1, cidr]
+                PublicSubnet2CIDR:          !FindInMap [VpcCidrs, publicsubnet2, cidr]
+                PrivateSubnet1CIDR:         !FindInMap [VpcCidrs, privatesubnet1, cidr]
+                PrivateSubnet2CIDR:         !FindInMap [VpcCidrs, privatesubnet2, cidr]
+                BastionHostInstanceType:    !Ref BastionHostInstanceType
+                KeyName:                    !Ref KeyName
+                EnvironmentType:            !Ref EnvironmentType
+                SshFrom:                    !Ref SshFrom
+
+    Security:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb/jenkinsinfra/infrastructure/security.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                VPC:                        !GetAtt VPC.Outputs.VPC
+                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
+                BastionSecurityGroup:       !GetAtt VPC.Outputs.BastionSecurityGroup
+
+Outputs:
+
+    keyName:
+        Description: The key to connect to kubernetes cluster (keyName)
+        Value: !Ref KeyName
+    workerSecurityGroupIds:
+        Description: The security group to which the Workers should be added (workerSecurityGroupIds)
+        Value: !GetAtt Security.Outputs.WorkerSecurityGroup
+    routeTableId:
+        Description: The route table that should be applied to the subnets where the kubernetes instances are created
+        Value: !GetAtt VPC.Outputs.PublicRouteTable
+    vpcCidr:
+        Description: The CIDR for the created VPC
+        Value: !FindInMap [VpcCidrs, vpc, cidr]
+    elasticFileSystemId:
+        Description: The filesystem ID for the EFS volume that is shared across the cluster (elasticFileSystemId)
+        Value: !GetAtt VPC.Outputs.FileSystem
+    logGroup:
+        Description: The CloudWatch log group that should be used by the workers
+        Value: !GetAtt Security.Outputs.LogGroup
+    BastionHost:
+        Description: Bastionhost
+        Value: !GetAtt VPC.Outputs.Bastion
