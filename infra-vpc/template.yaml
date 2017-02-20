@@ -432,7 +432,12 @@ Outputs:
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
         Value: !Ref PrivateRouteTable2
-
+    BastionIp:
+        Description: IP of Bastion Host
+        Value: !Ref EIP
+    BastionSecurityGroup:
+        Description: A reference to the Security Group where the Bastion Hosts are in
+        Value: !Ref BastionSecurityGroup
 
 
 
