@@ -312,6 +312,34 @@ Resources:
                 Resource:
                 - 'arn:aws:logs:*:*:*'
 
+    #Peering
+
+#    VPCPeeringConnection:
+#        Type: AWS::EC2::VPCPeeringConnection
+#        Properties:
+#            VpcId: !Ref VPC
+#            PeerVpcId: !Ref PeerVpcId
+
+    PeerPublicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref PeerVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
+
+    PeerPrivateRoute1:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref PeerVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
+
+    PeerPrivateRoute2:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref PeerVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
 
 
@@ -398,6 +426,16 @@ Parameters:
             - t2.small
             - m1.small
         Description: Enter t2.micro, t2.small, or m1.small. Default is t2.micro.
+
+    PeerVpcCIDR:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.0.0/24
+
+    VPCPeeringConnection:
+        Description: Please enter the ID of the peering VPC
+        Type: String
+        Default: none
 
  
 Outputs:
