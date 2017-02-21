@@ -221,8 +221,7 @@ Resources:
                 CidrIp: !Ref SshFrom4
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName}-bastion
-
+                  Value: bastion
 
     BastionLaunchConfiguration:
         Type: 'AWS::AutoScaling::LaunchConfiguration'
