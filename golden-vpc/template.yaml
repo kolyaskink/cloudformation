@@ -196,9 +196,6 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             SubnetId: !Ref PrivateSubnet2
 
-<<<<<<< HEAD
-    
-=======
     #Peering
 
     VPCPeeringConnection:
@@ -227,7 +224,7 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             DestinationCidrBlock: !Ref InfraVpcCIDR
             VpcPeeringConnectionId: !Ref VPCPeeringConnection
->>>>>>> test
+
 
 Parameters:
 
