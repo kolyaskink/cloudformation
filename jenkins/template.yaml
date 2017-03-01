@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    This template deploys Jenkins node with a LB, SG 
+
+Mappings:
+Resources:
+      
+      LBSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable access to the Jenkins LB
+            VpcId: !Ref VpcId
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref 
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom2
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom3
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom4
+            Tags:
+                - Key: Name
+                  Value: infra-jenkins-lb
+
+
+Parameters:
+
+      VpcId:
+        Description: Please enter the ID of created VPC
+        Type: String
+        Default: vpc-ef223f8b
+
+      PublicSubnet1Id:
+        Description: Please enter the ID for 1 public subnet
+        Type: String
+        Default: subnet-5f7c793b
+
+      PublicSubnet2Id:
+        Description: Please enter the ID for 2 public subnet
+        Type: String
+        Default: subnet-7d69350b
+
+    HttpsFrom1:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 212.67.170.162/32
+
+    HttpsFrom2:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 127.0.0.1/32
+
+    HttpsFrom3:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 127.0.0.2/32
+
+    HttpsFrom4:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 127.0.0.3/32
+
+Outputs:
