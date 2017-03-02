@@ -76,11 +76,12 @@ Resources:
         Type: "AWS::ElasticLoadBalancing::LoadBalancer"
         Properties:
             Instances: [!Ref JenkinsEC2Instance]
-            LoadBalancerName: LbInfraJenkins
+            LoadBalancerName: lb-Infra-Jenkins
             Listeners:
                   - LoadBalancerPort: 443
                     InstancePort: !Ref JenkinsPort
-                    Protocol: HTTP
+                    Protocol: HTTPS
+                    SSLCertificateId: !Ref GhSslCert
             HealthCheck:
                   Target: HTTP:80/
                   HealthyThreshold: '3'
@@ -207,7 +208,12 @@ Parameters:
         MinLength: 2
         MaxLength: 5
         Default: 80
-        
+
+      GhSslCert:
+        Description: arn of SSL cert
+        Type: String
+        Default: arn:aws:acm:us-west-2:777556643132:certificate/896e5609-1aac-446c-b17e-608bce984e22
+      
       JenkinsHostInstanceType:
         Type: String
         Default: t2.small
