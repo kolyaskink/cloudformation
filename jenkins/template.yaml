@@ -71,7 +71,29 @@ Resources:
               Tags:
                 - Key: Name
                   Value: InfraJenkins
-       
+
+      JenkinsLoadBalanser:
+        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+        Properties:
+            Instances: [!Ref JenkinsEC2Instance]
+            LoadBalancerName: LbInfraJenkins
+            Listeners:
+                  - LoadBalancerPort: 443
+                    InstancePort: !Ref JenkinsPort
+                    Protocol: HTTP
+            HealthCheck:
+                  Target: HTTP:80/
+                  HealthyThreshold: '3'
+                  UnhealthyThreshold: '5'
+                  Interval: '30'
+                  Timeout: '5'
+            Scheme: internet-facing
+            SecurityGroups: [!Ref LBSecurityGroup]
+            Subnets: [!Ref PublicSubnet1Id]
+
+
+   
+
       InstanceProfile:
         Type: 'AWS::IAM::InstanceProfile'
         Properties:
@@ -179,6 +201,13 @@ Parameters:
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
 
+      JenkinsPort:
+        Description: Jenkins app's port
+        Type: String
+        MinLength: 2
+        MaxLength: 5
+        Default: 80
+        
       JenkinsHostInstanceType:
         Type: String
         Default: t2.small
