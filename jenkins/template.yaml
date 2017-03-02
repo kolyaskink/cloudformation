@@ -5,6 +5,14 @@ Description: >
     This template deploys Jenkins node with a LB, SG 
 
 Mappings:
+
+    AWSRegionToEC2AMI:
+        us-west-2:
+            AMI: ami-f173cc91
+        eu-west-2:
+            AMI: ami-f1949e95
+
+
 Resources:
       
       LBSecurityGroup:
@@ -16,7 +24,7 @@ Resources:
               - IpProtocol: tcp
                 FromPort: 443
                 ToPort: 443
-                CidrIp: !Ref 
+                CidrIp: !Ref HttpsFrom1
               - IpProtocol: tcp
                 FromPort: 443
                 ToPort: 443
@@ -33,6 +41,79 @@ Resources:
                 - Key: Name
                   Value: infra-jenkins-lb
 
+      EC2SecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable access to the Jenkins EC2
+            VpcId: !Ref VpcId
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref LBSecurityGroup
+              - IpProtocol: tcp
+                FromPort: 22
+                ToPort: 22
+                CidrIp: !Ref VpcCIDR
+            Tags:
+                - Key: Name
+                  Value: infra-jenkins-ec2
+
+      JenkinsEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfile
+              InstanceType: !Ref JenkinsHostInstanceType
+              SecurityGroupIds: [!Ref EC2SecurityGroup]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: InfraJenkins
+       
+      InstanceProfile:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRole
+
+      IAMRole:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+          - PolicyName: 'ec2'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'ec2:AssociateAddress'
+                Resource:
+                - '*'
+          - PolicyName: logs
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:CreateLogGroup'
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+                - 'logs:DescribeLogStreams'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
 
 Parameters:
 
@@ -40,6 +121,11 @@ Parameters:
         Description: Please enter the ID of created VPC
         Type: String
         Default: vpc-ef223f8b
+
+      VpcCIDR:
+        Description: Please enter the ID of created VPC
+        Type: String
+        Default: 10.50.2.0/24
 
       PublicSubnet1Id:
         Description: Please enter the ID for 1 public subnet
@@ -51,7 +137,7 @@ Parameters:
         Type: String
         Default: subnet-7d69350b
 
-    HttpsFrom1:
+      HttpsFrom1:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -60,7 +146,7 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 212.67.170.162/32
 
-    HttpsFrom2:
+      HttpsFrom2:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -69,7 +155,7 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.1/32
 
-    HttpsFrom3:
+      HttpsFrom3:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -78,7 +164,7 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.2/32
 
-    HttpsFrom4:
+      HttpsFrom4:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -87,4 +173,32 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.3/32
 
+      KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
+
+      JenkinsHostInstanceType:
+        Type: String
+        Default: t2.small
+        AllowedValues:
+            - t2.small
+            - t2.medium 
+            - m4.large
+        Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
+
 Outputs:
+
+      LBSecurityGroup:
+        Description: A reference to the LB  Security Group where Jenkins is
+        Value: !Ref LBSecurityGroup
+
+      EC2SecurityGroup:
+        Description: A reference to the EC2 Security Group where Jenkins is
+        Value: !Ref EC2SecurityGroup
+
+      JenkinsEC2InstanceId:
+        Description: A reference to the EC2 instance ID
+        Value: !Ref JenkinsEC2Instance
+
