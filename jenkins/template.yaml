@@ -79,7 +79,7 @@ Resources:
             LoadBalancerName: lb-Infra-Jenkins
             Listeners:
                   - LoadBalancerPort: 443
-                    InstancePort: !Ref JenkinsPort
+                    InstancePort: !Ref ApachePort
                     Protocol: HTTPS
                     SSLCertificateId: !Ref GhSslCert
             HealthCheck:
@@ -202,8 +202,8 @@ Parameters:
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
 
-      JenkinsPort:
-        Description: Jenkins app's port
+      ApachePort:
+        Description: Apache port in front of Jenkins's app
         Type: String
         MinLength: 2
         MaxLength: 5
@@ -226,14 +226,28 @@ Parameters:
 Outputs:
 
       LBSecurityGroup:
-        Description: A reference to the LB  Security Group where Jenkins is
+        Description: LB Security Group where Jenkins is
         Value: !Ref LBSecurityGroup
 
       EC2SecurityGroup:
-        Description: A reference to the EC2 Security Group where Jenkins is
+        Description: EC2 Security Group where Jenkins is
         Value: !Ref EC2SecurityGroup
 
       JenkinsEC2InstanceId:
-        Description: A reference to the EC2 instance ID
+        Description: EC2 instance ID
         Value: !Ref JenkinsEC2Instance
+
+      JenkinsLoadBalanserId:
+        Description: Jenkins LB ID
+        Value: !Ref JenkinsLoadBalanser
+
+      JenkinsLoadBalanserDnsName:
+        Description: DNS name for Jenkins LB record
+        Value: !GetAtt JenkinsLoadBalanser.DNSName
+
+                
+              
+
+
+
 
