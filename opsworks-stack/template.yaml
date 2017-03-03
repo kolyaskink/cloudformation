@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    This template creates OpsWorks stack
+
+Resources:
+
+    OpsWorksStack:
+      Type: "AWS::OpsWorks::Stack"
+      Properties: 
+        ConfigurationManager: 
+          Name: Chef 
+          Version: 12
+        CustomCookbooksSource:
+          Type: git
+          Url: git@bitbucket.org:gamehouse-dev/opsworks-cookbooks.git
+          SshKey: !Ref BitBucketSshKey
+          Username: git
+          Revision: master
+        DefaultAvailabilityZone: !Select [ 0, !GetAZs ]
+        DefaultInstanceProfileArn: !Ref DefaultInstanceProfileArn
+        DefaultOs: !Ref DefaultOs
+        HostnameTheme: "Layer_Dependent"
+        DefaultSshKeyName: !Ref KeyName
+        DefaultRootDeviceType: "ebs"
+        DefaultSubnetId: !Ref DefaultSubnetId
+        Name: !Ref StackName
+        ServiceRoleArn: arn:aws:iam::777556643132:role/aws-opsworks-service-role
+        UseCustomCookbooks: true
+        VpcId: !Ref VpcId
+
+
+
+Parameters:
+
+    StackName:
+      Description: Define stack name here 
+      Type: String
+      Default: DefaultStack
+
+    VpcId:
+      Description: Please enter the ID of created VPC
+      Type: String
+      Default: vpc-ef223f8b
+
+    DefaultOs:
+      Description: Please enter the default OS version
+      Type: String
+      Default: Amazon Linux 2016.09
+
+    KeyName:
+      ConstraintDescription: must be the name of an existing EC2 KeyPair.
+      Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+      MinLength: '1'
+      Type: AWS::EC2::KeyPair::KeyName
+
+    DefaultSubnetId:
+      Description: Please enter the default subnet
+      Type: String
+      Default: subnet-5f7c793b
+
+    DefaultInstanceProfileArn:
+      Description: Please enter the default instance profile ARN
+      Type: String
+
+    BitBucketSshKey:
+      Description: Please enter here BitBucket private key
+      Type: String
+      
+
+
+Outputs:
+
+    StackName:
+      Description: Created stack name
+      Value: !Ref StackName
+
+    StackId:
+      Description: Creted stack ID
+      Value: !Ref OpsWorksStack
+
+
+
+
+

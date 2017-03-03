@@ -12,7 +12,6 @@ Mappings:
         eu-west-2:
             AMI: ami-f1949e95
 
-
 Resources:
       
       LBSecurityGroup:
@@ -91,9 +90,6 @@ Resources:
             Scheme: internet-facing
             SecurityGroups: [!Ref LBSecurityGroup]
             Subnets: [!Ref PublicSubnet1Id]
-
-
-   
 
       InstanceProfile:
         Type: 'AWS::IAM::InstanceProfile'
@@ -244,6 +240,10 @@ Outputs:
       JenkinsLoadBalanserDnsName:
         Description: DNS name for Jenkins LB record
         Value: !GetAtt JenkinsLoadBalanser.DNSName
+
+      JenkinsInstanceProfile:
+        Description: Jenkins instance profile ARN
+        Value: !GetAtt InstanceProfile.Arn
 
                 
               
