@@ -30,6 +30,26 @@ Resources:
         UseCustomCookbooks: true
         VpcId: !Ref VpcId
 
+    ElbAttach:
+      Type: "AWS::OpsWorks::ElasticLoadBalancerAttachment"
+      Properties:
+        ElasticLoadBalancerName: !Ref ElasticLoadBalancerName
+        LayerId: !Ref LayerWeb
+
+    LayerWeb:
+      Type: "AWS::OpsWorks::Layer"
+      Properties:
+        AutoAssignElasticIps: false
+        AutoAssignPublicIps: false
+        EnableAutoHealing: true
+        Name: !Ref LayerWebName
+        Shortname: !Ref LayerWebShortName
+        StackId: !Ref OpsWorksStack
+        Type: custom
+
+
+
+
 
 
 Parameters:
@@ -67,8 +87,20 @@ Parameters:
     BitBucketSshKey:
       Description: Please enter here BitBucket private key
       Type: String
-      
 
+    ElasticLoadBalancerName:
+      Description: Please enter here ELB Id 
+      Type: String
+
+    LayerWebName:
+      Description: Please enter here Web Layer name
+      Type: String      
+      Default: EenSloerie 
+
+    LayerWebShortName:
+      Description: Please enter here Web Layer Short name
+      Type: String      
+      Default: eensloerjie 
 
 Outputs:
 
@@ -79,6 +111,12 @@ Outputs:
     StackId:
       Description: Creted stack ID
       Value: !Ref OpsWorksStack
+
+    LayerWebId:
+      Description: Creted Web Layer ID
+      Value: !Ref LayerWeb
+
+
 
 
 

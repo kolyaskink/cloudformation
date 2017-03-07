@@ -82,7 +82,7 @@ Resources:
                     Protocol: HTTPS
                     SSLCertificateId: !Ref GhSslCert
             HealthCheck:
-                  Target: HTTP:80/
+                  Target: HTTP:80/static/19c0b418/images/headshot.png
                   HealthyThreshold: '3'
                   UnhealthyThreshold: '5'
                   Interval: '30'
@@ -121,18 +121,29 @@ Resources:
                 - 'ec2:AssociateAddress'
                 Resource:
                 - '*'
-          - PolicyName: logs
+
+          - PolicyName: 'logs'
             PolicyDocument:
               Version: '2012-10-17'
               Statement:
               - Effect: Allow
                 Action:
-                - 'logs:CreateLogGroup'
-                - 'logs:CreateLogStream'
-                - 'logs:PutLogEvents'
-                - 'logs:DescribeLogStreams'
+                - 'logs:*'
                 Resource:
                 - 'arn:aws:logs:*:*:*'
+
+          - PolicyName: 'cloudformationall'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'cloudformation:*'
+                Resource:
+                - '*'
+
+
+
 
 Parameters:
 
@@ -238,7 +249,7 @@ Outputs:
         Value: !Ref JenkinsLoadBalanser
 
       JenkinsLoadBalanserDnsName:
-        Description: DNS name for Jenkins LB record
+        Description: Hostname for LB. Create CNAME record something.gamehouse.com pinyed to it
         Value: !GetAtt JenkinsLoadBalanser.DNSName
 
       JenkinsInstanceProfile:
