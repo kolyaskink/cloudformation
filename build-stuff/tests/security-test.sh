@@ -10,16 +10,19 @@
 white_list_ip=( "212.67.170.162/32" )
 parsed="/tmp/parsed1"
 parameters_json="/tmp/parameters.json"
+var=0
 
-
-cat $parameters_json | jq -c 'map(select(.ParameterKey | contains("SshFrom")))' | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?/[0-9][0-9])' > $parsed
+cat $parameters_json | jq -c 'map(select(.ParameterKey | contains("SshFrom")))' | \
+grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?/[0-9][0-9])' > $parsed
 
 for ip in "${white_list_ip[@]}"
         do
                 cat $parsed | while read line
                         do
-                                if [[ "$ip" != "$line" ]]; then echo "$line is not allowed CIDR" && exit 1; fi
+                                if [[ "$ip" != "$line" ]]; then echo "$line is not allowed CIDR" && let "var++"; fi
                         done
         done
 
-exit 0
+if [[ $var -ne 0 ]]; then exit 1; else exit 0; fi
+
+
