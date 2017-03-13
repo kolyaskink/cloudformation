@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VpcId",
+    "ParameterValue": "vpc-a23e58c5"
+  },
+  {
+    "ParameterKey": "PublicSubnet1Id",
+    "ParameterValue": "subnet-0e46ff69"
+  },
+    {
+    "ParameterKey": "PublicSubnet2Id",
+    "ParameterValue": "subnet-0104d748"
+  },
+    {
+    "ParameterKey": "HttpsFrom1",
+    "ParameterValue": "212.67.170.162/32"
+  },
+    {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "gh-misc"
+        }
+]
