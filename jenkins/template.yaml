@@ -118,7 +118,7 @@ Resources:
               Statement:
               - Effect: Allow
                 Action:
-                - 'ec2:AssociateAddress'
+                - 'ec2:*'
                 Resource:
                 - '*'
 
