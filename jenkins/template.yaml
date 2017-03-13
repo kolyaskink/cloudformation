@@ -142,6 +142,16 @@ Resources:
                 Resource:
                 - '*'
 
+          - PolicyName: 'IAM'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'iam:*'
+                Resource:
+                - '*
+
 
 
 
