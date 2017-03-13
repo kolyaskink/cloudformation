@@ -2,9 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    This template deploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway and appropriate Security Groups
-    https://s3.amazonaws.com/cf-templates-kk/infra-vpc/template.yaml
-
+    TDeploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway GS and Bastion Host
+    
 Mappings:
     VpcCidrs:
         PublicSubnet1:
