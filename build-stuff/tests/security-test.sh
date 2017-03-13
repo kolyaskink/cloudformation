@@ -9,7 +9,12 @@
 
 white_list_ip=( "212.67.170.162/32" )
 parsed="/tmp/parsed1"
+varfile="/tmp/varfile"
 parameters_json="/tmp/parameters.json"
+
+
+cat /dev/null > $parsed
+cat /dev/null > $varfile
 var=0
 
 cat $parameters_json | jq -c 'map(select(.ParameterKey | contains("SshFrom")))' | \
@@ -19,10 +24,10 @@ for ip in "${white_list_ip[@]}"
         do
                 cat $parsed | while read line
                         do
-                                if [[ "$ip" != "$line" ]]; then echo "$line is not allowed CIDR" && let "var++"; fi
+                                if [[ "$ip" != "$line" ]]; then echo "$line is not allowed CIDR" && var=$(($var+1)) &&\
+                                echo $var > $varfile ; fi
                         done
         done
 
-if [[ $var -ne 0 ]]; then exit 1; else exit 0; fi
-
-
+var=$(cat $varfile)
+if [[ "$var" -ne "0" ]]; then exit 1; else exit 0; fi
