@@ -15,6 +15,10 @@
     "ParameterKey": "HttpsFrom1",
     "ParameterValue": "212.67.170.162/32"
   },
+   {
+    "ParameterKey": "HttpsFrom2",
+    "ParameterValue": "77.171.192.128/32"
+  },
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
