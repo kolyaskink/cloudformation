@@ -18,6 +18,20 @@ Resources:
     Type: "AWS::S3::Bucket"
     Properties:
       BucketName: !Ref S3BucketName
+      LifecycleConfiguration: 
+        Rules:
+        - 
+          Id: !Sub ${DaysToIA}toIA${DaysToGLACIER}toGLACIER
+          Status: "Enabled"
+          Transitions:
+          -
+            StorageClass: "STANDARD_IA"
+            TransitionInDays: !Ref DaysToIA
+          -
+            StorageClass: "GLACIER"
+            TransitionInDays: !Ref DaysToGLACIER
+
+
 
   S3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"
@@ -29,13 +43,13 @@ Resources:
             Action:
               - "s3:*"
             Effect:  "Allow"
-            Resource: "arn:aws:s3:::1993345886-cloudtrail"
+            Resource: !Sub arn:aws:s3:::${S3BucketName}
             Principal:  "*"
           - 
             Action:
               - "s3:PutObject"
             Effect:  "Allow"
-            Resource: "arn:aws:s3:::1993345886-cloudtrail/*"
+            Resource: !Sub arn:aws:s3:::${S3BucketName}/*
             Principal:
               Service: 
               - "cloudtrail.amazonaws.com"
@@ -45,6 +59,17 @@ Parameters:
   S3BucketName:
     Description: Name of Bucket for logs
     Type: String
+
+  DaysToIA:
+    Description: Days before file moved to IA storage
+    Type: Number
+    Default: 30
+
+  DaysToGLACIER:
+    Description: Days before file moved to Glacier
+    Type: Number
+    Default: 90
+
 
 Outputs:
   
@@ -59,6 +84,17 @@ Outputs:
   S3BucketPolicy:
     Description: Bucket Policy
     Value: !Ref S3BucketPolicy
+
+  DaysToIA:
+    Description: Days before file moved to IA storage
+    Value: !Ref DaysToIA
+  
+  DaysToGLACIER:
+    Description: Days before file moved to IA storage
+    Value: !Ref DaysToGLACIER
+
+
+
 
 
 
