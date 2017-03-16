@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    Account setting: CloudTrail
+
+Resources:
+
+  Trail:
+    Type: "AWS::CloudTrail::Trail"
+    Properties:
+      IncludeGlobalServiceEvents: true
+      IsLogging: true
+      IsMultiRegionTrail: true
+      S3BucketName: !Ref S3Bucket
+
+  S3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Ref S3BucketName
+
+  S3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Statement:
+          - 
+            Action:
+              - "s3:*"
+            Effect:  "Allow"
+            Resource: "arn:aws:s3:::1993345886-cloudtrail"
+            Principal:  "*"
+          - 
+            Action:
+              - "s3:PutObject"
+            Effect:  "Allow"
+            Resource: "arn:aws:s3:::1993345886-cloudtrail/*"
+            Principal:
+              Service: 
+              - "cloudtrail.amazonaws.com"
+
+Parameters:
+
+  S3BucketName:
+    Description: Name of Bucket for logs
+    Type: String
+
+Outputs:
+  
+  S3BucketName:
+    Description: Name of Bucket for logs
+    Value: !Ref S3BucketName
+
+  Trail:
+    Description: Trail tread for logs
+    Value: !Ref Trail
+
+  S3BucketPolicy:
+    Description: Bucket Policy
+    Value: !Ref S3BucketPolicy
+
+
+
