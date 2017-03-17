@@ -120,7 +120,6 @@ Resources:
             RouteTableId: !Ref PublicRouteTable
             SubnetId: !Ref PublicSubnet2
 
-
     # NAT GW and etc
     EIP:
         Type: 'AWS::EC2::EIP'
@@ -145,13 +144,11 @@ Resources:
             AllocationId: !GetAtt NatGateway1EIP.AllocationId
             SubnetId: !Ref PublicSubnet1
 
-
     NatGateway2:
         Type: AWS::EC2::NatGateway
         Properties:
             AllocationId: !GetAtt NatGateway2EIP.AllocationId
             SubnetId: !Ref PublicSubnet2
-
 
     PrivateRouteTable1:
         Type: AWS::EC2::RouteTable
@@ -238,7 +235,7 @@ Resources:
         Properties:
               AssociatePublicIpAddress: true
               EbsOptimized: false
-              IamInstanceProfile: !Ref InstanceProfile
+              IamInstanceProfile: !Ref BastionInstanceProfile
               ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
               InstanceType: !Ref BastionHostInstanceType
               SecurityGroups:
@@ -270,15 +267,14 @@ Resources:
             PauseTime: PT10M
             WaitOnResourceSignals: true
 
-
-    InstanceProfile:
+    BastionInstanceProfile:
         Type: 'AWS::IAM::InstanceProfile'
         Properties:
           Path: '/'
           Roles:
-          - !Ref IAMRole
+          - !Ref BastionIAMRole
 
-    IAMRole:
+    BastionIAMRole:
         Type: 'AWS::IAM::Role'
         Properties:
           AssumeRolePolicyDocument:
@@ -336,6 +332,19 @@ Resources:
             DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
             VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
+    #Chef
+    ChefEC2Instance: 
+        Type: "AWS::EC2::Instance"
+        Properties: 
+            ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+            KeyName: !Ref KeyName
+            IamInstanceProfile: !Ref ChefInstanceProfile
+            InstanceType: !Ref ChefHostInstanceType
+            SecurityGroupIds: [!Ref ChefEC2SecurityGroup]
+            SubnetId: !Ref PrivateSubnet1Id
+            Tags:
+              - Key: Name
+                Value: InfraChef
 
 
 Parameters:
@@ -431,7 +440,6 @@ Parameters:
         Description: Please enter the ID of the peering VPC
         Type: String
         Default: none
-
  
 Outputs:
 
