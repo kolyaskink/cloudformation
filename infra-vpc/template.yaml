@@ -332,19 +332,19 @@ Resources:
             DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
             VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
-    #Chef
-    ChefEC2Instance: 
-        Type: "AWS::EC2::Instance"
-        Properties: 
-            ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
-            KeyName: !Ref KeyName
-            IamInstanceProfile: !Ref ChefInstanceProfile
-            InstanceType: !Ref ChefHostInstanceType
-            SecurityGroupIds: [!Ref ChefEC2SecurityGroup]
-            SubnetId: !Ref PrivateSubnet1Id
-            Tags:
-              - Key: Name
-                Value: InfraChef
+    # #Chef
+    # ChefEC2Instance: 
+    #     Type: "AWS::EC2::Instance"
+    #     Properties: 
+    #         ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+    #         KeyName: !Ref KeyName
+    #         IamInstanceProfile: !Ref ChefInstanceProfile
+    #         InstanceType: !Ref ChefHostInstanceType
+    #         SecurityGroupIds: [!Ref ChefEC2SecurityGroup]
+    #         SubnetId: !Ref PrivateSubnet1Id
+    #         Tags:
+    #           - Key: Name
+    #             Value: InfraChef
 
 
 Parameters:
