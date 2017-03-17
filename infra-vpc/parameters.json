@@ -38,5 +38,9 @@
 	{
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
+  },
+  { 
+    "ParameterKey": "ChefHostInstanceType",
+    "ParameterValue": "t2.small"
   }
 ]
