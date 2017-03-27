@@ -33,7 +33,7 @@
   },
     {
     "ParameterKey": "PeerVpcCIDRGames",
-    "ParameterValue": "10.50.4.0/24"
+    "ParameterValue": "10.50.3.0/24"
   },
      {
     "ParameterKey": "VPCPeeringConnectionGames",
