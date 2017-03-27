@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    This template deploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway and appropriate Security Groups
+    VPC for studio's stuff and Fastlane apps 
 
 Mappings:
     AWSRegionToEC2AMI:
@@ -250,7 +250,7 @@ Parameters:
     InfraVpcId:
         Description: Please enter the Id of InfraVpc
         Type: String
-        Default: vpc-6ce02205
+        Default: vpc-a23e58c5
     
     InfraVpcCIDR:
         Description: Please enter the IP range (CIDR notation) for INFRA VPC
