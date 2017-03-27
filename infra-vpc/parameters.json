@@ -27,17 +27,9 @@
     "ParameterKey": "PeerVpcCIDRGhMisc",
     "ParameterValue": "10.50.0.0/24"
   },
-    {
-    "ParameterKey": "PeerVpcCIDRGames",
-    "ParameterValue": "10.50.3.0/24"
-  },
-    {
+     {
     "ParameterKey": "VPCPeeringConnectionGhMisc",
     "ParameterValue": "pcx-8b2ba8e2"
-  },
-    {
-    "ParameterKey": "VPCPeeringConnectionGames",
-    "ParameterValue": "pcx-4964eb20"
   },
   {
     "ParameterKey": "SshFrom1",
