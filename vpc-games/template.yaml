@@ -7,9 +7,7 @@ Description: >
 Mappings:
     AWSRegionToEC2AMI:
         us-west-2:
-            AMI: ami-f173cc91
-        eu-west-2:
-            AMI: ami-f1949e95
+            AMI: ami-e0bc2980
 
 Resources:
 
@@ -213,6 +211,65 @@ Resources:
             DestinationCidrBlock: !Ref InfraVpcCIDR
             VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
+    # Fastlane 
+    EC2SecurityGroupFastlane:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Fastlane SG
+            VpcId: !Ref VPC
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 22
+                ToPort: 22
+                CidrIp: !Ref InfraVpcCIDR
+            Tags:
+                - Key: Name
+                  Value: games-fastlane-ec2
+
+    FastlaneEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileFastlane
+              InstanceType: !Ref FastlaneHostInstanceType
+              SecurityGroupIds: [!Ref EC2SecurityGroupFastlane]
+              SubnetId: !Ref PrivateSubnet1
+              Tags:
+                - Key: Name
+                  Value: GamesFastlane
+
+    InstanceProfileFastlane:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRoleFastlane
+
+    IAMRoleFastlane:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+
+          - PolicyName: 'logs'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
 
 Parameters:
 
@@ -256,6 +313,21 @@ Parameters:
         Description: Please enter the IP range (CIDR notation) for INFRA VPC
         Type: String
         Default: 10.51.2.0/24
+
+    FastlaneHostInstanceType:
+        Type: String
+        Default: t2.small
+        AllowedValues:
+            - t2.small
+            - t2.medium 
+            - m4.large
+        Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
+
+    KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
 
  
 Outputs:
