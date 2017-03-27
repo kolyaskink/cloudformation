@@ -523,7 +523,7 @@ Parameters:
         Type: String
         Default: none
 
-    PeerVpcCIDRGhGames:
+    PeerVpcCIDRGames:
         Description: Please enter the IP range (CIDR notation) for peering VPC
         Type: String
         Default: 10.51.3.0/24
