@@ -109,7 +109,6 @@ Resources:
             RouteTableId: !Ref PublicRouteTable
             SubnetId: !Ref PublicSubnet2
 
-
     # NAT GW and etc
     EIP:
         Type: 'AWS::EC2::EIP'
@@ -134,13 +133,11 @@ Resources:
             AllocationId: !GetAtt NatGateway1EIP.AllocationId
             SubnetId: !Ref PublicSubnet1
 
-
     NatGateway2:
         Type: AWS::EC2::NatGateway
         Properties:
             AllocationId: !GetAtt NatGateway2EIP.AllocationId
             SubnetId: !Ref PublicSubnet2
-
 
     PrivateRouteTable1:
         Type: AWS::EC2::RouteTable
