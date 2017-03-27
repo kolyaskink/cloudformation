@@ -271,6 +271,84 @@ Resources:
                 Resource:
                 - 'arn:aws:logs:*:*:*'
 
+          - PolicyName: 'S3BucketAssets'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                    - "s3:GetObject"
+                    - "s3:GetObjectVersion"
+                Resource:
+                - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
+              - Effect: Allow
+                Action:
+                    - "s3:ListBucket"
+                Resource:
+                - !Sub arn:aws:s3:::${S3BucketAssetsName}/
+
+    S3BucketAssets:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: !Ref S3BucketAssetsName
+            LifecycleConfiguration: 
+                Rules:
+                - 
+                    Id: !Sub ${DaysToIAAssets}toIA${DaysToGLACIERAssets}toGLACIER
+                    Status: "Enabled"
+                    Transitions:
+                    -
+                        StorageClass: "STANDARD_IA"
+                        TransitionInDays: !Ref DaysToIAAssets
+                    -
+                        StorageClass: "GLACIER"
+                        TransitionInDays: !Ref DaysToGLACIERAssets
+
+    S3BucketAssetsPolicy:   
+        Type: "AWS::S3::BucketPolicy"
+        Properties:
+            Bucket: !Ref S3BucketAssets
+            PolicyDocument:
+                Statement:
+                    - 
+                        Action:
+                            - "s3:ListBucket"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
+                        Principal: 
+                            AWS: 
+                            - !Sub arn:aws:iam::777556643132:role/${IAMAppUser}
+                    - 
+                        Action:
+                            - "s3:PutObject"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
+                        Principal:
+                            AWS: 
+                            - !Sub arn:aws:iam::777556643132:role/${IAMAppUser}
+
+    IAMAppUser:
+        Type: 'AWS::IAM::User'
+        Properties:
+            UserName: !Ref AppUserName
+            Path: '/'
+            Policies:
+            - PolicyName: 'S3BucketAssetsInsert'
+              PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                    - Effect: Allow
+                      Action:
+                        - "s3:PutObject"
+                      Resource:
+                        - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
+                    - Effect: Allow
+                      Action:
+                        - "s3:ListBucket"
+                      Resource:
+                        - !Sub arn:aws:s3:::${S3BucketAssetsName}/
+
+
 Parameters:
 
 
@@ -329,6 +407,23 @@ Parameters:
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
 
+    S3BucketAssetsName:
+        Description: Name of Bucket for Assets
+        Type: String
+
+    DaysToIAAssets:
+        Description: Days before file moved to IA storage
+        Type: Number
+        Default: 30
+
+    DaysToGLACIERAssets:
+        Description: Days before file moved to Glacier
+        Type: Number
+        Default: 90
+
+    AppUserName:
+        Description: User name for parser app
+        Type: String
  
 Outputs:
 

@@ -31,6 +31,14 @@
     "ParameterKey": "InfraVpcId",
     "ParameterValue": "vpc-a23e58c5"
   },
+  {
+    "ParameterKey": "S3BucketAssetsName",
+    "ParameterValue": "8911037875-gamesassets"
+  },
+    {
+    "ParameterKey": "AppUserName",
+    "ParameterValue": "src-S3BucketAssets"
+  },
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
