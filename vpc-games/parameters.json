@@ -39,6 +39,14 @@
     "ParameterKey": "AppUserName",
     "ParameterValue": "src-S3BucketAssets"
   },
+      {
+    "ParameterKey": "DaysToIAAssets",
+    "ParameterValue": "90"
+  },
+      {
+    "ParameterKey": "DaysToGLACIERAssets",
+    "ParameterValue": "360"
+  },
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
