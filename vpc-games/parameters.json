@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey":"EnvironmentName",
-    "ParameterValue":"games"
+    "ParameterValue":"vpc-games"
   },
   {
     "ParameterKey": "VpcCIDR",
