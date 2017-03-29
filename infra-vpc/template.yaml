@@ -355,18 +355,18 @@ Resources:
             DestinationCidrBlock: !Ref PeerVpcCIDRGames
             VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
     #Chef
-#    ChefEC2Instance: 
-#        Type: "AWS::EC2::Instance"
-#        Properties: 
-#            ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
-#            KeyName: !Ref KeyName
-#            IamInstanceProfile: !Ref ChefInstanceProfile
-#            InstanceType: !Ref ChefHostInstanceType
-#            SecurityGroupIds: [!Ref ChefEC2SecurityGroup]
-#            SubnetId: !Ref PrivateSubnet1 
-#            Tags:
-#              - Key: Name
-#                Value: InfraChef
+    ChefEC2Instance: 
+        Type: "AWS::EC2::Instance"
+        Properties: 
+            ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+            KeyName: !Ref KeyName
+            IamInstanceProfile: !Ref ChefInstanceProfile
+            InstanceType: !Ref ChefHostInstanceType
+            SecurityGroupIds: [!Ref ChefEC2SecurityGroup]
+            SubnetId: !Ref PrivateSubnet1 
+            Tags:
+              - Key: Name
+                Value: InfraChef
 
     ChefInstanceProfile:
         Type: 'AWS::IAM::InstanceProfile'
