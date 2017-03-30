@@ -29,7 +29,7 @@ Resources:
       Type: AWS::Route53::RecordSet
       Properties:
           HostedZoneId: !Ref InternalProdHostedZone
-          Comment: 
+          Comment: "Interl DNS for Chef server"
           Name: !Join ['.', ['chef', !Ref InternalProdHostedZone]]
           Type: A
           TTL: '900'
