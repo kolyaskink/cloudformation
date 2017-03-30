@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+   This template takes care about DNS
+
+Resources:
+
+   InternalProdHostedZone:
+       Type: "AWS::Route53::HostedZone"
+       Properties:
+           HostedZoneConfig:
+               Comment: "Internal DNS"
+           Name: !Ref InterlnalProdHostedZone
+           VPCs:
+            -
+              VPCId: !Ref vpc-infra
+              VPCRegion: "us-west-2"
+            -
+              VPCId: !Ref vpc-games
+              VPCRegion: "us-west-2"
+            -
+              VPCId: !Ref vpc-mobile
+              VPCRegion: "us-west-2"   
+            -
+              VPCId: !Ref vpc-gh-misc
+              VPCRegion: "us-west-2" 
+           
+  InternalProdHostedZone-Record1:
+      Type: AWS::Route53::RecordSet
+      Properties:
+          HostedZoneId: !Ref InternalProdHostedZone
+          Comment: 
+          Name: !Join ['.', ['chef', !Ref InternalProdHostedZone]]
+          Type: A
+          TTL: '900'
+          ResourceRecords:
+          - '10.50.2.150'
+
+Parameters:
+  InterlnalProdHostedZone:
+       Type: String
+       Description: "The DNS name of an existing Amazon Route 53 hosted zone"
+  vpc-infra:
+      Type: String
+  vpc-games:
+      Type: String
+  vpc-mobile:
+      Type: String
+  vpc-gh-misc:
+      Type: String
+  
+

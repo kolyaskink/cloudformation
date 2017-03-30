@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey":"InterlnalProdHostedZone",
+    "ParameterValue":"us-west-2.777556643132.gamehouseos.internal"
+  },
+  {
+    "ParameterKey": "vpc-infra",
+    "ParameterValue": "vpc-a23e58c5"
+  },
+  {
+    "ParameterKey": "vpc-games",
+    "ParameterValue": "vpc-b7d29cd0"
+  },
+    {
+    "ParameterKey": "vpc-mobile",
+    "ParameterValue": "vpc-9ed7c8fa"
+  },
+    {
+    "ParameterKey": "vpc-gh-misc",
+    "ParameterValue": "vpc-82d66fe5"
+  }  
+]
