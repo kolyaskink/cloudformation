@@ -30,7 +30,7 @@ Resources:
       Properties:
           HostedZoneId: !Ref InternalProdHostedZone
           Comment: "Interl DNS for Chef server"
-          Name: !Join ['.', ['chef', !Ref InternalProdHostedZone]]
+          Name: !Join ['', [chef, ., !Ref InternalProdHostedZone, .]]
           Type: A
           TTL: '900'
           ResourceRecords:
