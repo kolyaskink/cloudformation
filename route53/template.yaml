@@ -25,7 +25,7 @@ Resources:
               VPCId: !Ref VpcGhMisc
               VPCRegion: "us-west-2" 
            
-  InternalProdHostedZone-Record1:
+  InternalProdHostedZoneRecord1:
       Type: AWS::Route53::RecordSet
       Properties:
           HostedZoneId: !Ref InternalProdHostedZone
