@@ -1,6 +1,6 @@
 [
   {
-    "ParameterKey":"InterlnalProdHostedZone",
+    "ParameterKey":"InterlnalProdHostedZoneName",
     "ParameterValue":"us-west-2.777556643132.gamehouseos.internal."
   },
   {

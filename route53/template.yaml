@@ -10,7 +10,7 @@ Resources:
       Properties:
            HostedZoneConfig:
                Comment: "Internal DNS"
-           Name: !Ref InterlnalProdHostedZone
+           Name: !Ref InterlnalProdHostedZoneName
            VPCs:
             -
               VPCId: !Ref VpcInfra
@@ -31,13 +31,14 @@ Resources:
           HostedZoneId: !Ref InternalProdHostedZone
           Comment: "Interl DNS for Chef server"
           Name: "chef.us-west-2.777556643132.gamehouseos.internal."
+          Name: !Join ['', ['chef', ., !Ref InterlnalProdHostedZoneName]]
           Type: A
           TTL: '900'
           ResourceRecords:
           - '10.50.2.150'
 
 Parameters:
-  InterlnalProdHostedZone:
+  InterlnalProdHostedZoneName:
        Type: String
        Description: "The DNS name of an existing Amazon Route 53 hosted zone"
   VpcInfra:
