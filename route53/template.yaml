@@ -13,16 +13,16 @@ Resources:
            Name: !Ref InterlnalProdHostedZone
            VPCs:
             -
-              VPCId: !Ref vpc-infra
+              VPCId: !Ref VpcInfra
               VPCRegion: "us-west-2"
             -
-              VPCId: !Ref vpc-games
+              VPCId: !Ref VpcGames
               VPCRegion: "us-west-2"
             -
-              VPCId: !Ref vpc-mobile
+              VPCId: !Ref VpcMobile
               VPCRegion: "us-west-2"   
             -
-              VPCId: !Ref vpc-gh-misc
+              VPCId: !Ref VpcGhMisc
               VPCRegion: "us-west-2" 
            
   InternalProdHostedZone-Record1:
@@ -40,13 +40,13 @@ Parameters:
   InterlnalProdHostedZone:
        Type: String
        Description: "The DNS name of an existing Amazon Route 53 hosted zone"
-  vpc-infra:
+  VpcInfra:
       Type: String
-  vpc-games:
+  VpcGames:
       Type: String
-  vpc-mobile:
+  VpcMobile:
       Type: String
-  vpc-gh-misc:
+  VpcGhMisc:
       Type: String
   
 
