@@ -38,16 +38,26 @@ Resources:
           - '10.50.2.150'
 
 Parameters:
+
   InterlnalProdHostedZoneName:
        Type: String
        Description: "The DNS name of an existing Amazon Route 53 hosted zone"
+
   VpcInfra:
       Type: String
+
   VpcGames:
       Type: String
+
   VpcMobile:
       Type: String
+
   VpcGhMisc:
       Type: String
+
   
+Outputs:
+
+      InternalProdHostedZoneRecord1:
+        Value: !Ref InternalProdHostedZoneRecord1
 
