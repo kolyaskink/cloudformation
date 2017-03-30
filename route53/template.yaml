@@ -5,9 +5,9 @@ Description: >
 
 Resources:
 
-   InternalProdHostedZone:
-       Type: "AWS::Route53::HostedZone"
-       Properties:
+  InternalProdHostedZone:
+      Type: "AWS::Route53::HostedZone"
+      Properties:
            HostedZoneConfig:
                Comment: "Internal DNS"
            Name: !Ref InterlnalProdHostedZone
