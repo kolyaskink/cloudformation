@@ -5,36 +5,36 @@ Description: >
 
 Resources:
 
-  InternalProdHostedZone:
-      Type: "AWS::Route53::HostedZone"
-      Properties:
-           HostedZoneConfig:
-               Comment: "Internal DNS"
-           Name: !Ref InterlnalProdHostedZone
-           VPCs:
-            -
-              VPCId: !Ref VpcInfra
-              VPCRegion: "us-west-2"
-            -
-              VPCId: !Ref VpcGames
-              VPCRegion: "us-west-2"
-            -
-              VPCId: !Ref VpcMobile
-              VPCRegion: "us-west-2"   
-            -
-              VPCId: !Ref VpcGhMisc
-              VPCRegion: "us-west-2" 
+#  InternalProdHostedZone:
+#      Type: "AWS::Route53::HostedZone"
+#      Properties:
+#           HostedZoneConfig:
+#               Comment: "Internal DNS"
+#           Name: !Ref InterlnalProdHostedZone
+#           VPCs:
+#            -
+#              VPCId: !Ref VpcInfra
+#              VPCRegion: "us-west-2"
+#            -
+#              VPCId: !Ref VpcGames
+#              VPCRegion: "us-west-2"
+#            -
+#              VPCId: !Ref VpcMobile
+#              VPCRegion: "us-west-2"   
+#            -
+#              VPCId: !Ref VpcGhMisc
+#              VPCRegion: "us-west-2" 
            
-  InternalProdHostedZoneRecord1:
-      Type: AWS::Route53::RecordSet
-      Properties:
-          HostedZoneName: !Ref InternalProdHostedZone
-          Comment: "Interl DNS for Chef server"
-          Name: "chef.us-west-2.777556643132.gamehouseos.internal."
-          Type: A
-          TTL: '900'
-          ResourceRecords:
-          - '10.50.2.150'
+#  InternalProdHostedZoneRecord1:
+#      Type: AWS::Route53::RecordSet
+#      Properties:
+#          HostedZoneName: !Ref InternalProdHostedZone
+#          Comment: "Interl DNS for Chef server"
+#          Name: "chef.us-west-2.777556643132.gamehouseos.internal."
+#          Type: A
+#          TTL: '900'
+#          ResourceRecords:
+#          - '10.50.2.150'
 
 Parameters:
   InterlnalProdHostedZone:
