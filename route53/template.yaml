@@ -30,7 +30,7 @@ Resources:
       Properties:
           HostedZoneId: !Ref InternalProdHostedZone
           Comment: "Interl DNS for Chef server"
-          Name: !Join ['', [chef, ., !Ref InternalProdHostedZone, .]]
+          Name: "chef.us-west-2.777556643132.gamehouseos.internal."
           Type: A
           TTL: '900'
           ResourceRecords:
