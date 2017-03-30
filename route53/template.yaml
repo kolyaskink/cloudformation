@@ -28,7 +28,7 @@ Resources:
   InternalProdHostedZoneRecord1:
       Type: AWS::Route53::RecordSet
       Properties:
-          HostedZoneId: !Ref InternalProdHostedZone
+          HostedZoneName: !Ref InternalProdHostedZone
           Comment: "Interl DNS for Chef server"
           Name: "chef.us-west-2.777556643132.gamehouseos.internal."
           Type: A

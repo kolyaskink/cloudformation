@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey":"InterlnalProdHostedZone",
-    "ParameterValue":"us-west-2.777556643132.gamehouseos.internal"
+    "ParameterValue":"us-west-2.777556643132.gamehouseos.internal."
   },
   {
     "ParameterKey": "VpcInfra",
