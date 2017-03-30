@@ -4,19 +4,19 @@
     "ParameterValue":"us-west-2.777556643132.gamehouseos.internal"
   },
   {
-    "ParameterKey": "vpc-infra",
+    "ParameterKey": "VpcInfra",
     "ParameterValue": "vpc-a23e58c5"
   },
   {
-    "ParameterKey": "vpc-games",
+    "ParameterKey": "VpcGames",
     "ParameterValue": "vpc-b7d29cd0"
   },
     {
-    "ParameterKey": "vpc-mobile",
+    "ParameterKey": "VpcMobile",
     "ParameterValue": "vpc-9ed7c8fa"
   },
     {
-    "ParameterKey": "vpc-gh-misc",
+    "ParameterKey": "VpcGhMisc",
     "ParameterValue": "vpc-82d66fe5"
   }  
 ]
