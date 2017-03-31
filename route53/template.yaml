@@ -35,8 +35,8 @@ Resources:
           Type: A
           TTL: '900'
           ResourceRecords:
-          - '10.50.2.150'
-
+          - '10.50.2.186'
+          
 Parameters:
 
   InterlnalProdHostedZoneName:
