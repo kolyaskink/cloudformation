@@ -4,7 +4,7 @@
 # Only certain vales allowed
 
 
-white_list_ip=( "212.67.170.162/32" )
+white_list_ip=( "212.67.170.162/32", "159.100.80.174/32" )
 parsed="$WORKSPACE/$gitfolder/tmp-parsed1"
 varfile="$WORKSPACE/$gitfolder/tmp-varfile"
 gitfolder="infra-vpc"

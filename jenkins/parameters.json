@@ -20,6 +20,10 @@
     "ParameterValue": "77.171.192.128/32"
   },
     {
+    "ParameterKey": "HttpsFrom3",
+    "ParameterValue": "159.100.80.174/32"
+  }, 
+    {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
         }
