@@ -295,6 +295,7 @@ Resources:
               - Effect: Allow
                 Action:
                 - 'ec2:AssociateAddress'
+                - 'ec2:DescribeTags'
                 Resource:
                 - '*'
           - PolicyName: logs
