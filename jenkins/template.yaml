@@ -40,6 +40,7 @@ Resources:
                 - Key: Name
                   Value: infra-jenkins-lb
 
+
       EC2SecurityGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
@@ -70,6 +71,8 @@ Resources:
               Tags:
                 - Key: Name
                   Value: InfraJenkins
+                - Key: DNS
+                  Value: infrajenkins
 
       JenkinsLoadBalanser:
         Type: "AWS::ElasticLoadBalancing::LoadBalancer"
