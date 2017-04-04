@@ -1,0 +1,18 @@
+{
+    "Comment": "Auto-update during EC2 booting",
+    "Changes": [
+        {
+            "Action": "ActionChange",
+            "ResourceRecordSet": {
+                "Name": "ChangeName",
+                "Type": "A",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "ChangeValue"
+                    }
+                ]
+            }
+        }
+    ]
+}
