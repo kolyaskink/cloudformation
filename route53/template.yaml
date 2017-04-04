@@ -58,6 +58,10 @@ Parameters:
   
 Outputs:
 
+      InternalProdHostedZoneId:
+        Value: !Ref InternalProdHostedZone
+
       InternalProdHostedZoneRecord1:
         Value: !Ref InternalProdHostedZoneRecord1
+
 
