@@ -35,7 +35,7 @@ Resources:
           Type: A
           TTL: '900'
           ResourceRecords:
-          - '10.50.2.186'
+          - '10.50.2.187'
           
 Parameters:
 
