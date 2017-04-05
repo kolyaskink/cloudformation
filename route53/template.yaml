@@ -25,28 +25,6 @@ Resources:
               VPCId: !Ref VpcGhMisc
               VPCRegion: "us-west-2" 
            
-  InternalProdHostedZoneRecord1:
-      Type: AWS::Route53::RecordSet
-      Properties:
-          HostedZoneId: !Ref InternalProdHostedZone
-          Comment: "Interl DNS for Chef server"
-          Name: !Join ['', ['chef', ., !Ref InterlnalProdHostedZoneName]]
-          Type: A
-          TTL: '900'
-          ResourceRecords:
-          - '10.50.2.187'
-          
-  InternalProdHostedZoneRecord2:
-      Type: AWS::Route53::RecordSet
-      Properties:
-          HostedZoneId: !Ref InternalProdHostedZone
-          Comment: "Interl DNS for Jenkins server"
-          Name: !Join ['', ['infrajenkins', ., !Ref InterlnalProdHostedZoneName]]
-          Type: A
-          TTL: '900'
-          ResourceRecords:
-          - '10.50.2.30'
-
 Parameters:
 
   InterlnalProdHostedZoneName:
@@ -71,10 +49,5 @@ Outputs:
       InternalProdHostedZoneId:
         Value: !Ref InternalProdHostedZone
 
-      InternalProdHostedZoneRecord1:
-        Value: !Ref InternalProdHostedZoneRecord1
-
-      InternalProdHostedZoneRecord2:
-        Value: !Ref InternalProdHostedZoneRecord2
 
 
