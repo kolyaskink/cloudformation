@@ -447,6 +447,8 @@ Resources:
             Tags:
               - Key: Name
                 Value: InfraDns
+              - Key: DNS
+                Value: InfraDns
 
     DnsInstanceProfile:
         Type: 'AWS::IAM::InstanceProfile'

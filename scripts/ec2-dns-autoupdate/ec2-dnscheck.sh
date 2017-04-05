@@ -14,29 +14,29 @@ dnstag=$(aws ec2 describe-tags --region $region --filters \
 "Name=resource-id,Values=$ec2id" "Name=key,Values=DNS" | jq '.Tags[0] .Value' | sed 's/\"//g')
 
 #If tag is presented, search for existing A record
-if [[ -n $dnstag ]]; then
-	recordvalue=$(aws route53 list-resource-record-sets --hosted-zone-id $zoneid \
-	| grep -B 4 "$dnstag.$region.$account.gamehouseos.internal." | head -1 | sed 's/\"\| //g' | gawk -F: '{print $2}')
-		
+if [[ -n $dnstag && "$dnstag" != "null" ]]
+	then
+		recordvalue=$(aws route53 list-resource-record-sets --hosted-zone-id $zoneid \
+		| grep -B 4 "$dnstag.$region.$account.gamehouseos.internal." | head -1 | sed 's/\"\| //g' | gawk -F: '{print $2}')
 		#If A record is there, check that IP is correct, if not - change
-		if [[ -n $recordvalue ]]; then
-				if [[ "$recordvalue" == "$ip" ]]; then exit 0;
+		if [[ -n $recordvalue ]]
+			then
+				if [[ "$recordvalue" == "$ip" ]]
+					then 
+						exit 0
 					else
 						sed "s/ChangeAction/UPSERT/g; s/ChangeValue/$ip/g; s/ChangeName/$dnstag.$region.$account.gamehouseos.internal./g" \
 						$batchtemplate > $batchfile && \
 						aws route53 change-resource-record-sets --hosted-zone-id $zoneid \
 						--change-batch file://$batchfile && exit 0
 				fi
-		else
+			else
 				sed "s/ChangeAction/CREATE/g; s/ChangeValue/$ip/g; s/ChangeName/$dnstag.$region.$account.gamehouseos.internal./g" \
 				$batchtemplate > $batchfile && \
 				aws route53 change-resource-record-sets --hosted-zone-id $zoneid \
-				--change-batch file://$batchfile exit 0
-
+				--change-batch file://$batchfile && exit 0
+		fi
 	else
-
 		echo "No dns tag found" && exit 0
-
 fi
-
 exit 1
