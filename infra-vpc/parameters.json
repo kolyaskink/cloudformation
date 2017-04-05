@@ -43,10 +43,6 @@
     "ParameterKey": "SshFrom1",
     "ParameterValue": "212.67.170.162/32"
   },
-  {
-    "ParameterKey": "SshFrom2",
-    "ParameterValue": "77.171.192.128/32"
-  },
 	{
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
