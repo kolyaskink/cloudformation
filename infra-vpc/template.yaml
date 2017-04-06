@@ -5,20 +5,9 @@ Description: >
     Deploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway GS and Bastion Host
     
 Mappings:
-    VpcCidrs:
-        PublicSubnet1:
-            cidr: 10.51.0.0/26
-        PublicSubnet2:
-            cidr: 10.51.0.64/26
-        PrivateSubnet1:
-            cidr: 10.51.0.128/26
-        PrivateSubnet2:
-            cidr: 10.51.0.192/26
-        vpc:
-            cidr: 10.51.0.0/24
     AWSRegionToEC2AMI:
         us-west-2:
-            AMI: ami-f173cc91
+            AMI: ami-bd7beddd
         eu-west-2:
             AMI: ami-f1949e95
 

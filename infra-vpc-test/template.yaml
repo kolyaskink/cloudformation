@@ -7,7 +7,7 @@ Description: >
 Mappings:
     AWSRegionToEC2AMI:
         us-west-2:
-            AMI: ami-f173cc91
+            AMI: ami-bd7beddd
         eu-west-2:
             AMI: ami-f1949e95
 
