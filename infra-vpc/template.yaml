@@ -162,8 +162,6 @@ Resources:
         Properties: 
           RouteTableIds:
             - !Ref PublicRouteTable
-            - !Ref PrivateRouteTable1
-            - !Ref PrivateRouteTable2
           VpnGatewayId: !Ref LuxVPNGW        
 
 
