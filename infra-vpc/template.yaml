@@ -157,6 +157,15 @@ Resources:
           DestinationCidrBlock: !Ref LuxVPNCIDR
           VpnConnectionId: !Ref LuxVPN
 
+    LuxVPNRoutePropagation:
+        Type: "AWS::EC2::VPNGatewayRoutePropagation"
+        Properties: 
+          RouteTableIds:
+            - !Ref PublicRouteTable
+            - !Ref PrivateRouteTable1
+            - !Ref PrivateRouteTable2
+          VpnGatewayId: !Ref LuxVPNGW        
+
 
     # NAT GW and etc
     EIP:
