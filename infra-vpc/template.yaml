@@ -110,52 +110,7 @@ Resources:
             SubnetId: !Ref PublicSubnet2
 
     # Ipsec
-    LuxVPNGW:    
-        Type: "AWS::EC2::VPNGateway"
-        Properties: 
-          Type: ipsec.1
-          Tags:
-              - Key: Name
-                Value: LuxVPNGW            
-              - Key: Env
-                Value: !Ref EnvironmentName
-              - Key: Destination
-                Value: Lux
 
-    LuxVPNCG:    
-        Type: "AWS::EC2::CustomerGateway"
-        Properties:
-          BgpAsn: !Ref VpnAsLux
-          IpAddress: !Ref VpnIpLux
-          Type: ipsec.1
-          Tags: 
-              - Key: Name
-                Value: LuxVPNCG   
-              - Key: Env
-                Value: !Ref EnvironmentName
-              - Key: Destination
-                Value: Lux
-
-    LuxVPN:
-        Type: "AWS::EC2::VPNConnection"
-        Properties: 
-          Type: ipsec.1
-          CustomerGatewayId: !Ref LuxVPNCG
-          StaticRoutesOnly: true
-          VpnGatewayId: !Ref LuxVPNGW
-          Tags:
-              - Key: Name
-                Value: LuxVPN   
-              - Key: Env
-                Value: !Ref EnvironmentName
-              - Key: Destination
-                Value: Lux              
-    
-    LuxVPNRoute:
-        Type: "AWS::EC2::VPNConnectionRoute"
-        Properties: 
-          DestinationCidrBlock: !Ref LuxVPNCIDR
-          VpnConnectionId: !Ref LuxVPN
 
 
     # NAT GW and etc
@@ -673,20 +628,6 @@ Parameters:
             - m4.large
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small. 
 
-    VpnAsLux:
-        Description: IpSec As for Lux
-        Type: String
-        Default: none
-
-    VpnIpLux:
-        Description: IP address of Lux IpSec endpoint
-        Type: String
-        Default: none
-
-    LuxVPNCIDR:
-        Description: CIDR address of Lux IpSec subnet
-        Type: String
-        Default: none
 
 Outputs:
 
