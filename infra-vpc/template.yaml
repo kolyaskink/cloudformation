@@ -115,9 +115,11 @@ Resources:
         Properties: 
           Type: ipsec.1
           Tags:
+              - Key: Name
+                Value: LuxVPNGW            
               - Key: Env
                 Value: !Ref EnvironmentName
-              - Key: Where
+              - Key: Destination
                 Value: Lux
 
     LuxVPNCG:    
@@ -127,9 +129,11 @@ Resources:
           IpAddress: !Ref VpnIpLux
           Type: ipsec.1
           Tags: 
+              - Key: Name
+                Value: LuxVPNCG   
               - Key: Env
                 Value: !Ref EnvironmentName
-              - Key: Where
+              - Key: Destination
                 Value: Lux
 
     LuxVPN:
@@ -140,9 +144,11 @@ Resources:
           StaticRoutesOnly: true
           VpnGatewayId: !Ref LuxVPNGW
           Tags:
+              - Key: Name
+                Value: LuxVPN   
               - Key: Env
                 Value: !Ref EnvironmentName
-              - Key: Where
+              - Key: Destination
                 Value: Lux              
 
     # NAT GW and etc
