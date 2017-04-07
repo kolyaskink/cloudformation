@@ -141,7 +141,7 @@ Resources:
         Properties: 
           Type: ipsec.1
           CustomerGatewayId: !Ref LuxVPNCG
-          StaticRoutesOnly: true
+          StaticRoutesOnly: false
           VpnGatewayId: !Ref LuxVPNGW
           Tags:
               - Key: Name
@@ -151,12 +151,6 @@ Resources:
               - Key: Destination
                 Value: Lux              
     
-    LuxVPNRoute:
-        Type: "AWS::EC2::VPNConnectionRoute"
-        Properties: 
-          DestinationCidrBlock: !Ref LuxVPNCIDR
-          VpnConnectionId: !Ref LuxVPN
-
     LuxVPNRoutePropagation:
         Type: "AWS::EC2::VPNGatewayRoutePropagation"
         Properties: 
