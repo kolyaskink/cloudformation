@@ -47,6 +47,14 @@
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
   },
+    {
+    "ParameterKey": "VpnAsLux",
+    "ParameterValue": "65000"
+  },
+    {
+    "ParameterKey": "VpnIpLux",
+    "ParameterValue": "149.13.34.143"
+  },
   { 
     "ParameterKey": "ChefHostInstanceType",
     "ParameterValue": "t2.small"

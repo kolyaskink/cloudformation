@@ -109,6 +109,42 @@ Resources:
             RouteTableId: !Ref PublicRouteTable
             SubnetId: !Ref PublicSubnet2
 
+    # Ipsec
+    LuxVPNGW:    
+        Type: "AWS::EC2::VPNGateway"
+        Properties: 
+          Type: ipsec.1
+          Tags:
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Where
+                Value: Lux
+
+    LuxVPNCG:    
+        Type: "AWS::EC2::CustomerGateway"
+        Properties:
+          BgpAsn: !Ref VpnAsLux
+          IpAddress: !Ref VpnIpLux
+          Type: ipsec.1
+          Tags: 
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Where
+                Value: Lux
+
+    LuxVPN:
+        Type: "AWS::EC2::VPNConnection"
+        Properties: 
+          Type: ipsec.1
+          CustomerGatewayId: !Ref LuxVPNCG
+          StaticRoutesOnly: true
+          VpnGatewayId: !Ref LuxVPNGW
+          Tags:
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Where
+                Value: Lux              
+
     # NAT GW and etc
     EIP:
         Type: 'AWS::EC2::EIP'
@@ -623,6 +659,20 @@ Parameters:
             - t2.medium 
             - m4.large
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small. 
+
+    VpnAsLux:
+        Description: IpSec As for Lux
+        Type: String
+        Default: none
+
+    VpnIpLux:
+        Description: IP address of Lux IpSec endpoint
+        Type: String
+        MinLength: 7
+        MaxLength: 16
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})"
+        ConstraintDescription: must be a valid IP adress of the form x.x.x.x
+        Default: none
 
 Outputs:
 
