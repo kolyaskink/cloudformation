@@ -150,6 +150,13 @@ Resources:
                 Value: !Ref EnvironmentName
               - Key: Destination
                 Value: Lux              
+    
+    LuxVPNRoute:
+        Type: "AWS::EC2::VPNConnectionRoute"
+        Properties: 
+          DestinationCidrBlock: !Ref LuxVPNCIDR
+          VpnConnectionId: !Ref LuxVPN
+
 
     # NAT GW and etc
     EIP:
@@ -673,6 +680,11 @@ Parameters:
 
     VpnIpLux:
         Description: IP address of Lux IpSec endpoint
+        Type: String
+        Default: none
+
+    LuxVPNCIDR:
+        Description: CIDR address of Lux IpSec subnet
         Type: String
         Default: none
 
