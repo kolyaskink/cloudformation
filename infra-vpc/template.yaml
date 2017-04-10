@@ -157,13 +157,15 @@ Resources:
           VpcId: !Ref VPC
           VpnGatewayId: !Ref LuxVPNGW      
 
-#    LuxVPNRoutePropagation:
-#        Type: "AWS::EC2::VPNGatewayRoutePropagation"
-#        DependsOn: LuxVPNGW
-#        Properties: 
-#          RouteTableIds:
-#            - !Ref PublicRouteTable
-#          VpnGatewayId: !Ref LuxVPNGW        
+    LuxVPNRoutePropagation:
+        Type: "AWS::EC2::VPNGatewayRoutePropagation"
+        DependsOn: LuxVPNGW
+        Properties: 
+          RouteTableIds:
+            - !Ref PublicRouteTable
+            - !Ref PrivateRouteTable1 
+            - !Ref PrivateRouteTable2
+          VpnGatewayId: !Ref LuxVPNGW        
 
 
     # NAT GW and etc
