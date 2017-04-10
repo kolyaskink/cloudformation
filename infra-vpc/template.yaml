@@ -117,7 +117,7 @@ Resources:
           Tags:
               - Key: Name
                 Value: LuxVPNGW            
-             - Key: Env
+              - Key: Env
                 Value: !Ref EnvironmentName
               - Key: Destination
                 Value: Lux
