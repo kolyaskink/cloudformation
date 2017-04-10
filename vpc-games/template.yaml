@@ -302,19 +302,6 @@ Resources:
                 - Key: Name
                   Value: GamesFastlane
 
-    FastlaneEC2Instance: 
-            Type: "AWS::EC2::Instance"
-            Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
-              KeyName: !Ref KeyName
-              IamInstanceProfile: !Ref InstanceProfileFastlane
-              InstanceType: !Ref FastlaneHostInstanceType
-              SecurityGroupIds: [!Ref EC2SecurityGroupFastlane]
-              SubnetId: !Ref PrivateSubnet1
-              Tags:
-                - Key: Name
-                  Value: GamesFastlane
-
     InstanceProfileFastlane:
         Type: 'AWS::IAM::InstanceProfile'
         Properties:
