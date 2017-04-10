@@ -292,7 +292,7 @@ Resources:
                   Timeout: '5'
             Scheme: internet-facing
             SecurityGroups: [!Ref LBSecurityGroupJenkinsStudioTemplate]
-            Subnets: [!Ref PublicSubnet1Id]
+            Subnets: [!Ref PublicSubnet1]
 
     InstanceProfileJenkinsStudioTemplate:
         Type: 'AWS::IAM::InstanceProfile'
