@@ -215,12 +215,42 @@ Resources:
             VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
     # Studio Jenkins template
+    LBSecurityGroupJenkinsStudioTemplate:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable access to the Jenkins LB
+            VpcId: !Ref VPC
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom1
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom2
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom3
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom4
+            Tags:
+                - Key: Name
+                  Value: games-jenkins-template-lb
+
     EC2SecurityGroupJenkinsStudioTemplate:
         Type: AWS::EC2::SecurityGroup
         Properties:
             GroupDescription: JenkinsStudioTemplate SG
             VpcId: !Ref VPC
             SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref LBSecurityGroupJenkinsStudioTemplate
               - IpProtocol: tcp
                 FromPort: 22
                 ToPort: 22
@@ -243,6 +273,26 @@ Resources:
                   Value: GamesJenkinsStudioTemplate
                 - Key: DNS
                   Value: GamesJenkinsStudioTemplate
+
+    JenkinsStudioTemplateBalanser:
+        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+        Properties:
+            Instances: [!Ref JenkinsStudioTemplateEC2Instance]
+            LoadBalancerName: lb-Games-JenkinsTemplate
+            Listeners:
+                  - LoadBalancerPort: 443
+                    InstancePort: !Ref ApachePort
+                    Protocol: HTTPS
+                    SSLCertificateId: !Ref GhosSslCert
+            HealthCheck:
+                  Target: HTTP:80/static/19c0b418/images/headshot.png
+                  HealthyThreshold: '3'
+                  UnhealthyThreshold: '5'
+                  Interval: '30'
+                  Timeout: '5'
+            Scheme: internet-facing
+            SecurityGroups: [!Ref LBSecurityGroupJenkinsStudioTemplate]
+            Subnets: [!Ref PublicSubnet1Id]
 
     InstanceProfileJenkinsStudioTemplate:
         Type: 'AWS::IAM::InstanceProfile'
@@ -506,6 +556,18 @@ Parameters:
     AppUserName:
         Description: User name for parser app
         Type: String
+
+    ApachePort:
+        Description: Apache port in front of Jenkins's app
+        Type: String
+        MinLength: 2
+        MaxLength: 5
+        Default: 80
+
+    GhosSslCert:
+        Description: arn of SSL cert
+        Type: String
+        Default: arn:aws:acm:us-west-2:777556643132:certificate/8ea61a4f-1549-4703-b99f-da25a2be8f7d
  
 Outputs:
 
