@@ -5,9 +5,12 @@ Description: >
     VPC for studio's stuff and Fastlane apps 
 
 Mappings:
-    AWSRegionToEC2AMI:
+    AWSRegionToEC2DefaultAMI:
         us-west-2:
             AMI: ami-bd7beddd
+    AWSRegionToEC2FastlaneAMI:    
+        us-west-2:
+            AMI: ami-e0bc2980
 
 Resources:
 
@@ -229,7 +232,7 @@ Resources:
     JenkinsStudioTemplateEC2Instance: 
             Type: "AWS::EC2::Instance"
             Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+              ImageId: !FindInMap [AWSRegionToEC2DefaultAMI, !Ref 'AWS::Region', AMI]
               KeyName: !Ref KeyName
               IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
               InstanceType: t2.small
@@ -289,7 +292,7 @@ Resources:
     FastlaneEC2Instance: 
             Type: "AWS::EC2::Instance"
             Properties: 
-              ImageId: ami-e0bc2980
+              ImageId: !FindInMap [AWSRegionToEC2FastlaneAMI, !Ref 'AWS::Region', AMI]
               KeyName: !Ref KeyName
               IamInstanceProfile: !Ref InstanceProfileFastlane
               InstanceType: !Ref FastlaneHostInstanceType
