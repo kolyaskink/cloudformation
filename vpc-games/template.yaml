@@ -7,7 +7,7 @@ Description: >
 Mappings:
     AWSRegionToEC2AMI:
         us-west-2:
-            AMI: ami-e0bc2980
+            AMI: ami-bd7beddd
 
 Resources:
 
@@ -211,6 +211,66 @@ Resources:
             DestinationCidrBlock: !Ref InfraVpcCIDR
             VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
+    # Studio Jenkins template
+    EC2SecurityGroupJenkinsStudioTemplate:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: JenkinsStudioTemplate SG
+            VpcId: !Ref VPC
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 22
+                ToPort: 22
+                CidrIp: !Ref InfraVpcCIDR
+            Tags:
+                - Key: Name
+                  Value: games-jenkins-template-ec2     
+
+    JenkinsStudioTemplateEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplate]
+              SubnetId: !Ref PrivateSubnet1
+              Tags:
+                - Key: Name
+                  Value: JenkinsStudioTemplate
+
+    InstanceProfileJenkinsStudioTemplate:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRoleJenkinsStudioTemplate
+
+    IAMRoleJenkinsStudioTemplate:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+
+          - PolicyName: 'logs'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
+
     # Fastlane 
     EC2SecurityGroupFastlane:
         Type: AWS::EC2::SecurityGroup
@@ -225,6 +285,19 @@ Resources:
             Tags:
                 - Key: Name
                   Value: games-fastlane-ec2
+
+    FastlaneEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: ami-e0bc2980
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileFastlane
+              InstanceType: !Ref FastlaneHostInstanceType
+              SecurityGroupIds: [!Ref EC2SecurityGroupFastlane]
+              SubnetId: !Ref PrivateSubnet1
+              Tags:
+                - Key: Name
+                  Value: GamesFastlane
 
     FastlaneEC2Instance: 
             Type: "AWS::EC2::Instance"
@@ -347,6 +420,8 @@ Resources:
                         - "s3:ListBucket"
                       Resource:
                         - !Sub arn:aws:s3:::${S3BucketAssetsName}/
+
+
 
 
 Parameters:
