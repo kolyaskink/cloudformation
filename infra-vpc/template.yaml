@@ -153,6 +153,7 @@ Resources:
     
     LuxVPNRoutePropagation:
         Type: "AWS::EC2::VPNGatewayRoutePropagation"
+        DependsOn: LuxVPNGW
         Properties: 
           RouteTableIds:
             - !Ref PublicRouteTable
