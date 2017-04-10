@@ -264,7 +264,7 @@ Resources:
 
     JenkinsStudioTemplateEC2Instance: 
             Type: "AWS::EC2::Instance"
-             Properties: 
+            Properties: 
               ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsAMI, !Ref 'AWS::Region', AMI]
               KeyName: !Ref KeyName
               IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
