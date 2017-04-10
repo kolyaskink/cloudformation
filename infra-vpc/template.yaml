@@ -150,14 +150,21 @@ Resources:
                 Value: !Ref EnvironmentName
               - Key: Destination
                 Value: Lux              
-    
-    LuxVPNRoutePropagation:
-        Type: "AWS::EC2::VPNGatewayRoutePropagation"
-        DependsOn: LuxVPNGW
+ 
+    LuxVPNAttachment:
+        Type: "AWS::EC2::VPCGatewayAttachment"
         Properties: 
-          RouteTableIds:
-            - !Ref PublicRouteTable
-          VpnGatewayId: !Ref LuxVPNGW        
+          InternetGatewayId: !Ref InternetGateway
+          VpcId: !Ref VPC
+          VpnGatewayId: !Ref LuxVPNGW      
+
+#    LuxVPNRoutePropagation:
+#        Type: "AWS::EC2::VPNGatewayRoutePropagation"
+#        DependsOn: LuxVPNGW
+#        Properties: 
+#          RouteTableIds:
+#            - !Ref PublicRouteTable
+#          VpnGatewayId: !Ref LuxVPNGW        
 
 
     # NAT GW and etc
