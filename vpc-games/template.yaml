@@ -271,7 +271,7 @@ Resources:
               IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
               InstanceType: t2.small
               SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplate]
-              SubnetId: !Ref PrivateSubnet1
+              SubnetId: !Ref PublicSubnet1
               Tags:
                 - Key: Name
                   Value: GamesJenkinsStudioTemplate
