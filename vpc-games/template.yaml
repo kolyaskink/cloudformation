@@ -252,6 +252,10 @@ Resources:
                 ToPort: 80
                 SourceSecurityGroupId: !Ref LBSecurityGroupJenkinsStudioTemplate
               - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                CidrIp: 212.67.170.162/32
+              - IpProtocol: tcp
                 FromPort: 22
                 ToPort: 22
                 CidrIp: !Ref InfraVpcCIDR
