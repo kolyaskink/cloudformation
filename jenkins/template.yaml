@@ -175,7 +175,7 @@ Resources:
                 Resource:
                 - '*'
 
-          - PolicyName: 'AllowAssumeRole-Route53-Ops'
+          - PolicyName: 'AllowAll-StsAssumeRoles-Prod'
             PolicyDocument:
               Version: '2012-10-17'
               Statement:
@@ -183,7 +183,17 @@ Resources:
                 Action:
                 - 'sts:AssumeRole'
                 Resource:
-                - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
+                - '*'
+
+#          - PolicyName: 'AllowAssumeRole-Route53-Ops'
+#            PolicyDocument:
+#              Version: '2012-10-17'
+#              Statement:
+#              - Effect: Allow
+#                Action:
+#                - 'sts:AssumeRole'
+#                Resource:
+#                - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
 
 
 
