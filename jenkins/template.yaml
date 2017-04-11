@@ -11,6 +11,10 @@ Mappings:
             AMI: ami-bd7beddd
         eu-west-2:
             AMI: ami-f1949e95
+    AWSRegionToEC2StudioJenkinsAMI:    
+        us-west-2:
+            AMI: ami-5cbf2f3c 
+
 
 Resources:
       
@@ -62,7 +66,7 @@ Resources:
       JenkinsEC2Instance: 
             Type: "AWS::EC2::Instance"
             Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsAMI, !Ref 'AWS::Region', AMI]
               KeyName: !Ref KeyName
               IamInstanceProfile: !Ref InstanceProfile
               InstanceType: !Ref JenkinsHostInstanceType
@@ -73,6 +77,10 @@ Resources:
                   Value: InfraJenkins
                 - Key: DNS
                   Value: infrajenkins
+              UserData:
+                'Fn::Base64': !Sub |
+                  #!/bin/bash -x
+                  /usr/local/bin/dns.sh
 
       JenkinsLoadBalanser:
         Type: "AWS::ElasticLoadBalancing::LoadBalancer"
@@ -83,7 +91,7 @@ Resources:
                   - LoadBalancerPort: 443
                     InstancePort: !Ref ApachePort
                     Protocol: HTTPS
-                    SSLCertificateId: !Ref GhSslCert
+                    SSLCertificateId: !Ref GhosSslCert
             HealthCheck:
                   Target: HTTP:80/static/19c0b418/images/headshot.png
                   HealthyThreshold: '3'
@@ -268,10 +276,10 @@ Parameters:
         MaxLength: 5
         Default: 80
 
-      GhSslCert:
+      GhosSslCert:
         Description: arn of SSL cert
         Type: String
-        Default: arn:aws:acm:us-west-2:777556643132:certificate/896e5609-1aac-446c-b17e-608bce984e22
+        Default: arn:aws:acm:us-west-2:777556643132:certificate/8ea61a4f-1549-4703-b99f-da25a2be8f7d
       
       JenkinsHostInstanceType:
         Type: String
