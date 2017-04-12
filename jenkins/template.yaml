@@ -224,11 +224,11 @@ Resources:
             PolicyDocument:
                 Statement:
                     - 
-                        Action:
-                            - "s3:ListBucket"
-                        Effect:  "Allow"
-                        Resource: !Sub arn:aws:s3:::${S3BucketJenkinsName}
-                        Principal: *
+                      Action:
+                        - "s3:ListBucket"
+                      Effect:  "Allow"
+                      Resource: !Sub arn:aws:s3:::${S3BucketJenkinsName}
+                      Principal: "*"
                             
 
 
