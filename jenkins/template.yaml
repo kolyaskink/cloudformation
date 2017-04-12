@@ -14,6 +14,9 @@ Mappings:
     AWSRegionToEC2StudioJenkinsAMI:    
         us-west-2:
             AMI: ami-5cbf2f3c 
+    AWSRegionToEC2InfraJenkinsAMI:    
+        us-west-2:
+            AMI: ami-47e17227
 
 
 Resources:
@@ -66,7 +69,7 @@ Resources:
       JenkinsEC2Instance: 
             Type: "AWS::EC2::Instance"
             Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsAMI, !Ref 'AWS::Region', AMI]
+              ImageId: !FindInMap [AWSRegionToEC2InfraJenkinsAMI, !Ref 'AWS::Region', AMI]
               KeyName: !Ref KeyName
               IamInstanceProfile: !Ref InstanceProfile
               InstanceType: !Ref JenkinsHostInstanceType
@@ -81,6 +84,7 @@ Resources:
                 'Fn::Base64': !Sub |
                   #!/bin/bash -x
                   /usr/local/bin/dns.sh
+                  /usr/local/bin/GetJenkinsHomeFromS3AndGit.sh
 
       JenkinsLoadBalanser:
         Type: "AWS::ElasticLoadBalancing::LoadBalancer"
