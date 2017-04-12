@@ -20,7 +20,15 @@
     "ParameterValue": "77.171.192.128/32"
   },
     {
+    "ParameterKey": "S3BucketJenkinsName",
+    "ParameterValue": "9181961191-InfraJenkins"
+  },
+  {      
+    "ParameterKey": "DaysToIAJenkins",
+    "ParameterValue": "30"
+  },
+  {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
-        }
+   }
 ]
