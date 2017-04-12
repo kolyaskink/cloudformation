@@ -11,24 +11,12 @@
     "ParameterKey": "PublicSubnet2Id",
     "ParameterValue": "subnet-0104d748"
   },
-    {
-    "ParameterKey": "HttpsFrom1",
-    "ParameterValue": "212.67.170.162/32"
-  },
-   {
-    "ParameterKey": "HttpsFrom2",
-    "ParameterValue": "77.171.192.128/32"
-  },
-    {
+  {
     "ParameterKey": "S3BucketJenkinsName",
     "ParameterValue": "9181961191-infrajenkins"
   },
   {      
     "ParameterKey": "DaysToIAJenkins",
     "ParameterValue": "30"
-  },
-  {
-    "ParameterKey": "KeyName",
-    "ParameterValue": "gh-misc"
-   }
+  }
 ]
