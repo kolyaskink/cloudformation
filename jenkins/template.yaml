@@ -21,191 +21,191 @@ Mappings:
 
 Resources:
       
-      LBSecurityGroup:
-        Type: AWS::EC2::SecurityGroup
-        Properties:
-            GroupDescription: Enable access to the Jenkins LB
-            VpcId: !Ref VpcId
-            SecurityGroupIngress:
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom1
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom2
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom3
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom4
-            Tags:
-                - Key: Name
-                  Value: infra-jenkins-lb
+      # LBSecurityGroup:
+      #   Type: AWS::EC2::SecurityGroup
+      #   Properties:
+      #       GroupDescription: Enable access to the Jenkins LB
+      #       VpcId: !Ref VpcId
+      #       SecurityGroupIngress:
+      #         - IpProtocol: tcp
+      #           FromPort: 443
+      #           ToPort: 443
+      #           CidrIp: !Ref HttpsFrom1
+      #         - IpProtocol: tcp
+      #           FromPort: 443
+      #           ToPort: 443
+      #           CidrIp: !Ref HttpsFrom2
+      #         - IpProtocol: tcp
+      #           FromPort: 443
+      #           ToPort: 443
+      #           CidrIp: !Ref HttpsFrom3
+      #         - IpProtocol: tcp
+      #           FromPort: 443
+      #           ToPort: 443
+      #           CidrIp: !Ref HttpsFrom4
+      #       Tags:
+      #           - Key: Name
+      #             Value: infra-jenkins-lb
 
 
-      EC2SecurityGroup:
-        Type: AWS::EC2::SecurityGroup
-        Properties:
-            GroupDescription: Enable access to the Jenkins EC2
-            VpcId: !Ref VpcId
-            SecurityGroupIngress:
-              - IpProtocol: tcp
-                FromPort: 80
-                ToPort: 80
-                SourceSecurityGroupId: !Ref LBSecurityGroup
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref VpcCIDR
-            Tags:
-                - Key: Name
-                  Value: infra-jenkins-ec2
+      # EC2SecurityGroup:
+      #   Type: AWS::EC2::SecurityGroup
+      #   Properties:
+      #       GroupDescription: Enable access to the Jenkins EC2
+      #       VpcId: !Ref VpcId
+      #       SecurityGroupIngress:
+      #         - IpProtocol: tcp
+      #           FromPort: 80
+      #           ToPort: 80
+      #           SourceSecurityGroupId: !Ref LBSecurityGroup
+      #         - IpProtocol: tcp
+      #           FromPort: 22
+      #           ToPort: 22
+      #           CidrIp: !Ref VpcCIDR
+      #       Tags:
+      #           - Key: Name
+      #             Value: infra-jenkins-ec2
 
-      JenkinsEC2Instance: 
-            Type: "AWS::EC2::Instance"
-            Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2InfraJenkinsAMI, !Ref 'AWS::Region', AMI]
-              KeyName: !Ref KeyName
-              IamInstanceProfile: !Ref InstanceProfile
-              InstanceType: !Ref JenkinsHostInstanceType
-              SecurityGroupIds: [!Ref EC2SecurityGroup]
-              SubnetId: !Ref PublicSubnet1Id
-              Tags:
-                - Key: Name
-                  Value: InfraJenkins
-                - Key: DNS
-                  Value: infrajenkins
-              UserData:
-                'Fn::Base64': !Sub |
-                  #!/bin/bash -x
-                  /usr/local/bin/dns.sh
-                  /usr/local/bin/GetJenkinsHomeFromS3AndGit.sh
+      # JenkinsEC2Instance: 
+      #       Type: "AWS::EC2::Instance"
+      #       Properties: 
+      #         ImageId: !FindInMap [AWSRegionToEC2InfraJenkinsAMI, !Ref 'AWS::Region', AMI]
+      #         KeyName: !Ref KeyName
+      #         IamInstanceProfile: !Ref InstanceProfile
+      #         InstanceType: !Ref JenkinsHostInstanceType
+      #         SecurityGroupIds: [!Ref EC2SecurityGroup]
+      #         SubnetId: !Ref PublicSubnet1Id
+      #         Tags:
+      #           - Key: Name
+      #             Value: InfraJenkins
+      #           - Key: DNS
+      #             Value: infrajenkins
+      #         UserData:
+      #           'Fn::Base64': !Sub |
+      #             #!/bin/bash -x
+      #             /usr/local/bin/dns.sh
+      #             /usr/local/bin/GetJenkinsHomeFromS3AndGit.sh
 
-      JenkinsLoadBalanser:
-        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
-        Properties:
-            Instances: [!Ref JenkinsEC2Instance]
-            LoadBalancerName: lb-Infra-Jenkins
-            Listeners:
-                  - LoadBalancerPort: 443
-                    InstancePort: !Ref ApachePort
-                    Protocol: HTTPS
-                    SSLCertificateId: !Ref GhosSslCert
-            HealthCheck:
-                  Target: HTTP:80/static/19c0b418/images/headshot.png
-                  HealthyThreshold: '3'
-                  UnhealthyThreshold: '5'
-                  Interval: '30'
-                  Timeout: '5'
-            Scheme: internet-facing
-            SecurityGroups: [!Ref LBSecurityGroup]
-            Subnets: [!Ref PublicSubnet1Id]
+      # JenkinsLoadBalanser:
+      #   Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+      #   Properties:
+      #       Instances: [!Ref JenkinsEC2Instance]
+      #       LoadBalancerName: lb-Infra-Jenkins
+      #       Listeners:
+      #             - LoadBalancerPort: 443
+      #               InstancePort: !Ref ApachePort
+      #               Protocol: HTTPS
+      #               SSLCertificateId: !Ref GhosSslCert
+      #       HealthCheck:
+      #             Target: HTTP:80/static/19c0b418/images/headshot.png
+      #             HealthyThreshold: '3'
+      #             UnhealthyThreshold: '5'
+      #             Interval: '30'
+      #             Timeout: '5'
+      #       Scheme: internet-facing
+      #       SecurityGroups: [!Ref LBSecurityGroup]
+      #       Subnets: [!Ref PublicSubnet1Id]
 
-      InstanceProfile:
-        Type: 'AWS::IAM::InstanceProfile'
-        Properties:
-          Path: '/'
-          Roles:
-          - !Ref IAMRole
+      # InstanceProfile:
+      #   Type: 'AWS::IAM::InstanceProfile'
+      #   Properties:
+      #     Path: '/'
+      #     Roles:
+      #     - !Ref IAMRole
 
-      IAMRole:
-        Type: 'AWS::IAM::Role'
-        Properties:
-          AssumeRolePolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                - 'ec2.amazonaws.com'
-              Action:
-              - 'sts:AssumeRole'
-          Path: '/'
-          Policies:
-          - PolicyName: 'AllowAll-EC2-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'ec2:*'
-                Resource:
-                - '*'
+      # IAMRole:
+      #   Type: 'AWS::IAM::Role'
+      #   Properties:
+      #     AssumeRolePolicyDocument:
+      #       Version: '2012-10-17'
+      #       Statement:
+      #       - Effect: Allow
+      #         Principal:
+      #           Service:
+      #           - 'ec2.amazonaws.com'
+      #         Action:
+      #         - 'sts:AssumeRole'
+      #     Path: '/'
+      #     Policies:
+      #     - PolicyName: 'AllowAll-EC2-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'ec2:*'
+      #           Resource:
+      #           - '*'
 
-          - PolicyName: 'AllowAll-S3-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 's3:*'
-                Resource:
-                - '*'
+      #     - PolicyName: 'AllowAll-S3-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 's3:*'
+      #           Resource:
+      #           - '*'
 
-          - PolicyName: 'AllowAll-Logs-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'logs:*'
-                Resource:
-                - 'arn:aws:logs:*:*:*'
+      #     - PolicyName: 'AllowAll-Logs-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'logs:*'
+      #           Resource:
+      #           - 'arn:aws:logs:*:*:*'
 
-          - PolicyName: 'AllowAll-Cloudformation-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'cloudformation:*'
-                Resource:
-                - '*'
+      #     - PolicyName: 'AllowAll-Cloudformation-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'cloudformation:*'
+      #           Resource:
+      #           - '*'
 
-          - PolicyName: 'AllowAll-IAM-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'iam:*'
-                Resource:
-                - '*'
+      #     - PolicyName: 'AllowAll-IAM-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'iam:*'
+      #           Resource:
+      #           - '*'
 
-          - PolicyName: 'AllowAll-Route53-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'route53:*'
-                Resource:
-                - '*'
+      #     - PolicyName: 'AllowAll-Route53-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'route53:*'
+      #           Resource:
+      #           - '*'
 
-          - PolicyName: 'AllowAll-Sts-Prod'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'sts:*'
-                Resource:
-                - '*'
+      #     - PolicyName: 'AllowAll-Sts-Prod'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'sts:*'
+      #           Resource:
+      #           - '*'
 
-          - PolicyName: 'AllowAssumeRole-Route53-Ops'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'sts:AssumeRole'
-                Resource:
-                - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
+      #     - PolicyName: 'AllowAssumeRole-Route53-Ops'
+      #       PolicyDocument:
+      #         Version: '2012-10-17'
+      #         Statement:
+      #         - Effect: Allow
+      #           Action:
+      #           - 'sts:AssumeRole'
+      #           Resource:
+      #           - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
 
       S3BucketJenkins:
         Type: "AWS::S3::Bucket"
