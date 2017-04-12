@@ -1,0 +1,1 @@
+Bucket name should not contain uppercase characters

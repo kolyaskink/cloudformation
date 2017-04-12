@@ -21,7 +21,7 @@
   },
     {
     "ParameterKey": "S3BucketJenkinsName",
-    "ParameterValue": "9181961191-InfraJenkins"
+    "ParameterValue": "9181961191-infrajenkins"
   },
   {      
     "ParameterKey": "DaysToIAJenkins",
