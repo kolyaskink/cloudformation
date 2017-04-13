@@ -239,6 +239,17 @@ Resources:
                 Resource:
                 - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
 
+          - PolicyName: 'AllowAssumeRole-AllowAll-Test'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'sts:AssumeRole'
+                Resource:
+                - 'arn:aws:iam::061061380301:role/AdminAccessFromProd'
+
+
                          
 
 
