@@ -229,33 +229,7 @@ Resources:
                 Resource:
                 - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
 
-      S3BucketJenkins:
-        Type: "AWS::S3::Bucket"
-        Properties:
-            BucketName: !Ref S3BucketJenkinsName
-            LifecycleConfiguration: 
-                Rules:
-                - 
-                    Id: !Sub ${DaysToIAJenkins}toIA
-                    Status: "Enabled"
-                    Transitions:
-                    -
-                        StorageClass: "STANDARD_IA"
-                        TransitionInDays: !Ref DaysToIAJenkins
-
-      S3BucketJenkinsPolicy:   
-        Type: "AWS::S3::BucketPolicy"
-        Properties:
-            Bucket: !Ref S3BucketJenkins
-            PolicyDocument:
-                Statement:
-                    - 
-                      Action:
-                        - "s3:ListBucket"
-                      Effect:  "Allow"
-                      Resource: !Sub arn:aws:s3:::${S3BucketJenkinsName}
-                      Principal: "*"
-                            
+                         
 
 
 Parameters:
@@ -343,14 +317,6 @@ Parameters:
             - m4.large
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
 
-      S3BucketJenkinsName:
-        Description: Name of Bucket for Assets
-        Type: String
-
-      DaysToIAJenkins:
-        Description: Days before file moved to IA storage
-        Type: Number
-        Default: 30
 
 Outputs:
 
@@ -378,9 +344,7 @@ Outputs:
         Description: Jenkins instance profile ARN
         Value: !GetAtt InstanceProfile.Arn
 
-      S3BucketJenkinsName:
-        Description: Jenkins S3 bucket for $Jenkins Home
-        Value: !Ref S3BucketJenkinsName
+
 
                 
               
