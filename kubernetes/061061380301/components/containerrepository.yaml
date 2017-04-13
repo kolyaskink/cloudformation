@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    This creates a Container Repository
+
+Parameters:
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+
+Resources:
+
+    ContainerRepository:
+        Type: AWS::ECR::Repository
+        Properties:
+            RepositoryName: "ecr-kubelog"
+#        RepositoryPolicyText:
+
+Outputs:
+    RepositoryName:
+        Description: Name for the ECR Container Repository
+        Value: !Ref ContainerRepository

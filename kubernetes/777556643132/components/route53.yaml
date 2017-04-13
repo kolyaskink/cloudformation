@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    This template deploys a private Hosted Zone in route53.
+
+
+Parameters:
+    VPC:
+        Type: AWS::EC2::VPC::Id
+        Description: Choose which VPC the Hosted Zone should be tied to
+    HostedZone:
+        Type: String
+        Description: "The DNS name of an existing Amazon Route 53 hosted zone"
+
+Resources:
+
+    InternalHostedZone:
+        Type: "AWS::Route53::HostedZone"
+        Properties:
+            HostedZoneConfig:
+                Comment: "Internal DNS"
+            Name: !Ref HostedZone
+            VPCs:
+              -
+                VPCId: !Ref VPC
+                VPCRegion: "us-west-2"
+
+    myDNSRecord:
+        Type: AWS::Route53::RecordSet
+        Properties:
+            HostedZoneId: !Ref InternalHostedZone
+            Comment: DNS name for logstash instance.
+            Name: !Join ['.', ['logstash', !Ref HostedZone]]
+            Type: A
+            TTL: '900'
+            ResourceRecords:
+            - '10.51.4.10'

@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "KeyName",
+        "ParameterValue": "id_kubeaws"
+    },
+    {
+        "ParameterKey": "DBPassword",
+        "ParameterValue": "JqQsd2XABBI8w1M5gtxY"
+    }
+]
