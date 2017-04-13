@@ -169,6 +169,16 @@ Resources:
                 Resource:
                 - '*'
 
+          - PolicyName: 'AllowAll-LB-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'elasticloadbalancing:*'
+                Resource:
+                - '*'
+
           - PolicyName: 'AllowAll-Logs-Prod'
             PolicyDocument:
               Version: '2012-10-17'
