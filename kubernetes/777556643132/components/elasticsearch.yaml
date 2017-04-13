@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    Elasticsearch domain for k8s logs
+    TODO: naming
+
+Parameters:
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+    ElasticSearchVolumeSize:
+        Description: The size of the EBS volume for each data node.
+        Type: Number
+        Default: '10'
+        MinValue: '10'
+        MaxValue: '100'
+    ElasticSearchVolumeType:
+        Description: The EBS volume type to use with the Amazon ES domain
+        Type: String
+        Default: 'standard'
+        AllowedValues:
+        - 'standard'
+        - 'gp2'
+        - 'io1'
+    ElasticSearchDedicatedMasterEnabled:
+        Description: Specifies whether to use a dedicated master node for the Amazon ES domain.
+        Type: String
+        Default: 'false'
+        AllowedValues:
+        - 'true'
+        - 'false'
+    ElasticSearchInstanceCount:
+        Description: The number of instances in the Amazon ES domain.
+        Type: Number
+        MinValue: '1'
+        MaxValue: '20'
+    ElasticSearchZoneAwarenessEnabled:
+        Description: Specifies whether to enable zone awareness for the Amazon ES domain.
+        Type: String
+        Default: 'false'
+        AllowedValues:
+        - 'true'
+        - 'false'
+    ElasticSearchInstanceType:
+        Description: hardware configuration of the computer that will host the instance
+        Type: String
+        Default: m3.medium.elasticsearch
+        AllowedValues:
+            - t2.medium.elasticsearch
+            - m3.medium.elasticsearch
+            - c4.large.elasticsearch
+            - c4.2xlarge.elasticsearch
+#    ElasticSearchDedicatedMasterType:
+#        Description: Instance type for the dedicated master node
+#        Type: String
+#        Default: m3.medium.elasticsearch
+#        AllowedValues:
+#            - t2.medium.elasticsearch
+#            - m3.medium.elasticsearch
+#            - c4.large.elasticsearch
+#            - c4.2xlarge.elasticsearch
+#    ElasticSearchDedicatedMasterCount:
+#        Description: A dedicated master node is a cluster node that performs cluster management tasks, but does not hold data or respond to data upload requests.
+#        Type: Number
+#        MinValue: '1'
+#        MaxValue: '20'
+
+Resources:
+
+    ElasticsearchDomain:
+      Type: "AWS::Elasticsearch::Domain"
+      Properties:
+         AccessPolicies: {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::777556643132:root"
+              },
+              "Action": "es:*",
+              "Resource": "arn:aws:es:us-west-2:777556643132:domain/es-kubelog/*"
+            },
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "es:*",
+              "Resource": "arn:aws:es:us-west-2:777556643132:domain/es-kubelog/*",
+              "Condition": {
+                "IpAddress": {
+                  "aws:SourceIp": [
+                    "212.67.170.162",
+                    "212.67.170.172"
+                  ]
+                }
+              }
+            }
+          ]
+         }
+         AdvancedOptions:
+            "rest.action.multi.allow_explicit_index": true
+         DomainName:
+            "es-kubelog"
+#            Fn::Join:
+#            - ''
+#            -   - "ES-"
+#                - Ref: EnvironmentName
+         EBSOptions:
+            EBSEnabled: true
+            Iops: 0
+            VolumeSize:
+               Ref: ElasticSearchVolumeSize
+            VolumeType:
+               Ref: ElasticSearchVolumeType
+         ElasticsearchClusterConfig:
+            DedicatedMasterEnabled:
+               Ref: ElasticSearchDedicatedMasterEnabled
+            InstanceCount:
+               Ref: ElasticSearchInstanceCount
+            ZoneAwarenessEnabled:
+               Ref: ElasticSearchZoneAwarenessEnabled
+            InstanceType:
+               Ref: ElasticSearchInstanceType
+#            DedicatedMasterType:
+#               Ref: ElasticSearchDedicatedMasterType
+#            DedicatedMasterCount:
+#               Ref: ElasticSearchDedicatedMasterCount
+         ElasticsearchVersion: "5.1"
+         SnapshotOptions:
+            AutomatedSnapshotStartHour: 0
+
+Outputs:
+    ElasticSearchDomain:
+        Description: Name of the ElasticSearch Domain
+        Value: !Ref ElasticsearchDomain

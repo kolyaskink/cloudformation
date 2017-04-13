@@ -1,0 +1,307 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    This template deploys a VPC with public/private subnets and the appropriate Security Groups
+    Stackname max 20 chars!
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Bastion Host Properties
+      Parameters:
+      - KeyName
+      - BastionHostInstanceType
+      - SshFrom
+    ParameterLabels:
+        KeyName:
+            default: Which SSH key to use for connecting to cluster?
+        BastionHostInstanceType:
+            default: Node instance type?
+        SshFrom:
+            default: From which IP address access to bastion hosts?
+
+Parameters:
+    KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
+    BastionHostInstanceType:
+        Type: String
+        Default: t2.micro
+        AllowedValues:
+            - t2.micro
+            - m1.small
+        Description: Enter t2.micro, m1.small. Default is t2.micro.
+    LogstashInstanceType:
+        Type: String
+        Default: t2.micro
+        AllowedValues:
+            - t2.micro
+            - m1.small
+        Description: Enter t2.micro, m1.small. Default is t2.micro.
+    SshFrom:
+        Description: Lockdown SSH access to the bastion host (default can be accessed from anywhere)
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        Default: 212.67.170.162/32
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+    EnvironmentType:
+        Description: determines the type of the environment and thus whether it can be
+            shutdown without serious consequences
+        Type: String
+        Default: 'development'
+        AllowedValues:
+        - 'development'
+        - 'test'
+        - 'preproduction'
+        - 'production'
+    DBName:
+        Default: TestDB
+        Description: The database name
+        Type: String
+        MinLength: '1'
+        MaxLength: '64'
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+        ConstraintDescription: must begin with a letter and contain only alphanumeric
+            characters.
+    DBUser:
+        Default: ghdba
+        # NoEcho: 'true'
+        Description: The database admin account username
+        Type: String
+        MinLength: '1'
+        MaxLength: '16'
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+        ConstraintDescription: must begin with a letter and contain only alphanumeric
+            characters.
+    DBPassword:
+        NoEcho: 'true'
+        Description: The database admin account password
+        Type: String
+        MinLength: '1'
+        MaxLength: '41'
+        AllowedPattern: "[a-zA-Z0-9]+"
+        ConstraintDescription: must contain only alphanumeric characters.
+    DBAllocatedStorage:
+        Default: '5'
+        Description: The size of the database (Gb)
+        Type: Number
+        MinValue: '5'
+        MaxValue: '1024'
+        ConstraintDescription: must be between 5 and 1024Gb.
+    DBInstanceClass:
+        Description: The database instance type
+        Type: String
+        Default: db.t2.small
+        AllowedValues:
+            - db.t1.micro
+            - db.t2.small
+            - db.m1.small
+            - db.m1.medium
+            - db.m1.large
+            - db.m1.xlarge
+            - db.m2.xlarge
+            - db.m2.2xlarge
+            - db.m2.4xlarge
+        ConstraintDescription: must select a valid database instance type.
+    MultiAZ:
+        Description: Multi-AZ master database
+        Type: String
+        Default: 'true'
+        AllowedValues:
+        - 'true'
+        - 'false'
+        ConstraintDescription: must be true or false. 
+    ElasticSearchVolumeSize: 
+        Description: The size of the EBS volume for each data node.
+        Type: Number
+        Default: '10'
+        MinValue: '10'
+        MaxValue: '100'        
+    ElasticSearchVolumeType: 
+        Description: The EBS volume type to use with the Amazon ES domain
+        Type: String
+        Default: 'standard'
+        AllowedValues:
+        - 'standard'
+        - 'gp2'
+        - 'io1'        
+    ElasticSearchDedicatedMasterEnabled: 
+        Description: Specifies whether to use a dedicated master node for the Amazon ES domain.
+        Type: String
+        Default: 'false'
+        AllowedValues:
+        - 'true'
+        - 'false'
+    ElasticSearchInstanceCount: 
+        Description: The number of instances in the Amazon ES domain.
+        Type: Number
+        MinValue: '1'
+        MaxValue: '20'
+    ElasticSearchZoneAwarenessEnabled: 
+        Description: Specifies whether to enable zone awareness for the Amazon ES domain.
+        Type: String
+        Default: 'false'
+        AllowedValues:
+        - 'true'
+        - 'false'
+    ElasticSearchInstanceType: 
+        Description: hardware configuration of the computer that will host the instance
+        Type: String
+        Default: m3.medium.elasticsearch
+        AllowedValues:
+            - t2.medium.elasticsearch
+            - m3.medium.elasticsearch
+            - c4.large.elasticsearch
+            - c4.2xlarge.elasticsearch
+    HostedZoneName:
+        Description: Domain of the internal Route53 hosted zone
+        Type: String
+        Default: 'REGION.ACCOUNTID.gamehouseos.internal'
+#    ElasticSearchDedicatedMasterType: 
+#        Description: Instance type for the dedicated master node
+#        Type: String
+#        Default: m3.medium.elasticsearch
+#        AllowedValues:
+#            - t2.medium.elasticsearch
+#            - m3.medium.elasticsearch
+#            - c4.large.elasticsearch
+#            - c4.2xlarge.elasticsearch
+#    ElasticSearchDedicatedMasterCount: 
+#        Description: A dedicated master node is a cluster node that performs cluster management tasks, but does not hold data or respond to data upload requests.
+#        Type: Number
+#        MinValue: '1'
+#        MaxValue: '20'
+
+Mappings:
+  VpcCidrs:
+    publicsubnet1:
+      cidr: 10.0.2.0/24
+    publicsubnet2:
+      cidr: 10.0.4.0/24
+    privatesubnet1:
+      cidr: 10.0.1.0/24
+    privatesubnet2:
+      cidr: 10.0.3.0/24
+    vpc:
+      cidr: 10.0.0.0/16
+
+Resources:
+
+    VPC:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/vpc.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
+                PublicSubnet1CIDR:          !FindInMap [VpcCidrs, publicsubnet1, cidr]
+                PublicSubnet2CIDR:          !FindInMap [VpcCidrs, publicsubnet2, cidr]
+                PrivateSubnet1CIDR:         !FindInMap [VpcCidrs, privatesubnet1, cidr]
+                PrivateSubnet2CIDR:         !FindInMap [VpcCidrs, privatesubnet2, cidr]
+                BastionHostInstanceType:    !Ref BastionHostInstanceType
+                KeyName:                    !Ref KeyName
+                EnvironmentType:            !Ref EnvironmentType
+                SshFrom:                    !Ref SshFrom
+
+    Database:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/rds.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                DBName:                     !Ref DBName
+                DBUser:                     !Ref DBUser
+                DBPassword:                 !Ref DBPassword
+                DBAllocatedStorage:         !Ref DBAllocatedStorage
+                DBInstanceClass:            !Ref DBInstanceClass
+                RDSSubnetGroup:             !GetAtt VPC.Outputs.RDSSubnetGroup
+                RDSReadReplicaSubnetGroup:  !GetAtt VPC.Outputs.RDSReadReplicaSubnetGroup
+                RDSSecurityGroup:           !GetAtt Security.Outputs.RDSSecurityGroup
+                MultiAZ:                    !Ref MultiAZ
+                EnvironmentType:            !Ref EnvironmentType
+
+    Security:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/security.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                VPC:                        !GetAtt VPC.Outputs.VPC
+                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
+                BastionSecurityGroup:       !GetAtt VPC.Outputs.BastionSecurityGroup
+
+#    LogStash:
+#        Type: AWS::CloudFormation::Stack
+#        Properties:
+#            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/logstash.yaml
+#            Parameters:
+#                EnvironmentName:            !Ref AWS::StackName
+#                VPC:                        !GetAtt VPC.Outputs.VPC
+#                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
+#                LogstashInstanceType:       !Ref LogstashInstanceType
+
+    ElasticSearch:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/elasticsearch.yaml
+            Parameters:
+                EnvironmentName:                    !Ref AWS::StackName
+                ElasticSearchVolumeSize:            !Ref ElasticSearchVolumeSize
+                ElasticSearchVolumeType:            !Ref ElasticSearchVolumeType
+                ElasticSearchDedicatedMasterEnabled:  !Ref ElasticSearchDedicatedMasterEnabled
+                ElasticSearchInstanceCount:         !Ref ElasticSearchInstanceCount
+                ElasticSearchZoneAwarenessEnabled:  !Ref ElasticSearchZoneAwarenessEnabled
+                ElasticSearchInstanceType:          !Ref ElasticSearchInstanceType
+#                ElasticSearchDedicatedMasterType:   !Ref ElasticSearchDedicatedMasterType
+#                VPC:                                !GetAtt VPC.Outputs.VPC
+#                BastionSecurityGroup:               !GetAtt VPC.Outputs.BastionSecurityGroup
+
+
+    HostedZone:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/route53.yaml
+            Parameters:
+                VPC:                        !GetAtt VPC.Outputs.VPC
+                HostedZone:                 !Join ['.',[!Ref "AWS::Region", !Ref "AWS::AccountId", !Ref HostedZoneName] ]
+
+
+    ContainerRepository:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/containerrepository.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                 
+Outputs:
+
+    VpcID:
+        Description: The ID of the VPC that was created
+        Value: !GetAtt VPC.Outputs.VPC
+    keyName:
+        Description: The key to connect to kubernetes cluster (keyName)
+        Value: !Ref KeyName
+    workerSecurityGroupIds:
+        Description: The security group to which the Workers should be added (workerSecurityGroupIds)
+        Value: !GetAtt Security.Outputs.WorkerSecurityGroup
+    routeTableId:
+        Description: The route table that should be applied to the subnets where the kubernetes instances are created
+        Value: !GetAtt VPC.Outputs.PublicRouteTable
+    vpcCidr:
+        Description: The CIDR for the created VPC
+        Value: !FindInMap [VpcCidrs, vpc, cidr]
+    BastionHost:
+        Description: Bastionhost
+        Value: !GetAtt VPC.Outputs.Bastion
+    ElasticSearchDomain:
+        Description: ElasticSearch Domain Name
+        Value: !GetAtt ElasticSearch.Outputs.ElasticSearchDomain
+    ContainerRepository:
+        Description: ECR Name
+        Value: !GetAtt ContainerRepository.Outputs.RepositoryName        
