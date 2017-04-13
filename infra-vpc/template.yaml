@@ -606,10 +606,6 @@ Parameters:
         Type: String
         Default: none
 
-    LuxVPNCIDR:
-        Description: CIDR address of Lux IpSec subnet
-        Type: String
-        Default: none
 
 Outputs:
 
