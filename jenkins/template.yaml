@@ -16,224 +16,220 @@ Mappings:
             AMI: ami-5cbf2f3c 
     AWSRegionToEC2InfraJenkinsAMI:    
         us-west-2:
-            AMI: ami-47e17227
+            AMI: ami-8c41d2ec
 
 
 Resources:
       
-      # LBSecurityGroup:
-      #   Type: AWS::EC2::SecurityGroup
-      #   Properties:
-      #       GroupDescription: Enable access to the Jenkins LB
-      #       VpcId: !Ref VpcId
-      #       SecurityGroupIngress:
-      #         - IpProtocol: tcp
-      #           FromPort: 443
-      #           ToPort: 443
-      #           CidrIp: !Ref HttpsFrom1
-      #         - IpProtocol: tcp
-      #           FromPort: 443
-      #           ToPort: 443
-      #           CidrIp: !Ref HttpsFrom2
-      #         - IpProtocol: tcp
-      #           FromPort: 443
-      #           ToPort: 443
-      #           CidrIp: !Ref HttpsFrom3
-      #         - IpProtocol: tcp
-      #           FromPort: 443
-      #           ToPort: 443
-      #           CidrIp: !Ref HttpsFrom4
-      #       Tags:
-      #           - Key: Name
-      #             Value: infra-jenkins-lb
-
-
-      # EC2SecurityGroup:
-      #   Type: AWS::EC2::SecurityGroup
-      #   Properties:
-      #       GroupDescription: Enable access to the Jenkins EC2
-      #       VpcId: !Ref VpcId
-      #       SecurityGroupIngress:
-      #         - IpProtocol: tcp
-      #           FromPort: 80
-      #           ToPort: 80
-      #           SourceSecurityGroupId: !Ref LBSecurityGroup
-      #         - IpProtocol: tcp
-      #           FromPort: 22
-      #           ToPort: 22
-      #           CidrIp: !Ref VpcCIDR
-      #       Tags:
-      #           - Key: Name
-      #             Value: infra-jenkins-ec2
-
-      # JenkinsEC2Instance: 
-      #       Type: "AWS::EC2::Instance"
-      #       Properties: 
-      #         ImageId: !FindInMap [AWSRegionToEC2InfraJenkinsAMI, !Ref 'AWS::Region', AMI]
-      #         KeyName: !Ref KeyName
-      #         IamInstanceProfile: !Ref InstanceProfile
-      #         InstanceType: !Ref JenkinsHostInstanceType
-      #         SecurityGroupIds: [!Ref EC2SecurityGroup]
-      #         SubnetId: !Ref PublicSubnet1Id
-      #         Tags:
-      #           - Key: Name
-      #             Value: InfraJenkins
-      #           - Key: DNS
-      #             Value: infrajenkins
-      #         UserData:
-      #           'Fn::Base64': !Sub |
-      #             #!/bin/bash -x
-      #             /usr/local/bin/dns.sh
-      #             /usr/local/bin/GetJenkinsHomeFromS3AndGit.sh
-
-      # JenkinsLoadBalanser:
-      #   Type: "AWS::ElasticLoadBalancing::LoadBalancer"
-      #   Properties:
-      #       Instances: [!Ref JenkinsEC2Instance]
-      #       LoadBalancerName: lb-Infra-Jenkins
-      #       Listeners:
-      #             - LoadBalancerPort: 443
-      #               InstancePort: !Ref ApachePort
-      #               Protocol: HTTPS
-      #               SSLCertificateId: !Ref GhosSslCert
-      #       HealthCheck:
-      #             Target: HTTP:80/static/19c0b418/images/headshot.png
-      #             HealthyThreshold: '3'
-      #             UnhealthyThreshold: '5'
-      #             Interval: '30'
-      #             Timeout: '5'
-      #       Scheme: internet-facing
-      #       SecurityGroups: [!Ref LBSecurityGroup]
-      #       Subnets: [!Ref PublicSubnet1Id]
-
-      # InstanceProfile:
-      #   Type: 'AWS::IAM::InstanceProfile'
-      #   Properties:
-      #     Path: '/'
-      #     Roles:
-      #     - !Ref IAMRole
-
-      # IAMRole:
-      #   Type: 'AWS::IAM::Role'
-      #   Properties:
-      #     AssumeRolePolicyDocument:
-      #       Version: '2012-10-17'
-      #       Statement:
-      #       - Effect: Allow
-      #         Principal:
-      #           Service:
-      #           - 'ec2.amazonaws.com'
-      #         Action:
-      #         - 'sts:AssumeRole'
-      #     Path: '/'
-      #     Policies:
-      #     - PolicyName: 'AllowAll-EC2-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'ec2:*'
-      #           Resource:
-      #           - '*'
-
-      #     - PolicyName: 'AllowAll-S3-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 's3:*'
-      #           Resource:
-      #           - '*'
-
-      #     - PolicyName: 'AllowAll-Logs-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'logs:*'
-      #           Resource:
-      #           - 'arn:aws:logs:*:*:*'
-
-      #     - PolicyName: 'AllowAll-Cloudformation-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'cloudformation:*'
-      #           Resource:
-      #           - '*'
-
-      #     - PolicyName: 'AllowAll-IAM-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'iam:*'
-      #           Resource:
-      #           - '*'
-
-      #     - PolicyName: 'AllowAll-Route53-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'route53:*'
-      #           Resource:
-      #           - '*'
-
-      #     - PolicyName: 'AllowAll-Sts-Prod'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'sts:*'
-      #           Resource:
-      #           - '*'
-
-      #     - PolicyName: 'AllowAssumeRole-Route53-Ops'
-      #       PolicyDocument:
-      #         Version: '2012-10-17'
-      #         Statement:
-      #         - Effect: Allow
-      #           Action:
-      #           - 'sts:AssumeRole'
-      #           Resource:
-      #           - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
-
-      S3BucketJenkins:
-        Type: "AWS::S3::Bucket"
+      LBSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
         Properties:
-            BucketName: !Ref S3BucketJenkinsName
-            LifecycleConfiguration: 
-                Rules:
-                - 
-                    Id: !Sub ${DaysToIAJenkins}toIA
-                    Status: "Enabled"
-                    Transitions:
-                    -
-                        StorageClass: "STANDARD_IA"
-                        TransitionInDays: !Ref DaysToIAJenkins
+            GroupDescription: Enable access to the Jenkins LB
+            VpcId: !Ref VpcId
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom1
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom2
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom3
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom4
+            Tags:
+                - Key: Name
+                  Value: infra-jenkins-lb
 
-      S3BucketJenkinsPolicy:   
-        Type: "AWS::S3::BucketPolicy"
+
+      EC2SecurityGroup:
+        Type: AWS::EC2::SecurityGroup
         Properties:
-            Bucket: !Ref S3BucketJenkins
+            GroupDescription: Enable access to the Jenkins EC2
+            VpcId: !Ref VpcId
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref LBSecurityGroup
+              - IpProtocol: tcp
+                FromPort: 22
+                ToPort: 22
+                CidrIp: !Ref VpcCIDR
+            Tags:
+                - Key: Name
+                  Value: infra-jenkins-ec2
+
+      JenkinsEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2InfraJenkinsAMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfile
+              InstanceType: !Ref JenkinsHostInstanceType
+              SecurityGroupIds: [!Ref EC2SecurityGroup]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: InfraJenkins
+                - Key: DNS
+                  Value: infrajenkins
+              UserData:
+                'Fn::Base64': !Sub |
+                  #!/bin/bash -x
+                  /usr/local/bin/dns.sh
+                  mount -a && /etc/init.d/jenkins restart
+
+      JenkinsHomeVolume:
+            Type: "AWS::EC2::Volume"
+            Properties:       
+              VolumeType: gp2
+              AvailabilityZone: "us-west-2a"
+              Encrypted: false
+              Size: 30
+              Tags:
+                  - Key: Name
+                    Value: InfraJenkinsHome
+                  - Key: MakeSnapshot
+                    Value: True
+
+      JenkinsHomeVolumeAttachment:
+            Type: "AWS::EC2::VolumeAttachment"
+            Properties:
+              Device: "/dev/xvdb"
+              VolumeId: !Ref JenkinsHomeVolume
+              InstanceId: !Ref JenkinsEC2Instance
+
+
+
+      JenkinsLoadBalanser:
+        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+        Properties:
+            Instances: [!Ref JenkinsEC2Instance]
+            LoadBalancerName: lb-Infra-Jenkins
+            Listeners:
+                  - LoadBalancerPort: 443
+                    InstancePort: !Ref ApachePort
+                    Protocol: HTTPS
+                    SSLCertificateId: !Ref GhosSslCert
+            HealthCheck:
+                  Target: HTTP:80/static/19c0b418/images/headshot.png
+                  HealthyThreshold: '3'
+                  UnhealthyThreshold: '5'
+                  Interval: '30'
+                  Timeout: '5'
+            Scheme: internet-facing
+            SecurityGroups: [!Ref LBSecurityGroup]
+            Subnets: [!Ref PublicSubnet1Id]
+
+      InstanceProfile:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRole
+
+      IAMRole:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+          - PolicyName: 'AllowAll-EC2-Prod'
             PolicyDocument:
-                Statement:
-                    - 
-                      Action:
-                        - "s3:ListBucket"
-                      Effect:  "Allow"
-                      Resource: !Sub arn:aws:s3:::${S3BucketJenkinsName}
-                      Principal: "*"
-                            
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'ec2:*'
+                Resource:
+                - '*'
+
+          - PolicyName: 'AllowAll-S3-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 's3:*'
+                Resource:
+                - '*'
+
+          - PolicyName: 'AllowAll-Logs-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
+
+          - PolicyName: 'AllowAll-Cloudformation-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'cloudformation:*'
+                Resource:
+                - '*'
+
+          - PolicyName: 'AllowAll-IAM-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'iam:*'
+                Resource:
+                - '*'
+
+          - PolicyName: 'AllowAll-Route53-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'route53:*'
+                Resource:
+                - '*'
+
+          - PolicyName: 'AllowAll-Sts-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'sts:*'
+                Resource:
+                - '*'
+
+          - PolicyName: 'AllowAssumeRole-Route53-Ops'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'sts:AssumeRole'
+                Resource:
+                - 'arn:aws:iam::456446183138:role/CrossAccountDnsRW'
+
+                         
 
 
 Parameters:
@@ -258,77 +254,69 @@ Parameters:
         Type: String
         Default: subnet-7d69350b
 
-      # HttpsFrom1:
-      #   Description: IP address to grant access to
-      #   Type: String
-      #   MinLength: 9
-      #   MaxLength: 18
-      #   AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-      #   ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-      #   Default: 212.67.170.162/32
-
-      # HttpsFrom2:
-      #   Description: IP address to grant access to
-      #   Type: String
-      #   MinLength: 9
-      #   MaxLength: 18
-      #   AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-      #   ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-      #   Default: 127.0.0.1/32
-
-      # HttpsFrom3:
-      #   Description: IP address to grant access to
-      #   Type: String
-      #   MinLength: 9
-      #   MaxLength: 18
-      #   AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-      #   ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-      #   Default: 127.0.0.2/32
-
-      # HttpsFrom4:
-      #   Description: IP address to grant access to
-      #   Type: String
-      #   MinLength: 9
-      #   MaxLength: 18
-      #   AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-      #   ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-      #   Default: 127.0.0.3/32
-
-      # KeyName:
-      #   ConstraintDescription: must be the name of an existing EC2 KeyPair.
-      #   Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
-      #   MinLength: '1'
-      #   Type: AWS::EC2::KeyPair::KeyName
-
-      # ApachePort:
-      #   Description: Apache port in front of Jenkins's app
-      #   Type: String
-      #   MinLength: 2
-      #   MaxLength: 5
-      #   Default: 80
-
-      # GhosSslCert:
-      #   Description: arn of SSL cert
-      #   Type: String
-      #   Default: arn:aws:acm:us-west-2:777556643132:certificate/8ea61a4f-1549-4703-b99f-da25a2be8f7d
-      
-      # JenkinsHostInstanceType:
-      #   Type: String
-      #   Default: t2.small
-      #   AllowedValues:
-      #       - t2.small
-      #       - t2.medium 
-      #       - m4.large
-      #   Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
-
-      S3BucketJenkinsName:
-        Description: Name of Bucket for Assets
+      HttpsFrom1:
+        Description: IP address to grant access to
         Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 212.67.170.162/32
 
-      DaysToIAJenkins:
-        Description: Days before file moved to IA storage
-        Type: Number
-        Default: 30
+      HttpsFrom2:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 127.0.0.1/32
+
+      HttpsFrom3:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 127.0.0.2/32
+
+      HttpsFrom4:
+        Description: IP address to grant access to
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+        Default: 127.0.0.3/32
+
+      KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
+
+      ApachePort:
+        Description: Apache port in front of Jenkins's app
+        Type: String
+        MinLength: 2
+        MaxLength: 5
+        Default: 80
+
+      GhosSslCert:
+        Description: arn of SSL cert
+        Type: String
+        Default: arn:aws:acm:us-west-2:777556643132:certificate/8ea61a4f-1549-4703-b99f-da25a2be8f7d
+      
+      JenkinsHostInstanceType:
+        Type: String
+        Default: t2.small
+        AllowedValues:
+            - t2.small
+            - t2.medium 
+            - m4.large
+        Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
+
 
 Outputs:
 
@@ -356,9 +344,7 @@ Outputs:
         Description: Jenkins instance profile ARN
         Value: !GetAtt InstanceProfile.Arn
 
-      S3BucketJenkinsName:
-        Description: Jenkins S3 bucket for $Jenkins Home
-        Value: !Ref S3BucketJenkinsName
+
 
                 
               

@@ -1,1 +1,2 @@
 Bucket name should not contain uppercase characters
+Update to resource type AWS::EC2::VolumeAttachment is not supported.
