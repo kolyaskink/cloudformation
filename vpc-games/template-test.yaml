@@ -526,10 +526,10 @@ Parameters:
     #     Type: String
     #     Default: vpc-a23e58c5
     
-    # InfraVpcCIDR:
-    #     Description: Please enter the IP range (CIDR notation) for INFRA VPC
-    #     Type: String
-    #     Default: 10.51.2.0/24
+    InfraVpcCIDR:
+        Description: Please enter the IP range (CIDR notation) for INFRA VPC
+        Type: String
+        Default: 10.51.2.0/24
 
     FastlaneHostInstanceType:
         Type: String

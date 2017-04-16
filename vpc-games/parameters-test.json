@@ -51,6 +51,10 @@
     "ParameterKey": "HttpsFrom2",
     "ParameterValue": "77.171.192.128/32"
   },
+  {
+    "ParameterKey": "InfraVpcCIDR",
+    "ParameterValue": "10.150.2.0/24"
+  },
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
