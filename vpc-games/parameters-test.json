@@ -27,6 +27,10 @@
     "ParameterKey": "InfraVpcCIDR",
     "ParameterValue": "10.150.2.0/24"
   },
+ {
+    "ParameterKey": "InfraVpcId",
+    "ParameterValue": "vpc-1b88da7c"
+  },
   {
     "ParameterKey": "S3BucketAssetsName",
     "ParameterValue": "7626681997-gamesassets"

@@ -190,32 +190,32 @@ Resources:
 
     #Peering
 
-    # VPCPeeringConnection:
-    #     Type: AWS::EC2::VPCPeeringConnection
-    #     Properties:
-    #         VpcId: !Ref VPC
-    #         PeerVpcId: !Ref InfraVpcId
+    VPCPeeringConnection:
+        Type: AWS::EC2::VPCPeeringConnection
+        Properties:
+            VpcId: !Ref VPC
+            PeerVpcId: !Ref InfraVpcId
 
-    # PeerPublicRoute:
-    #     Type: AWS::EC2::Route
-    #     Properties:
-    #         RouteTableId: !Ref PublicRouteTable
-    #         DestinationCidrBlock: !Ref InfraVpcCIDR
-    #         VpcPeeringConnectionId: !Ref VPCPeeringConnection
+    PeerPublicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref InfraVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
-    # PeerPrivateRoute1:
-    #     Type: AWS::EC2::Route
-    #     Properties:
-    #         RouteTableId: !Ref PrivateRouteTable1
-    #         DestinationCidrBlock: !Ref InfraVpcCIDR
-    #         VpcPeeringConnectionId: !Ref VPCPeeringConnection
+    PeerPrivateRoute1:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref InfraVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
-    # PeerPrivateRoute2:
-    #     Type: AWS::EC2::Route
-    #     Properties:
-    #         RouteTableId: !Ref PrivateRouteTable2
-    #         DestinationCidrBlock: !Ref InfraVpcCIDR
-    #         VpcPeeringConnectionId: !Ref VPCPeeringConnection
+    PeerPrivateRoute2:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref InfraVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
     # Studio Jenkins template
     LBSecurityGroupJenkinsStudioTemplate:
@@ -611,6 +611,16 @@ Parameters:
         AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.3/32
+
+    InfraVpcId:
+        Description: Please enter the Id of InfraVpc
+        Type: String
+        Default: vpc-a23e58c5
+    
+    InfraVpcCIDR:
+        Description: Please enter the IP range (CIDR notation) for INFRA VPC
+        Type: String
+        Default: 10.151.2.0/24
  
 Outputs:
 
@@ -644,9 +654,9 @@ Outputs:
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
         Value: !Ref PrivateRouteTable2
-    # VPCPeeringConnectionId:
-    #     Description: The ID for VPC peering to InfraVpc
-    #     Value: !Ref VPCPeeringConnection
+    VPCPeeringConnectionId:
+        Description: The ID for VPC peering to InfraVpc
+        Value: !Ref VPCPeeringConnection
 
 
 
