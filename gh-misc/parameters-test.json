@@ -23,10 +23,6 @@
     "ParameterKey": "PrivateSubnet2CIDR",
     "ParameterValue": "10.150.0.192/26"
   },
-	{
-    "ParameterKey": "KeyName",
-    "ParameterValue": "gh-misc-test"
-  },
   {
     "ParameterKey": "InfraVpcCIDR",
     "ParameterValue": "10.150.2.0/24"
