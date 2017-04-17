@@ -1,0 +1,38 @@
+[
+  {
+    "ParameterKey":"EnvironmentName",
+    "ParameterValue":"gh-misc"
+  },
+  {
+    "ParameterKey": "VpcCIDR",
+    "ParameterValue": "10.50.0.0/24"
+  },
+  {
+    "ParameterKey": "PublicSubnet1CIDR",
+    "ParameterValue": "10.150.0.0/26"
+  },
+    {
+    "ParameterKey": "PublicSubnet2CIDR",
+    "ParameterValue": "10.150.0.64/26"
+  },
+    {
+    "ParameterKey": "PrivateSubnet1CIDR",
+    "ParameterValue": "10.150.0.128/26"
+  },
+    {
+    "ParameterKey": "PrivateSubnet2CIDR",
+    "ParameterValue": "10.150.0.192/26"
+  },
+	{
+    "ParameterKey": "KeyName",
+    "ParameterValue": "gh-misc-test"
+  },
+  {
+    "ParameterKey": "InfraVpcCIDR",
+    "ParameterValue": "10.150.2.0/24"
+  },
+ {
+    "ParameterKey": "InfraVpcId",
+    "ParameterValue": "vpc-1b88da7c"
+  }
+]
