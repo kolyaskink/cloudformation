@@ -521,11 +521,7 @@ Parameters:
         Type: String
         Default: 10.51.3.192/26
 
-    # InfraVpcId:
-    #     Description: Please enter the Id of InfraVpc
-    #     Type: String
-    #     Default: vpc-a23e58c5
-    
+  
     InfraVpcCIDR:
         Description: Please enter the IP range (CIDR notation) for INFRA VPC
         Type: String
