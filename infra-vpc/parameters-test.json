@@ -35,6 +35,14 @@
     "ParameterKey": "VPCPeeringConnectionGames",
     "ParameterValue": "pcx-5837be31"
   },
+  {
+    "ParameterKey": "VpnAsLux",
+    "ParameterValue": "65000"
+  },
+  {
+    "ParameterKey": "VpnIpLux",
+    "ParameterValue": "149.13.34.143"
+  },
 	{
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
