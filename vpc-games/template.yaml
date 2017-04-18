@@ -416,6 +416,7 @@ Resources:
                 Action:
                     - "s3:GetObject"
                     - "s3:GetObjectVersion"
+                    - "s3:ListObjects"
                 Resource:
                 - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
               - Effect: Allow
