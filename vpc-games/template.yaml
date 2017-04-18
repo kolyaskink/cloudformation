@@ -408,7 +408,7 @@ Resources:
                 Resource:
                 - 'arn:aws:logs:*:*:*'
 
-          - PolicyName: 'S3BucketAssets'
+          - PolicyName: 'S3BucketAssetsDownloadOnly'
             PolicyDocument:
               Version: '2012-10-17'
               Statement:
