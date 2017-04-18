@@ -36,6 +36,10 @@
     "ParameterValue": "10.150.3.0/24"
   },
      {
+    "ParameterKey": "VPCPeeringConnectionGhMisc",
+    "ParameterValue": "pcx-f7cc449e"
+  },
+  {
     "ParameterKey": "VPCPeeringConnectionGames",
     "ParameterValue": "pcx-5837be31"
   },
