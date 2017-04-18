@@ -408,22 +408,20 @@ Resources:
                 Resource:
                 - 'arn:aws:logs:*:*:*'
 
-          # - PolicyName: 'S3BucketAssetsDownloadOnly'
-          #   PolicyDocument:
-          #     Version: '2012-10-17'
-          #     Statement:
-          #     - Effect: Allow
-          #       Action:
-          #           - "s3:GetObject"
-          #           - "s3:GetObjectVersion"
-          #           - "s3:ListObjects"
-          #       Resource:
-          #       - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
-          #     - Effect: Allow
-          #       Action:
-          #           - "s3:ListBucket"
-          #       Resource:
-          #       - !Sub arn:aws:s3:::${S3BucketAssetsName}/
+          - PolicyName: 'S3BucketAssetsDownloadOnly'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                    - "s3:*"
+                Resource:
+                - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
+              - Effect: Allow
+                Action:
+                    - "s3:*"
+                Resource:
+                - !Sub arn:aws:s3:::${S3BucketAssetsName}/
 
     S3BucketAssets:
         Type: "AWS::S3::Bucket"
