@@ -463,23 +463,23 @@ Resources:
                         Principal:
                             AWS: 
                             - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
-                    - 
-                        Action:
-                            - "s3:ListBucket"
-                        Effect:  "Allow"
-                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
-                        Principal: 
-                            AWS: 
-                            - !Sub arn:aws:iam::777556643132:role/${IAMRoleFastlane}
-                    - 
-                        Action:
-                            - "s3:GetObject"
-                            - "s3:GetObjectVersion"
-                        Effect:  "Allow"
-                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
-                        Principal:
-                            AWS: 
-                            - !Sub arn:aws:iam::777556643132:role/${IAMRoleFastlane}
+                    # - 
+                    #     Action:
+                    #         - "s3:ListBucket"
+                    #     Effect:  "Allow"
+                    #     Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
+                    #     Principal: 
+                    #         AWS: 
+                    #         - !GetAtt !Ref IAMRoleFastlane.arn
+                    # - 
+                    #     Action:
+                    #         - "s3:GetObject"
+                    #         - "s3:GetObjectVersion"
+                    #     Effect:  "Allow"
+                    #     Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
+                    #     Principal:
+                    #         AWS: 
+                    #         - !GetAtt !Ref IAMRoleFastlane.arn
 
     IAMAppUser:
         Type: 'AWS::IAM::User'
