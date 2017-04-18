@@ -62,7 +62,7 @@
     {
     "ParameterKey": "GhosSslCert",
     "ParameterValue": "arn:aws:acm:us-west-2:061061380301:certificate/ca81cb3d-e34f-4c5c-aada-353f5bce6c46"
-  }
+  },
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
