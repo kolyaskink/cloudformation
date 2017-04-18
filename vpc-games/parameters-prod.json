@@ -55,6 +55,10 @@
     "ParameterKey": "HttpsFrom2",
     "ParameterValue": "77.171.192.128/32"
   },
+   {
+    "ParameterKey": "IAMRoleFastlaneArn",
+    "ParameterValue": "arn:aws:iam::777556643132:role/GamesVpc-IAMRoleFastlane-SKHEB8296F34"
+  },
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"

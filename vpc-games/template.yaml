@@ -470,7 +470,7 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
                             AWS: 
-                            - arn:aws:iam::061061380301:role/GamesVpc-IAMRoleFastlane-1GMW5WR506WLT
+                            - !Ref IAMRoleFastlaneArn
                     - 
                         Action:
                             - "s3:GetObject"
@@ -479,7 +479,7 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
                             AWS: 
-                            - arn:aws:iam::061061380301:role/GamesVpc-IAMRoleFastlane-1GMW5WR506WLT
+                            - !Ref IAMRoleFastlaneArn
 
     IAMAppUser:
         Type: 'AWS::IAM::User'
@@ -592,6 +592,10 @@ Parameters:
         Description: arn of SSL cert
         Type: String
         Default: arn:aws:acm:us-west-2:777556643132:certificate/8ea61a4f-1549-4703-b99f-da25a2be8f7d
+
+    IAMRoleFastlaneArn:
+        Description: temp
+        Type: String
 
     HttpsFrom1:
         Description: IP address to grant access to
