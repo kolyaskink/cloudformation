@@ -462,6 +462,22 @@ Resources:
                         Principal:
                             AWS: 
                             - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
+                    - 
+                        Action:
+                            - "s3:*"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
+                        Principal: 
+                            AWS: 
+                            - !Sub arn:aws:iam::777556643132:role/${IAMRoleFastlane}
+                    - 
+                        Action:
+                            - "s3:*"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
+                        Principal:
+                            AWS: 
+                            - !Sub arn:aws:iam::777556643132:role/${IAMRoleFastlane}
 
     IAMAppUser:
         Type: 'AWS::IAM::User'
