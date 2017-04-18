@@ -414,12 +414,13 @@ Resources:
               Statement:
               - Effect: Allow
                 Action:
-                    - "s3:*"
+                    - "s3:GetObject"
+                    - "s3:GetObjectVersion"
                 Resource:
                 - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
               - Effect: Allow
                 Action:
-                    - "s3:*"
+                    - "s3:ListBucket"
                 Resource:
                 - !Sub arn:aws:s3:::${S3BucketAssetsName}/
 
@@ -464,7 +465,7 @@ Resources:
                             - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
                     - 
                         Action:
-                            - "s3:*"
+                            - "s3:ListBucket"
                         Effect:  "Allow"
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
@@ -472,7 +473,8 @@ Resources:
                             - !Sub arn:aws:iam::777556643132:role/${IAMRoleFastlane}
                     - 
                         Action:
-                            - "s3:*"
+                            - "s3:GetObject"
+                            - "s3:GetObjectVersion"
                         Effect:  "Allow"
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
