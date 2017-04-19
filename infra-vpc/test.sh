@@ -23,7 +23,7 @@ fi
 
 
 #3. Checking if IG has been attached to VPC. We are not cheking if IG has been created, anyway it would violent template.
-igvpcatt=$(grep "\"AWS::EC2::VPCGatewayAttachment\"" /tmp/parsed | wc -l
+igvpcatt=$(grep "\"AWS::EC2::VPCGatewayAttachment\"" /tmp/parsed | wc -l)
 
 if [[ $igvpcatt -eq 0 ]] ; then
 	echo "ERROR! It looks like you didn't connect IG to VPC" && exit 2
