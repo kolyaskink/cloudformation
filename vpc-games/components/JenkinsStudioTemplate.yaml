@@ -1,0 +1,195 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+Jenkins Master and Jenkins Slaves for a test Studio "Bullet-tooth Tony"
+
+Mappings:
+    AWSRegionToEC2DefaultAMI:
+        us-west-2:
+            AMI: ami-bd7beddd
+    AWSRegionToEC2FastlaneAMI:    
+        us-west-2:
+            AMI: ami-e0bc2980
+    AWSRegionToEC2StudioJenkinsAMI:    
+        us-west-2:
+            AMI: ami-5cbf2f3c   
+
+Parameters:
+
+    HttpsFrom1:
+        Type: String
+    
+    HttpsFrom2:
+        Type: String
+
+    HttpsFrom3:
+        Type: String
+
+    HttpsFrom4:
+        Type: String
+
+    VPCid:
+        Type: String
+
+    InfraVpcCIDR:
+        Type: String
+
+    PublicSubnet1Id:
+        Type: String
+
+    ApachePort:
+        Type: String
+
+    GhosSslCert:
+        Type: String
+
+
+
+Resources:
+
+    LBSecurityGroupJenkinsStudioTemplate:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable access to the Jenkins LB
+            VpcId: !Ref VPCid
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom1
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom2
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom3
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: !Ref HttpsFrom4
+            Tags:
+                - Key: Name
+                  Value: games-jenkins-template-lb
+
+    EC2SecurityGroupJenkinsStudioTemplate:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: JenkinsStudioTemplate SG
+            VpcId: !Ref VPCid
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref LBSecurityGroupJenkinsStudioTemplate
+              - IpProtocol: tcp
+                FromPort: 22
+                ToPort: 22
+                CidrIp: !Ref InfraVpcCIDR
+            Tags:
+                - Key: Name
+                  Value: games-jenkins-template-ec2     
+
+    JenkinsStudioTemplateEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsAMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplate]
+              SubnetId: !Ref PublicSubnet1
+              Tags:
+                - Key: Name
+                  Value: GamesJenkinsStudioTemplate
+                - Key: DNS
+                  Value: GamesJenkinsStudioTemplate
+              UserData:
+                'Fn::Base64': !Sub |
+                  #!/bin/bash -x
+                  /usr/local/bin/dns.sh
+
+    JenkinsStudioTemplateBalanser:
+        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+        Properties:
+            Instances: [!Ref JenkinsStudioTemplateEC2Instance]
+            LoadBalancerName: lb-Games-JenkinsTemplate
+            Listeners:
+                  - LoadBalancerPort: 443
+                    InstancePort: !Ref ApachePort
+                    Protocol: HTTPS
+                    SSLCertificateId: !Ref GhosSslCert
+            HealthCheck:
+                  Target: HTTP:80/static/19c0b418/images/headshot.png
+                  HealthyThreshold: '3'
+                  UnhealthyThreshold: '5'
+                  Interval: '30'
+                  Timeout: '5'
+            Scheme: internet-facing
+            SecurityGroups: [!Ref LBSecurityGroupJenkinsStudioTemplate]
+            Subnets: [!Ref PublicSubnet1id]
+
+    InstanceProfileJenkinsStudioTemplate:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRoleJenkinsStudioTemplate
+
+    IAMRoleJenkinsStudioTemplate:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+
+          - PolicyName: 'logs'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
+
+          - PolicyName: 'dnsupdate'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'route53:GetHostedZone'
+                - 'route53:ListHostedZones'
+                - 'route53:ListResourceRecordSets'
+                - 'route53:ChangeResourceRecordSets'
+                - 'route53:GetChange'
+                - 'ec2:DescribeTags'
+                Resource:
+                - '*'
+
+Outputs:
+
+    LBSecurityGroupJenkinsId:
+        Value: !Ref LBSecurityGroupJenkinsStudioTemplate
+
+    EC2SecurityGroupJenkinsId:
+        Value: !Ref EC2SecurityGroupJenkinsStudioTemplate
+
+    JenkinsStudioTemplateEC2InstanceId: 
+        Value: !Ref JenkinsStudioTemplateEC2Instance
+
+    JenkinsStudioTemplateBalanserId: 
+        Value: !Ref JenkinsStudioTemplateBalanser
+
+    JenkinsStudioTemplateBalanserDnsName:
+        Value: !GetAtt JenkinsStudioTemplateBalanser.DNSName

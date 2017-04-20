@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    Deploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway GS and Bastion Host
+    GH-misc emulation 
     
 Mappings:
     AWSRegionToEC2AMI:
@@ -181,129 +181,38 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             SubnetId: !Ref PrivateSubnet2
 
-    #Bastion host
-    BastionSecurityGroup:
-        Type: AWS::EC2::SecurityGroup
+
+
+    #Peering
+    VPCPeeringConnection:
+        Type: AWS::EC2::VPCPeeringConnection
         Properties:
-            GroupDescription: Enable access to the Bastion host
             VpcId: !Ref VPC
-            SecurityGroupIngress:
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref SshFrom1
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref SshFrom2
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref SshFrom3
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref SshFrom4
-            Tags:
-                - Key: Name
-                  Value: bastion
+            PeerVpcId: !Ref InfraVpcId
 
-    BastionLaunchConfiguration:
-        Type: 'AWS::AutoScaling::LaunchConfiguration'
-        Metadata:
-            'AWS::CloudFormation::Init':
-                configSets:
-                    default:
-                        - ssh-access
-                ssh-access:
-                  services:
-                    sysvinit:
-                      sshd:
-                        enabled: true
-                        ensureRunning: true
+    PeerPublicRoute:
+        Type: AWS::EC2::Route
         Properties:
-              AssociatePublicIpAddress: true
-              EbsOptimized: false
-              IamInstanceProfile: !Ref BastionInstanceProfile
-              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
-              InstanceType: !Ref BastionHostInstanceType
-              SecurityGroups:
-              - !Ref BastionSecurityGroup
-              KeyName: !Ref KeyName
-              UserData:
-                'Fn::Base64': !Sub |
-                  #!/bin/bash -x
-                  INSTANCEID=$(curl -s -m 60 http://169.254.169.254/latest/meta-data/instance-id)
-                  aws --region ${AWS::Region} ec2 associate-address --instance-id $INSTANCEID --allocation-id ${EIP.AllocationId} && /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource BastionLaunchConfiguration --region ${AWS::Region}
-                  /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource BastionAutoScalingGroup --region ${AWS::Region}
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref InfraVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
-    BastionAutoScalingGroup:
-        Type: 'AWS::AutoScaling::AutoScalingGroup'
+    PeerPrivateRoute1:
+        Type: AWS::EC2::Route
         Properties:
-          DesiredCapacity: 1
-          LaunchConfigurationName: !Ref BastionLaunchConfiguration
-          MaxSize: 1
-          MinSize: 1
-          VPCZoneIdentifier:
-          - !Ref PublicSubnet1
-          - !Ref PublicSubnet2
-        CreationPolicy:
-          ResourceSignal:
-            Count: 1
-            Timeout: PT10M
-        UpdatePolicy:
-          AutoScalingRollingUpdate:
-            PauseTime: PT10M
-            WaitOnResourceSignals: true
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref InfraVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
-    BastionInstanceProfile:
-        Type: 'AWS::IAM::InstanceProfile'
+    PeerPrivateRoute2:
+        Type: AWS::EC2::Route
         Properties:
-          Path: '/'
-          Roles:
-          - !Ref BastionIAMRole
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref InfraVpcCIDR
+            VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
-    BastionIAMRole:
-        Type: 'AWS::IAM::Role'
-        Properties:
-          AssumeRolePolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                - 'ec2.amazonaws.com'
-              Action:
-              - 'sts:AssumeRole'
-          Path: '/'
-          Policies:
-          - PolicyName: 'ec2'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'ec2:AssociateAddress'
-                - 'ec2:DescribeTags'
-                Resource:
-                - '*'
-          - PolicyName: logs
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'logs:CreateLogGroup'
-                - 'logs:CreateLogStream'
-                - 'logs:PutLogEvents'
-                - 'logs:DescribeLogStreams'
-                Resource:
-                - 'arn:aws:logs:*:*:*'
-
-  
 
 Parameters:
-
 
     EnvironmentName:
         Description: An environment name that will be prefixed to resource names
@@ -313,78 +222,39 @@ Parameters:
     VpcCIDR:
         Description: Please enter the IP range (CIDR notation) for this VPC
         Type: String
-        Default: 10.51.0.0/24
+        Default: 10.51.3.0/24
 
     PublicSubnet1CIDR:
         Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
         Type: String
-        Default: 10.51.0.0/26
+        Default: 10.51.3.0/26
 
     PublicSubnet2CIDR:
         Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
         Type: String
-        Default: 10.51.0.64/26
+        Default: 10.51.3.64/26
 
     PrivateSubnet1CIDR:
         Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
         Type: String
-        Default: 10.51.0.128/26
+        Default: 10.51.3.128/26
 
     PrivateSubnet2CIDR:
         Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
         Type: String
-        Default: 10.51.0.192/26
+        Default: 10.51.3.192/26
 
-    SshFrom1:
-        Description: IP address to grant access to
+    InfraVpcId:
+        Description: Please enter the Id of InfraVpc
         Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 212.67.170.162/32
-
-    SshFrom2:
-        Description: IP address to grant access to
+        Default: vpc-a23e58c5
+    
+    InfraVpcCIDR:
+        Description: Please enter the IP range (CIDR notation) for INFRA VPC
         Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 127.0.0.1/32
-
-    SshFrom3:
-        Description: IP address to grant access to
-        Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 127.0.0.2/32
-
-    SshFrom4:
-        Description: IP address to grant access to
-        Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 127.0.0.3/32
-
-    KeyName:
-        ConstraintDescription: must be the name of an existing EC2 KeyPair.
-        Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
-        MinLength: '1'
-        Type: AWS::EC2::KeyPair::KeyName
-
-    BastionHostInstanceType:
-        Type: String
-        Default: t2.micro
-        AllowedValues:
-            - t2.micro
-            - t2.small
-            - m1.small
-        Description: Enter t2.micro, t2.small, or m1.small. Default is t2.micro.
+        Default: 10.151.2.0/24
+ 
+ 
 
 Outputs:
 
@@ -418,12 +288,5 @@ Outputs:
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
         Value: !Ref PrivateRouteTable2
-    BastionIp:
-        Description: IP of Bastion Host
-        Value: !Ref EIP
-    BastionSecurityGroup:
-        Description: A reference to the Security Group where the Bastion Hosts are in
-        Value: !Ref BastionSecurityGroup
-
 
 

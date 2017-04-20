@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    VPC for studio's stuff and Fastlane apps 
+    The general template for GamesVpc  
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
@@ -17,479 +17,51 @@ Mappings:
 
 Resources:
 
-    # VPC and Subnets 
-    VPC:
-        Type: AWS::EC2::VPC
+    Vpc:
+        Type: AWS::CloudFormation::Stack
         Properties:
-            CidrBlock: !Ref VpcCIDR
-            EnableDnsSupport: true
-            EnableDnsHostnames: true
-            Tags:
-                - Key: Name
-                  Value: !Ref EnvironmentName
+            TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Vpc.yaml
+            Parameters:
+                EnvironmentName:           !Ref EnvironmentName
+                VpcCIDR:                   !Ref VpcCIDR
+                PublicSubnet1CIDR:         !Ref PublicSubnet1CIDR
+                PublicSubnet2CIDR:         !Ref PublicSubnet2CIDR
+                PrivateSubnet1CIDR:        !Ref PrivateSubnet1CIDR
+                PrivateSubnet2CIDR:        !Ref PrivateSubnet1CIDR
+                InfraVpcId:                !Ref InfraVpcId
+                InfraVpcCIDR:              !Ref InfraVpcCIDR         
 
-    PublicSubnet1:
-        Type: AWS::EC2::Subnet
+    Fastlane:
+        Type: AWS::CloudFormation::Stack
         Properties:
-            VpcId: !Ref VPC
-            AvailabilityZone: !Select [ 0, !GetAZs ]
-            CidrBlock: !Ref PublicSubnet1CIDR
-            MapPublicIpOnLaunch: true
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+            TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Fastlane.yaml
+            Parameters:
+                InfraVpcCIDR:               !Ref InfraVpcCIDR
+                VPCid:                      !GetAtt Vpc.Outputs.VPC
+                KeyName:                    !Ref KeyName
+                FastlaneHostInstanceType:   !Ref FastlaneHostInstanceType
+                PrivateSubnet1Id:           !GetAtt Vpc.Outputs.PrivateSubnet1Id
+                S3BucketAssetsName:         !Ref S3BucketAssetsName
+                DaysToIAAssets:             !Ref DaysToIAAssets
+                DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
 
-    PublicSubnet2:
-        Type: AWS::EC2::Subnet
+    JenkinsStudioTemplate:
+        Type: AWS::CloudFormation::Stack
         Properties:
-            VpcId: !Ref VPC
-            AvailabilityZone: !Select [ 1, !GetAZs ]
-            CidrBlock: !Ref PublicSubnet2CIDR
-            MapPublicIpOnLaunch: true
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
-
-    PrivateSubnet1:
-        Type: AWS::EC2::Subnet
-        Properties:
-            VpcId: !Ref VPC
-            AvailabilityZone: !Select [ 0, !GetAZs ]
-            CidrBlock: !Ref PrivateSubnet1CIDR
-            MapPublicIpOnLaunch: false
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
-
-    PrivateSubnet2:
-        Type: AWS::EC2::Subnet
-        Properties:
-            VpcId: !Ref VPC
-            AvailabilityZone: !Select [ 1, !GetAZs ]
-            CidrBlock: !Ref PrivateSubnet2CIDR
-            MapPublicIpOnLaunch: false
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
-
-    # Inetrnet GW and etc
-    InternetGateway:
-        Type: AWS::EC2::InternetGateway
-        Properties:
-            Tags:
-                - Key: Name
-                  Value: !Ref EnvironmentName
-
-    InternetGatewayAttachment:
-        Type: AWS::EC2::VPCGatewayAttachment
-        Properties:
-            InternetGatewayId: !Ref InternetGateway
-            VpcId: !Ref VPC
-
-    PublicRouteTable:
-        Type: AWS::EC2::RouteTable
-        Properties:
-            VpcId: !Ref VPC
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Public Routes
-
-    DefaultPublicRoute:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            DestinationCidrBlock: 0.0.0.0/0
-            GatewayId: !Ref InternetGateway
-
-    PublicSubnet1RouteTableAssociation:
-        Type: AWS::EC2::SubnetRouteTableAssociation
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            SubnetId: !Ref PublicSubnet1
-
-    PublicSubnet2RouteTableAssociation:
-        Type: AWS::EC2::SubnetRouteTableAssociation
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            SubnetId: !Ref PublicSubnet2
-
-
-    # NAT GW and etc
-    EIP:
-        Type: 'AWS::EC2::EIP'
-        Properties:
-            Domain: vpc   
-
-    NatGateway1EIP:
-        Type: AWS::EC2::EIP
-        DependsOn: InternetGatewayAttachment
-        Properties:
-            Domain: vpc
-
-    NatGateway2EIP:
-        Type: AWS::EC2::EIP
-        DependsOn: InternetGatewayAttachment
-        Properties:
-            Domain: vpc
-
-    NatGateway1:
-        Type: AWS::EC2::NatGateway
-        Properties:
-            AllocationId: !GetAtt NatGateway1EIP.AllocationId
-            SubnetId: !Ref PublicSubnet1
-
-
-    NatGateway2:
-        Type: AWS::EC2::NatGateway
-        Properties:
-            AllocationId: !GetAtt NatGateway2EIP.AllocationId
-            SubnetId: !Ref PublicSubnet2
-
-
-    PrivateRouteTable1:
-        Type: AWS::EC2::RouteTable
-        Properties:
-            VpcId: !Ref VPC
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Routes (AZ1)
-
-    PrivateRouteTable2:
-        Type: AWS::EC2::RouteTable
-        Properties:
-            VpcId: !Ref VPC
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Routes (AZ2)
-
-    DefaultPrivateRoute1:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable1
-            DestinationCidrBlock: 0.0.0.0/0
-            NatGatewayId: !Ref NatGateway1
-
-    DefaultPrivateRoute2:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable2
-            DestinationCidrBlock: 0.0.0.0/0
-            NatGatewayId: !Ref NatGateway2
-
-    PrivateSubnet1RouteTableAssociation:
-        Type: AWS::EC2::SubnetRouteTableAssociation
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable1
-            SubnetId: !Ref PrivateSubnet1
-
-    PrivateSubnet2RouteTableAssociation:
-        Type: AWS::EC2::SubnetRouteTableAssociation
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable2
-            SubnetId: !Ref PrivateSubnet2
-
-    #Peering
-
-    VPCPeeringConnection:
-        Type: AWS::EC2::VPCPeeringConnection
-        Properties:
-            VpcId: !Ref VPC
-            PeerVpcId: !Ref InfraVpcId
-
-    PeerPublicRoute:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            DestinationCidrBlock: !Ref InfraVpcCIDR
-            VpcPeeringConnectionId: !Ref VPCPeeringConnection
-
-    PeerPrivateRoute1:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable1
-            DestinationCidrBlock: !Ref InfraVpcCIDR
-            VpcPeeringConnectionId: !Ref VPCPeeringConnection
-
-    PeerPrivateRoute2:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable2
-            DestinationCidrBlock: !Ref InfraVpcCIDR
-            VpcPeeringConnectionId: !Ref VPCPeeringConnection
-
-    # Studio Jenkins template
-    LBSecurityGroupJenkinsStudioTemplate:
-        Type: AWS::EC2::SecurityGroup
-        Properties:
-            GroupDescription: Enable access to the Jenkins LB
-            VpcId: !Ref VPC
-            SecurityGroupIngress:
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom1
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom2
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom3
-              - IpProtocol: tcp
-                FromPort: 443
-                ToPort: 443
-                CidrIp: !Ref HttpsFrom4
-            Tags:
-                - Key: Name
-                  Value: games-jenkins-template-lb
-
-    EC2SecurityGroupJenkinsStudioTemplate:
-        Type: AWS::EC2::SecurityGroup
-        Properties:
-            GroupDescription: JenkinsStudioTemplate SG
-            VpcId: !Ref VPC
-            SecurityGroupIngress:
-              - IpProtocol: tcp
-                FromPort: 80
-                ToPort: 80
-                SourceSecurityGroupId: !Ref LBSecurityGroupJenkinsStudioTemplate
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref InfraVpcCIDR
-            Tags:
-                - Key: Name
-                  Value: games-jenkins-template-ec2     
-
-    JenkinsStudioTemplateEC2Instance: 
-            Type: "AWS::EC2::Instance"
-            Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsAMI, !Ref 'AWS::Region', AMI]
-              KeyName: !Ref KeyName
-              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
-              InstanceType: t2.small
-              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplate]
-              SubnetId: !Ref PublicSubnet1
-              Tags:
-                - Key: Name
-                  Value: GamesJenkinsStudioTemplate
-                - Key: DNS
-                  Value: GamesJenkinsStudioTemplate
-              UserData:
-                'Fn::Base64': !Sub |
-                  #!/bin/bash -x
-                  /usr/local/bin/dns.sh
-
-    JenkinsStudioTemplateBalanser:
-        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
-        Properties:
-            Instances: [!Ref JenkinsStudioTemplateEC2Instance]
-            LoadBalancerName: lb-Games-JenkinsTemplate
-            Listeners:
-                  - LoadBalancerPort: 443
-                    InstancePort: !Ref ApachePort
-                    Protocol: HTTPS
-                    SSLCertificateId: !Ref GhosSslCert
-            HealthCheck:
-                  Target: HTTP:80/static/19c0b418/images/headshot.png
-                  HealthyThreshold: '3'
-                  UnhealthyThreshold: '5'
-                  Interval: '30'
-                  Timeout: '5'
-            Scheme: internet-facing
-            SecurityGroups: [!Ref LBSecurityGroupJenkinsStudioTemplate]
-            Subnets: [!Ref PublicSubnet1]
-
-    InstanceProfileJenkinsStudioTemplate:
-        Type: 'AWS::IAM::InstanceProfile'
-        Properties:
-          Path: '/'
-          Roles:
-          - !Ref IAMRoleJenkinsStudioTemplate
-
-    IAMRoleJenkinsStudioTemplate:
-        Type: 'AWS::IAM::Role'
-        Properties:
-          AssumeRolePolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                - 'ec2.amazonaws.com'
-              Action:
-              - 'sts:AssumeRole'
-          Path: '/'
-          Policies:
-
-          - PolicyName: 'logs'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'logs:*'
-                Resource:
-                - 'arn:aws:logs:*:*:*'
-
-          - PolicyName: 'dnsupdate'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'route53:GetHostedZone'
-                - 'route53:ListHostedZones'
-                - 'route53:ListResourceRecordSets'
-                - 'route53:ChangeResourceRecordSets'
-                - 'route53:GetChange'
-                - 'ec2:DescribeTags'
-                Resource:
-                - '*'
-
-    # Fastlane 
-    EC2SecurityGroupFastlane:
-        Type: AWS::EC2::SecurityGroup
-        Properties:
-            GroupDescription: Fastlane SG
-            VpcId: !Ref VPC
-            SecurityGroupIngress:
-              - IpProtocol: tcp
-                FromPort: 22
-                ToPort: 22
-                CidrIp: !Ref InfraVpcCIDR
-            Tags:
-                - Key: Name
-                  Value: games-fastlane-ec2
-
-    FastlaneEC2Instance: 
-            Type: "AWS::EC2::Instance"
-            Properties: 
-              ImageId: !FindInMap [AWSRegionToEC2FastlaneAMI, !Ref 'AWS::Region', AMI]
-              KeyName: !Ref KeyName
-              IamInstanceProfile: !Ref InstanceProfileFastlane
-              InstanceType: !Ref FastlaneHostInstanceType
-              SecurityGroupIds: [!Ref EC2SecurityGroupFastlane]
-              SubnetId: !Ref PrivateSubnet1
-              Tags:
-                - Key: Name
-                  Value: GamesFastlane
-
-    InstanceProfileFastlane:
-        Type: 'AWS::IAM::InstanceProfile'
-        Properties:
-          Path: '/'
-          Roles:
-          - !Ref IAMRoleFastlane
-
-    IAMRoleFastlane:
-        Type: 'AWS::IAM::Role'
-        Properties:
-          AssumeRolePolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                - 'ec2.amazonaws.com'
-              Action:
-              - 'sts:AssumeRole'
-          Path: '/'
-          Policies:
-
-          - PolicyName: 'logs'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                - 'logs:*'
-                Resource:
-                - 'arn:aws:logs:*:*:*'
-
-          - PolicyName: 'S3BucketAssets'
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-              - Effect: Allow
-                Action:
-                    - "s3:GetObject"
-                    - "s3:GetObjectVersion"
-                Resource:
-                - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
-              - Effect: Allow
-                Action:
-                    - "s3:ListBucket"
-                Resource:
-                - !Sub arn:aws:s3:::${S3BucketAssetsName}/
-
-    S3BucketAssets:
-        Type: "AWS::S3::Bucket"
-        Properties:
-            BucketName: !Ref S3BucketAssetsName
-            LifecycleConfiguration: 
-                Rules:
-                - 
-                    Id: !Sub ${DaysToIAAssets}toIA${DaysToGLACIERAssets}toGLACIER
-                    Status: "Enabled"
-                    Transitions:
-                    -
-                        StorageClass: "STANDARD_IA"
-                        TransitionInDays: !Ref DaysToIAAssets
-                    -
-                        StorageClass: "GLACIER"
-                        TransitionInDays: !Ref DaysToGLACIERAssets
-
-    S3BucketAssetsPolicy:   
-        Type: "AWS::S3::BucketPolicy"
-        Properties:
-            Bucket: !Ref S3BucketAssets
-            PolicyDocument:
-                Statement:
-                    - 
-                        Action:
-                            - "s3:ListBucket"
-                        Effect:  "Allow"
-                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
-                        Principal: 
-                            AWS: 
-                            - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
-                    - 
-                        Action:
-                            - "s3:PutObject"
-                        Effect:  "Allow"
-                        Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
-                        Principal:
-                            AWS: 
-                            - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
-
-    IAMAppUser:
-        Type: 'AWS::IAM::User'
-        Properties:
-            UserName: !Ref AppUserName
-            Path: '/'
-            Policies:
-            - PolicyName: 'S3BucketAssetsInsert'
-              PolicyDocument:
-                    Version: '2012-10-17'
-                    Statement:
-                    - Effect: Allow
-                      Action:
-                        - "s3:PutObject"
-                      Resource:
-                        - !Sub arn:aws:s3:::${S3BucketAssetsName}/*
-                    - Effect: Allow
-                      Action:
-                        - "s3:ListBucket"
-                      Resource:
-                        - !Sub arn:aws:s3:::${S3BucketAssetsName}/
-
-
+            TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/JenkinsStudioTemplate.yaml
+            Parameters:
+                    HttpsFrom1:             !Ref HttpsFrom1
+                    HttpsFrom2:             !Ref HttpsFrom2
+                    HttpsFrom3:             !Ref HttpsFrom3
+                    HttpsFrom4:             !Ref HttpsFrom4
+                    VPCid:                  !GetAtt Vpc.Outputs.VPC
+                    InfraVpcCIDR:           !Ref InfraVpcCIDR
+                    PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
+                    ApachePort:             !Ref ApachePort
+                    GhosSslCert:            !Ref GhosSslCert
 
 
 Parameters:
-
 
     EnvironmentName:
         Description: An environment name that will be prefixed to resource names
@@ -575,6 +147,10 @@ Parameters:
         Description: arn of SSL cert
         Type: String
         Default: arn:aws:acm:us-west-2:777556643132:certificate/8ea61a4f-1549-4703-b99f-da25a2be8f7d
+
+    IAMRoleFastlaneArn:
+        Description: temp
+        Type: String
 
     HttpsFrom1:
         Description: IP address to grant access to

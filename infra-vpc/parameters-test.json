@@ -27,6 +27,30 @@
     "ParameterKey": "SshFrom1",
     "ParameterValue": "212.67.170.162/32"
   },
+  {
+    "ParameterKey": "SshFrom2",
+    "ParameterValue": "77.171.192.128/32"
+  },
+    {
+    "ParameterKey": "PeerVpcCIDRGames",
+    "ParameterValue": "10.150.3.0/24"
+  },
+     {
+    "ParameterKey": "VPCPeeringConnectionGhMisc",
+    "ParameterValue": "pcx-f7cc449e"
+  },
+  {
+    "ParameterKey": "VPCPeeringConnectionGames",
+    "ParameterValue": "pcx-5837be31"
+  },
+  {
+    "ParameterKey": "VpnAsLux",
+    "ParameterValue": "65000"
+  },
+  {
+    "ParameterKey": "VpnIpLux",
+    "ParameterValue": "149.13.34.143"
+  },
 	{
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
