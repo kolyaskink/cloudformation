@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    Deploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway GS and Bastion Host
+    Deploys a VPC with 2 public and 2 private subnets, Internet Gateway, NAT Gateway GS and Bastion Host.
     
 Mappings:
     AWSRegionToEC2AMI:
