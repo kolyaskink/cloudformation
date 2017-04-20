@@ -93,7 +93,7 @@ Parameters:
         AllowedValues:
         - 'true'
         - 'false'
-        ConstraintDescription: must be true or false.
+        ConstraintDescription: must be true or false.   
     EnvironmentName:
         Description: An environment name that will be prefixed to resource names
         Type: String
@@ -121,6 +121,7 @@ Resources:
                 Ref: DBInstanceClass
             DBSubnetGroupName:
                 Ref: RDSSubnetGroup
+            BackupRetentionPeriod: 7
             Engine: postgres
             EngineVersion: 9.5.4
             MasterUsername:

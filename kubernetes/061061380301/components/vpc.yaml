@@ -330,6 +330,12 @@ Resources:
                 Key: Name
                 Value: !Sub ${EnvironmentName} Public DB Subnet Group
 
+    RedisSubnetGroup:
+        Type: "AWS::ElastiCache::SubnetGroup"
+        Properties:
+            Description: "Subnet group for Redis Elasticache instance consisting of 1 private subnet"
+            SubnetIds:
+            - !Ref PrivateSubnet1
 
     BastionSecurityGroup:
         Type: AWS::EC2::SecurityGroup
@@ -427,6 +433,10 @@ Outputs:
     RDSReadReplicaSubnetGroup:
         Description: A reference to DB subnet group
         Value: !Ref RDSReadReplicaSubnetGroup
+
+    RedisSubnetGroup:
+        Description: A reference to Redis subnet group
+        Value: !Ref RedisSubnetGroup
         
     Bastion:
         Description: IP of Bastion Host

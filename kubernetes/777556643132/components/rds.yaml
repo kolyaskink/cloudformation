@@ -121,6 +121,7 @@ Resources:
                 Ref: DBInstanceClass
             DBSubnetGroupName:
                 Ref: RDSSubnetGroup
+            BackupRetentionPeriod: 30
             Engine: postgres
             EngineVersion: 9.5.4
             MasterUsername:

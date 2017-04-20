@@ -116,7 +116,22 @@ Parameters:
         AllowedValues:
         - 'true'
         - 'false'
-        ConstraintDescription: must be true or false. 
+        ConstraintDescription: must be true or false.
+    RedisInstanceClass:
+        Description: The database instance type
+        Type: String
+        Default: cache.m3.xlarge
+        AllowedValues:
+        - cache.m3.medium
+        - cache.m3.large
+        - cache.m3.xlarge
+        - cache.m3.2xlarge
+        - cache.m4.large
+        - cache.m4.xlarge
+        - cache.m4.2xlarge
+        - cache.m4.4xlarge
+        - cache.m4.10xlarge
+        ConstraintDescription: must select a valid Elasticache Node type.
     ElasticSearchVolumeSize: 
         Description: The size of the EBS volume for each data node.
         Type: Number
@@ -226,6 +241,17 @@ Resources:
                 MultiAZ:                    !Ref MultiAZ
                 EnvironmentType:            !Ref EnvironmentType
 
+    RedisCache:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/elasticache.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                RedisInstanceClass:         !Ref RedisInstanceClass
+                RedisSecurityGroup:         !GetAtt Security.Outputs.RDSSecurityGroup
+                RedisSubnetGroup:           !GetAtt VPC.Outputs.RedisSubnetGroup
+                EnvironmentType:            !Ref EnvironmentType                
+
     Security:
         Type: AWS::CloudFormation::Stack
         Properties:
@@ -235,16 +261,6 @@ Resources:
                 VPC:                        !GetAtt VPC.Outputs.VPC
                 VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
                 BastionSecurityGroup:       !GetAtt VPC.Outputs.BastionSecurityGroup
-
-#    LogStash:
-#        Type: AWS::CloudFormation::Stack
-#        Properties:
-#            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/logstash.yaml
-#            Parameters:
-#                EnvironmentName:            !Ref AWS::StackName
-#                VPC:                        !GetAtt VPC.Outputs.VPC
-#                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
-#                LogstashInstanceType:       !Ref LogstashInstanceType
 
     ElasticSearch:
         Type: AWS::CloudFormation::Stack
