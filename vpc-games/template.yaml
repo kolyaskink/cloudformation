@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    The general template for GamesVpc
+    The general template for GamesVpc.
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
