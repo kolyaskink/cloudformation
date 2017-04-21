@@ -248,7 +248,7 @@ Resources:
             Parameters:
                 EnvironmentName:            !Ref AWS::StackName
                 RedisInstanceClass:         !Ref RedisInstanceClass
-                RedisSecurityGroup:         !GetAtt Security.Outputs.RDSSecurityGroup
+                RedisSecurityGroup:         !GetAtt Security.Outputs.WorkerSecurityGroup
                 RedisSubnetGroup:           !GetAtt VPC.Outputs.RedisSubnetGroup
                 EnvironmentType:            !Ref EnvironmentType                
 
