@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey":"BucketName",
+    "ParameterValue":"testghoscfrontorigin"
+  },
+  {
+    "ParameterKey":"Cname",
+    "ParameterValue":"cloudfront.test.gamehouseoriginalstories.com"
+  },
+  {
+    "ParameterKey":"CanonicalUser",
+  	"ParameterValue": "7364311b1359d1aef9844c57cae1551a57291417bad82293d3128c7d9e0b51f129713feae295f5b19041f668e54578c2"
+  }
+]

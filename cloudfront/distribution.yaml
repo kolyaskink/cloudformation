@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Template that creates a CloudFront distribution and the S3 bucket that serves as the origin for it. 
+
+Parameters:
+  BucketName:
+    Type: String
+    AllowedPattern: "[a-z0-9]*"
+    
+  Cname:
+    Type: String
+    Default: ''
+    Description: Cname for CloudFront distribution
+
+  CanonicalUser:
+    Type: String
+    
+  S3Domain:
+    Type: String
+    Default: 's3.amazonaws.com'
+
+Resources:
+
+  OriginBucket:
+    Type: "AWS::S3::Bucket"
+    Properties: 
+      AccessControl: Private
+      BucketName: !Ref BucketName
+      Tags:
+        - Key: Purpose
+          Value: CloudFrontOrigin
+      VersioningConfiguration:
+        Status: Enabled
+
+  OriginBucketPolicy: 
+    Type: "AWS::S3::BucketPolicy"
+    Properties: 
+      Bucket: 
+        Ref: "OriginBucket"
+      PolicyDocument: 
+        Statement: 
+          - Action: 
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource: 
+              Fn::Join: 
+                - ""
+                - 
+                  - "arn:aws:s3:::"
+                  - 
+                    Ref: "OriginBucket"
+                  - "/*"
+            Principal:
+              CanonicalUser: [ Ref: CanonicalUser ]
+          - Action: 
+              - "s3:ListBucket"
+            Effect: "Allow"
+            Resource: 
+              Fn::Join: 
+                - ""
+                - 
+                  - "arn:aws:s3:::"
+                  - 
+                    Ref: "OriginBucket"
+            Principal:
+              CanonicalUser: [ Ref: CanonicalUser ]          
+
+  CloudFrontDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    DependsOn: OriginBucket
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref Cname
+#        CacheBehaviors:
+#          CacheBehavior
+        Comment: "CF Distribution for GHOS"
+#        CustomErrorResponses:
+#          CustomErrorResponse
+        DefaultCacheBehavior:
+#          AllowedMethods:
+#            - String
+#          CachedMethods:
+#            - String
+#          Compress: Boolean
+#          DefaultTTL: Number
+          ForwardedValues:
+#            Cookies:
+#              Cookies
+#            Headers:
+#              - String
+            QueryString: false
+#            QueryStringCacheKeys:
+#              - String
+#          MaxTTL: Number
+#          MinTTL: Number
+#          SmoothStreaming: Boolean
+          TargetOriginId: "E3NBCYGV4RKG5T"
+#          TrustedSigners:
+#            - String
+          ViewerProtocolPolicy : allow-all
+        DefaultRootObject: "index.html"
+        Enabled: true
+#        HttpVersion: String
+#        Logging:
+#          Logging
+        Origins:
+        - DomainName:
+            "Fn::Join":
+              - "."
+              -
+                - !Ref BucketName
+                - !Ref S3Domain
+          Id: "E3NBCYGV4RKG5T"
+          S3OriginConfig:
+            OriginAccessIdentity: origin-access-identity/cloudfront/E3NBCYGV4RKG5T
+        PriceClass: "PriceClass_100"
+#        Restrictions:
+#          Restriction
+#        ViewerCertificate:
+#          ViewerCertificate
+#        WebACLId: String
+
+Outputs:
+  OriginBucket:
+    Value: !Ref OriginBucket
+    Description: Name of the s3 origin bucket
