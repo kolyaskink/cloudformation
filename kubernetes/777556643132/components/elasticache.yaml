@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    This creates a Redis Elasticache instance in a Elasticache Subnet.
+
+Parameters:
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+    RedisInstanceClass:
+        Description: The database instance type
+        Type: String
+        Default: cache.m3.xlarge
+        AllowedValues:
+        - cache.m3.medium
+        - cache.m3.large
+        - cache.m3.xlarge
+        - cache.m3.2xlarge
+        - cache.m4.large
+        - cache.m4.xlarge
+        - cache.m4.2xlarge
+        - cache.m4.4xlarge
+        - cache.m4.10xlarge
+        ConstraintDescription: must select a valid Elasticache Node type.
+    RedisSecurityGroup:
+        Description: The security group that describes allowed incoming connections
+        Type: String
+        AllowedPattern: "[a-zA-Z0-9\\-]+"
+        ConstraintDescription: must be a valid security group name.
+    RedisSubnetGroup:
+        Description: Subnet group for RDS instance consisting of 1 private subnet
+        Type: String
+        AllowedPattern: "[a-zA-Z0-9\\-]+"
+    EnvironmentType:
+        Description: determines the type of the environment and thus whether it can be
+            shutdown without serious consequences
+        Type: String
+        Default: 'development'
+        AllowedValues:
+        - 'development'
+        - 'test'
+        - 'preproduction'
+        - 'production'
+
+Resources:
+
+  RedisCache:
+    Type: "AWS::ElastiCache::CacheCluster"
+    Properties:
+      AutoMinorVersionUpgrade: false
+      CacheNodeType: !Ref RedisInstanceClass
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      Engine: redis
+      EngineVersion: "3.2.4"
+      NumCacheNodes: 1
+      PreferredAvailabilityZone: us-west-2a
+      PreferredMaintenanceWindow: mon:05:00-mon:06:00
+      SnapshotRetentionLimit: 7
+      SnapshotWindow: 07:00-08:00
+      VpcSecurityGroupIds: 
+      - !Ref RedisSecurityGroup
+        
+Outputs:
+    MasterJDBCConnectionString:
+        Description: Endpoint string for the Redis Elasticache instance
+        Value:
+            Fn::Join:
+            - ''
+            -   - Fn::GetAtt:
+                    - RedisCache
+                    - RedisEndpoint.Address
+                - ":"
+                - Fn::GetAtt:
+                    - RedisCache
+                    - RedisEndpoint.Port
