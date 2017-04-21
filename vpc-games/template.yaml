@@ -21,7 +21,7 @@ Resources:
         Type: AWS::CloudFormation::Stack
         Properties:
             #TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Vpc.yaml
-            TemplateURL: !Sub https://s3.amazonaws.com/${SCFS3Name}/vpc-games/components/Vpc.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Vpc.yaml
             Parameters:
                 EnvironmentName:           !Ref EnvironmentName
                 VpcCIDR:                   !Ref VpcCIDR
@@ -193,7 +193,7 @@ Parameters:
     CFS3Name:
         Description: S3 bucket name with CF components
         Type: String
-         
+
 Outputs:
 
     VpcId:
