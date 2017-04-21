@@ -70,5 +70,9 @@
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
+        },
+   {
+    "ParameterKey": "CFS3Name",
+    "ParameterValue": "cf-templates-kk"
         }
 ]
