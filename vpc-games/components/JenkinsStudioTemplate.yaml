@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
-Jenkins Master and Jenkins Slaves for a test Studio "Bullet-tooth Tony"
+
+  Jenkins Master and Jenkins Slaves for a test Studio "Bullet-tooth Tony"
 
 Mappings:
-  
     AWSRegionToEC2DefaultAMI:
         us-west-2:
             AMI: ami-bd7beddd
