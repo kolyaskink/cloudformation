@@ -27,7 +27,7 @@ Resources:
                 PublicSubnet1CIDR:         !Ref PublicSubnet1CIDR
                 PublicSubnet2CIDR:         !Ref PublicSubnet2CIDR
                 PrivateSubnet1CIDR:        !Ref PrivateSubnet1CIDR
-                PrivateSubnet2CIDR:        !Ref PrivateSubnet1CIDR
+                PrivateSubnet2CIDR:        !Ref PrivateSubnet2CIDR
                 InfraVpcId:                !Ref InfraVpcId
                 InfraVpcCIDR:              !Ref InfraVpcCIDR         
 
