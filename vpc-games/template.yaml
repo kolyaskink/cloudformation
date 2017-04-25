@@ -37,7 +37,7 @@ Resources:
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Fastlane.yaml
             Parameters:
                 InfraVpcCIDR:               !Ref InfraVpcCIDR
-                VPCid:                      !GetAtt Vpc.Outputs.VPCId
+                VPCid:                      !GetAtt Vpc.Outputs.VpcId
                 KeyName:                    !Ref KeyName
                 FastlaneHostInstanceType:   !Ref FastlaneHostInstanceType
                 PrivateSubnet1Id:           !GetAtt Vpc.Outputs.PrivateSubnet1Id
@@ -54,7 +54,7 @@ Resources:
                     HttpsFrom2:             !Ref HttpsFrom2
                     HttpsFrom3:             !Ref HttpsFrom3
                     HttpsFrom4:             !Ref HttpsFrom4
-                    VPCid:                  !GetAtt Vpc.Outputs.VPCId
+                    VPCid:                  !GetAtt Vpc.Outputs.VpcId
                     InfraVpcCIDR:           !Ref InfraVpcCIDR
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
                     ApachePort:             !Ref ApachePort
