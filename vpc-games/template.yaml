@@ -20,7 +20,6 @@ Resources:
     Vpc:
         Type: AWS::CloudFormation::Stack
         Properties:
-            #TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Vpc.yaml
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Vpc.yaml
             Parameters:
                 EnvironmentName:           !Ref EnvironmentName
@@ -35,7 +34,6 @@ Resources:
     Fastlane:
         Type: AWS::CloudFormation::Stack
         Properties:
-            #TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Fastlane.yaml
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Fastlane.yaml
             Parameters:
                 InfraVpcCIDR:               !Ref InfraVpcCIDR
@@ -50,7 +48,6 @@ Resources:
     JenkinsStudioTemplate:
         Type: AWS::CloudFormation::Stack
         Properties:
-            #TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/JenkinsStudioTemplate.yaml
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/JenkinsStudioTemplate.yaml
             Parameters:
                     HttpsFrom1:             !Ref HttpsFrom1
