@@ -5,7 +5,7 @@ Description: >
     VPC, Subnets, IGW, NatGW and peering
 
 Mappings:
-
+    
     AWSRegionToEC2DefaultAMI:
         us-west-2:
             AMI: ami-bd7beddd
@@ -114,49 +114,46 @@ Resources:
                 - Key: Name
                   Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
 
-    # Inetrnet GW and etc
-    InternetGateway:
-        Type: AWS::EC2::InternetGateway
-        Properties:
-            # Tags:
-            #     - Key: Name
-            #       Value: !Ref EnvironmentName
-            Tags:
-                - Key: Name
-                  Value: test
+    # # Inetrnet GW and etc
+    # InternetGateway:
+    #     Type: AWS::EC2::InternetGateway
+    #     Properties:
+    #         Tags:
+    #             - Key: Name
+    #               Value: !Ref EnvironmentName
 
-    InternetGatewayAttachment:
-        Type: AWS::EC2::VPCGatewayAttachment
-        Properties:
-            InternetGatewayId: !Ref InternetGateway
-            VpcId: !Ref VPC
+    # InternetGatewayAttachment:
+    #     Type: AWS::EC2::VPCGatewayAttachment
+    #     Properties:
+    #         InternetGatewayId: !Ref InternetGateway
+    #         VpcId: !Ref VPC
 
-    PublicRouteTable:
-        Type: AWS::EC2::RouteTable
-        Properties:
-            VpcId: !Ref VPC
-            # Tags:
-            #     - Key: Name
-            #       Value: !Sub ${EnvironmentName} Public Routes
+    # PublicRouteTable:
+    #     Type: AWS::EC2::RouteTable
+    #     Properties:
+    #         VpcId: !Ref VPC
+    #         Tags:
+    #             - Key: Name
+    #               Value: !Sub ${EnvironmentName} Public Routes
 
-    DefaultPublicRoute:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            DestinationCidrBlock: 0.0.0.0/0
-            GatewayId: !Ref InternetGateway
+    # DefaultPublicRoute:
+    #     Type: AWS::EC2::Route
+    #     Properties:
+    #         RouteTableId: !Ref PublicRouteTable
+    #         DestinationCidrBlock: 0.0.0.0/0
+    #         GatewayId: !Ref InternetGateway
 
-    PublicSubnet1RouteTableAssociation:
-        Type: AWS::EC2::SubnetRouteTableAssociation
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            SubnetId: !Ref PublicSubnet1
+    # PublicSubnet1RouteTableAssociation:
+    #     Type: AWS::EC2::SubnetRouteTableAssociation
+    #     Properties:
+    #         RouteTableId: !Ref PublicRouteTable
+    #         SubnetId: !Ref PublicSubnet1
 
-    PublicSubnet2RouteTableAssociation:
-        Type: AWS::EC2::SubnetRouteTableAssociation
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            SubnetId: !Ref PublicSubnet2
+    # PublicSubnet2RouteTableAssociation:
+    #     Type: AWS::EC2::SubnetRouteTableAssociation
+    #     Properties:
+    #         RouteTableId: !Ref PublicRouteTable
+    #         SubnetId: !Ref PublicSubnet2
 
 
     # NAT GW and etc
