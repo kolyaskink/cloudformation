@@ -175,8 +175,7 @@ Resources:
                         Effect:  "Allow"
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
-                            AWS: 
-                             - !Sub 
+                            AWS: !Sub 
                                 - arn:aws:iam::${AccountId}:user/${IAMAppUser}
                                 - { AccountId: !Ref AWS::AccountId }
 
@@ -186,8 +185,7 @@ Resources:
                         Effect:  "Allow"
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
-                            AWS: 
-                             - !Sub 
+                            AWS: !Sub 
                                 - arn:aws:iam::${AccountId}:user/${IAMAppUser}
                                 - { AccountId: !Ref AWS::AccountId }                           
 
