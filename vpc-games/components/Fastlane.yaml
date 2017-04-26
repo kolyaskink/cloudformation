@@ -39,7 +39,6 @@ Parameters:
         AllowedValues:
             - t2.small
             - t2.medium 
-            - m4.large
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
 
     PrivateSubnet1Id:
