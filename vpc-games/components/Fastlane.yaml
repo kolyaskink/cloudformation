@@ -176,8 +176,9 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
                             AWS: 
-                             - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
-                             - { AccountId: !Ref AWS::AccountId }
+                             - !Sub 
+                                - arn:aws:iam::${AccountId}:user/${IAMAppUser}
+                                - { AccountId: !Ref AWS::AccountId }
 
                     - 
                         Action:
@@ -186,8 +187,9 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
                             AWS: 
-                             - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
-                             - { AccountId: !Ref AWS::AccountId }                           
+                             - !Sub 
+                                - arn:aws:iam::${AccountId}:user/${IAMAppUser}
+                                - { AccountId: !Ref AWS::AccountId }                           
 
                     - 
                         Action:
