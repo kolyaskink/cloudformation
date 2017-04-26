@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
     
-    VPC, Subnets, IGW, NatGW and peering
+        VPC, Subnets, IGW, NatGW and peering
 
 Mappings:
     

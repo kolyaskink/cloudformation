@@ -46,6 +46,7 @@ Resources:
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
                 AppUserName:                !Ref AppUserName
                 IAMRoleFastlaneArn:         !Ref IAMRoleFastlaneArn
+                AccountId:                  !Ref AccountId
 
 
     JenkinsStudioTemplate:
@@ -191,8 +192,12 @@ Parameters:
         AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.3/32
+    
     CFS3Name:
         Description: S3 bucket name with CF components
+        Type: String
+
+    AccountId:
         Type: String
 
 Outputs:

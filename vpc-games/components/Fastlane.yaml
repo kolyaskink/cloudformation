@@ -68,6 +68,9 @@ Parameters:
         Description: temp
         Type: String
 
+    AccountId:
+        Type: String
+
 
 Resources:
 
@@ -175,9 +178,8 @@ Resources:
                         Effect:  "Allow"
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
-                            AWS: !Sub 
-                                - arn:aws:iam::${AccountId}:user/${IAMAppUser}
-                                - { AccountId: !Ref AWS::AccountId }
+                            AWS: 
+                            - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
 
                     - 
                         Action:
@@ -185,10 +187,9 @@ Resources:
                         Effect:  "Allow"
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
-                            AWS: !Sub 
-                                - arn:aws:iam::${AccountId}:user/${IAMAppUser}
-                                - { AccountId: !Ref AWS::AccountId }                           
-
+                            AWS: 
+                            - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
+                         
                     - 
                         Action:
                             - "s3:ListBucket"
