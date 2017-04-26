@@ -64,6 +64,10 @@ Parameters:
         Description: User name for parser app
         Type: String
 
+    IAMRoleFastlaneArn:
+        Description: temp
+        Type: String
+
 
 Resources:
 

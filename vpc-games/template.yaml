@@ -45,6 +45,7 @@ Resources:
                 DaysToIAAssets:             !Ref DaysToIAAssets
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
                 AppUserName:                !Ref AppUserName
+                IAMRoleFastlaneArn:         !Ref IAMRoleFastlaneArn
 
 
     JenkinsStudioTemplate:
