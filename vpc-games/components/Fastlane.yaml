@@ -60,6 +60,10 @@ Parameters:
         Type: Number
         Default: 90
 
+    AppUserName:
+        Description: User name for parser app
+        Type: String
+
 
 Resources:
 

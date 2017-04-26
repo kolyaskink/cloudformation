@@ -44,6 +44,8 @@ Resources:
                 S3BucketAssetsName:         !Ref S3BucketAssetsName
                 DaysToIAAssets:             !Ref DaysToIAAssets
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
+                AppUserName:                !Ref AppUserName
+
 
     JenkinsStudioTemplate:
         Type: AWS::CloudFormation::Stack
@@ -59,6 +61,7 @@ Resources:
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
                     ApachePort:             !Ref ApachePort
                     GhosSslCert:            !Ref GhosSslCert
+                    KeyName:                !Ref KeyName
 
 
 Parameters:
