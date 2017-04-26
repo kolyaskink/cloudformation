@@ -179,7 +179,7 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
                             AWS: 
-                            - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
+                            - !Sub arn:aws:iam::061061380301:user/${IAMAppUser}
 
                     - 
                         Action:
@@ -188,7 +188,7 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
                             AWS: 
-                            - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
+                            - !Sub arn:aws:iam::061061380301:user/${IAMAppUser}
                          
                     - 
                         Action:
