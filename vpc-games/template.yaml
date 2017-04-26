@@ -208,7 +208,7 @@ Outputs:
 
     PublicSubnets:
         Description: A list of the public subnets
-        Value: !Join [ ",", [ !GetAtt Vpc.Outputs.PublicSubnet1, !GetAtt Vpc.Outputs.PublicSubnet2 ]]
+        Value: !Join [ ",", [ !GetAtt Vpc.Outputs.PublicSubnet1Id, !GetAtt Vpc.Outputs.PublicSubnet2Id ]]
 
     PublicSubnet1Id: 
         Description: The ID for 1 public subnet
@@ -220,7 +220,7 @@ Outputs:
 
     PrivateSubnets:
         Description: A list of the private subnets
-        Value: !Join [ ",", [ !GetAtt Vpc.Outputs.PrivateSubnet1, !GetAtt Vpc.Outputs.PrivateSubnet2 ]]
+        Value: !Join [ ",", [ !GetAtt Vpc.Outputs.PrivateSubnet1Id, !GetAtt Vpc.Outputs.PrivateSubnet2Id ]]
 
     PrivateSubnet1Id: 
         Description: The ID for 1 private subnet
