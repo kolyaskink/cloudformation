@@ -212,11 +212,11 @@ Outputs:
 
     PublicSubnet1Id: 
         Description: The ID for 1 public subnet
-        Value: !GetAtt Vpc.Outputs.PublicSubnet1
+        Value: !GetAtt Vpc.Outputs.PublicSubnet1Id
 
     PublicSubnet2Id: 
         Description: The ID for 2 public subnet
-        Value: !GetAtt Vpc.Outputs.PublicSubnet2
+        Value: !GetAtt Vpc.Outputs.PublicSubnet2Id
 
     PrivateSubnets:
         Description: A list of the private subnets
@@ -224,11 +224,11 @@ Outputs:
 
     PrivateSubnet1Id: 
         Description: The ID for 1 private subnet
-        Value: !GetAtt Vpc.Outputs.PrivateSubnet1
+        Value: !GetAtt Vpc.Outputs.PrivateSubnet1Id
 
     PrivateSubnet2Id: 
         Description: The ID for 2 private subnet
-        Value: !GetAtt Vpc.Outputs.PrivateSubnet2
+        Value: !GetAtt Vpc.Outputs.PrivateSubnet2Id
 
     PublicRouteTable:
         Description: The route table for public subnets
