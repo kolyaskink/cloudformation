@@ -64,7 +64,7 @@ Resources:
                     ApachePort:             !Ref ApachePort
                     GhosSslCert:            !Ref GhosSslCert
                     KeyName:                !Ref KeyName
-                    JenkinsStudioTemplateGitRepoName: !Ref JenkinsStudioTemplateGitRepoName
+                    StudioTemplateGitRepoName: !Ref StudioTemplateGitRepoName
 
 
 Parameters:
