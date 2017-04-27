@@ -1,7 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
-Fastlane EC2, S3 for assets
+
+    Fastlane EC2, S3 for assets
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
@@ -38,7 +39,6 @@ Parameters:
         AllowedValues:
             - t2.small
             - t2.medium 
-            - m4.large
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
 
     PrivateSubnet1Id:
@@ -58,6 +58,17 @@ Parameters:
         Description: Days before file moved to Glacier
         Type: Number
         Default: 90
+
+    AppUserName:
+        Description: User name for parser app
+        Type: String
+
+    IAMRoleFastlaneArn:
+        Description: temp
+        Type: String
+
+    AccountId:
+        Type: String
 
 
 Resources:
@@ -167,7 +178,8 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}
                         Principal: 
                             AWS: 
-                            - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
+                            - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
+
                     - 
                         Action:
                             - "s3:PutObject"
@@ -175,7 +187,8 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketAssetsName}/*
                         Principal:
                             AWS: 
-                            - !Sub arn:aws:iam::777556643132:user/${IAMAppUser}
+                            - !Sub arn:aws:iam::${AccountId}:user/${IAMAppUser}
+                         
                     - 
                         Action:
                             - "s3:ListBucket"

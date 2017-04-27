@@ -1,7 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
-Jenkins Master and Jenkins Slaves for a test Studio "Bullet-tooth Tony"
+
+  Jenkins Master and Jenkins Slaves for a test Studio "Bullet-tooth Tony"
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
@@ -42,6 +43,11 @@ Parameters:
 
     GhosSslCert:
         Type: String
+
+    KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
 
 
 
@@ -99,7 +105,7 @@ Resources:
               IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplate
               InstanceType: t2.small
               SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplate]
-              SubnetId: !Ref PublicSubnet1
+              SubnetId: !Ref PublicSubnet1Id
               Tags:
                 - Key: Name
                   Value: GamesJenkinsStudioTemplate
@@ -128,7 +134,7 @@ Resources:
                   Timeout: '5'
             Scheme: internet-facing
             SecurityGroups: [!Ref LBSecurityGroupJenkinsStudioTemplate]
-            Subnets: [!Ref PublicSubnet1id]
+            Subnets: [!Ref PublicSubnet1Id]
 
     InstanceProfileJenkinsStudioTemplate:
         Type: 'AWS::IAM::InstanceProfile'

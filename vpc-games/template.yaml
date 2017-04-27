@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-    The general template for GamesVpc  
+    The general template for GamesVpc. 
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
@@ -20,45 +20,50 @@ Resources:
     Vpc:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Vpc.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Vpc.yaml
             Parameters:
                 EnvironmentName:           !Ref EnvironmentName
                 VpcCIDR:                   !Ref VpcCIDR
                 PublicSubnet1CIDR:         !Ref PublicSubnet1CIDR
                 PublicSubnet2CIDR:         !Ref PublicSubnet2CIDR
                 PrivateSubnet1CIDR:        !Ref PrivateSubnet1CIDR
-                PrivateSubnet2CIDR:        !Ref PrivateSubnet1CIDR
+                PrivateSubnet2CIDR:        !Ref PrivateSubnet2CIDR
                 InfraVpcId:                !Ref InfraVpcId
                 InfraVpcCIDR:              !Ref InfraVpcCIDR         
 
     Fastlane:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/Fastlane.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Fastlane.yaml
             Parameters:
                 InfraVpcCIDR:               !Ref InfraVpcCIDR
-                VPCid:                      !GetAtt Vpc.Outputs.VPC
+                VPCid:                      !GetAtt Vpc.Outputs.VpcId
                 KeyName:                    !Ref KeyName
                 FastlaneHostInstanceType:   !Ref FastlaneHostInstanceType
                 PrivateSubnet1Id:           !GetAtt Vpc.Outputs.PrivateSubnet1Id
                 S3BucketAssetsName:         !Ref S3BucketAssetsName
                 DaysToIAAssets:             !Ref DaysToIAAssets
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
+                AppUserName:                !Ref AppUserName
+                IAMRoleFastlaneArn:         !Ref IAMRoleFastlaneArn
+                AccountId:                  !Ref AccountId
+
 
     JenkinsStudioTemplate:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: https://s3.amazonaws.com/9799998836-cf-templates/vpc-games/components/JenkinsStudioTemplate.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/JenkinsStudioTemplate.yaml
             Parameters:
                     HttpsFrom1:             !Ref HttpsFrom1
                     HttpsFrom2:             !Ref HttpsFrom2
                     HttpsFrom3:             !Ref HttpsFrom3
                     HttpsFrom4:             !Ref HttpsFrom4
-                    VPCid:                  !GetAtt Vpc.Outputs.VPC
+                    VPCid:                  !GetAtt Vpc.Outputs.VpcId
                     InfraVpcCIDR:           !Ref InfraVpcCIDR
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
                     ApachePort:             !Ref ApachePort
                     GhosSslCert:            !Ref GhosSslCert
+                    KeyName:                !Ref KeyName
 
 
 Parameters:
@@ -187,42 +192,85 @@ Parameters:
         AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.3/32
- 
+    
+    CFS3Name:
+        Description: S3 bucket name with CF components
+        Type: String
+
+    AccountId:
+        Type: String
+
 Outputs:
 
     VpcId:
-        Description: The ID for the created VPC
-        Value: !Ref VPC
+        Description: The ID for the created VPC 
+        Value: !GetAtt Vpc.Outputs.PrivateSubnet1Id
+
     PublicSubnets:
         Description: A list of the public subnets
-        Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
+        Value: !Join [ ",", [ !GetAtt Vpc.Outputs.PublicSubnet1Id, !GetAtt Vpc.Outputs.PublicSubnet2Id ]]
+
     PublicSubnet1Id: 
         Description: The ID for 1 public subnet
-        Value: !Ref PublicSubnet1
+        Value: !GetAtt Vpc.Outputs.PublicSubnet1Id
+
     PublicSubnet2Id: 
         Description: The ID for 2 public subnet
-        Value: !Ref PublicSubnet2
+        Value: !GetAtt Vpc.Outputs.PublicSubnet2Id
+
     PrivateSubnets:
         Description: A list of the private subnets
-        Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ]]
+        Value: !Join [ ",", [ !GetAtt Vpc.Outputs.PrivateSubnet1Id, !GetAtt Vpc.Outputs.PrivateSubnet2Id ]]
+
     PrivateSubnet1Id: 
         Description: The ID for 1 private subnet
-        Value: !Ref PrivateSubnet1
+        Value: !GetAtt Vpc.Outputs.PrivateSubnet1Id
+
     PrivateSubnet2Id: 
         Description: The ID for 2 private subnet
-        Value: !Ref PrivateSubnet2
+        Value: !GetAtt Vpc.Outputs.PrivateSubnet2Id
+
     PublicRouteTable:
         Description: The route table for public subnets
-        Value: !Ref PublicRouteTable
+        Value: !GetAtt Vpc.Outputs.PublicRouteTable
+
     PrivateRouteTable1:
         Description: The route table for private subnet in AZ1
-        Value: !Ref PrivateRouteTable1
+        Value: !GetAtt Vpc.Outputs.PrivateRouteTable1
+
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
-        Value: !Ref PrivateRouteTable2
+        Value: !GetAtt Vpc.Outputs.PrivateRouteTable2
+
     VPCPeeringConnectionId:
         Description: The ID for VPC peering to InfraVpc
-        Value: !Ref VPCPeeringConnection
+        Value: !GetAtt Vpc.Outputs.VPCPeeringConnectionId
 
+    LBSecurityGroupJenkinsId:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.LBSecurityGroupJenkinsId
+
+    EC2SecurityGroupJenkinsId:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.EC2SecurityGroupJenkinsId
+
+    JenkinsStudioTemplateEC2InstanceId: 
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.JenkinsStudioTemplateEC2InstanceId
+
+    JenkinsStudioTemplateBalanserId: 
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.JenkinsStudioTemplateBalanserId
+
+    JenkinsStudioTemplateBalanserDnsName:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.JenkinsStudioTemplateBalanserDnsName
+
+    FastlaneEC2Instanced: 
+        Value: !GetAtt Fastlane.Outputs.FastlaneEC2Instanced
+
+    FastlaneAppUserName:
+        Value: !GetAtt Fastlane.Outputs.AppUserName
+
+    S3BucketAssetsName:
+        Value: !GetAtt Fastlane.Outputs.S3BucketAssetsName
+
+    S3BucketAssetsId:
+        Value: !GetAtt Fastlane.Outputs.S3BucketAssetsId
 
 

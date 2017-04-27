@@ -62,5 +62,13 @@
     {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc"
+        },
+   {
+    "ParameterKey": "CFS3Name",
+    "ParameterValue": "9799998836-cf-templates"
+        },
+     {
+    "ParameterKey": "AccountId",
+    "ParameterValue": "777556643132"
         }
 ]
