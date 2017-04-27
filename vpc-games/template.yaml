@@ -289,5 +289,5 @@ Outputs:
     StudioTemplateGitRepoUrlHttp:
         Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoUrlHttp
 
-    StudioTemplateGitRepoUrlHttp:
+    StudioTemplateGitRepoUrlSsh:
         Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoUrlSsh

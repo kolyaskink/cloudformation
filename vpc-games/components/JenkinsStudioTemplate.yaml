@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-  Jenkins Master and Jenkins Slaves, Git Repo for a test Studio "Bullet-tooth Tony"
+  Jenkins Master, Jenkins Slaves and  Git Repo for a test Studio "Bullet-tooth Tony"
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
