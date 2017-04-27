@@ -64,6 +64,7 @@ Resources:
                     ApachePort:             !Ref ApachePort
                     GhosSslCert:            !Ref GhosSslCert
                     KeyName:                !Ref KeyName
+                    JenkinsStudioTemplateGitRepoName: !Ref JenkinsStudioTemplateGitRepoName
 
 
 Parameters:
@@ -200,6 +201,9 @@ Parameters:
     AccountId:
         Type: String
 
+    StudioTemplateGitRepoName:
+        Type: String
+
 Outputs:
 
     VpcId:
@@ -272,5 +276,11 @@ Outputs:
 
     S3BucketAssetsId:
         Value: !GetAtt Fastlane.Outputs.S3BucketAssetsId
+
+    StudioTemplateGitRepoName:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoName
+
+    StudioTemplateGitRepoId:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepo
 
 

@@ -78,6 +78,9 @@
    {
     "ParameterKey": "AccountId",
     "ParameterValue": "061061380301"
+        },
+   {
+    "ParameterKey": "StudioTemplateGitRepoName",
+    "ParameterValue": "StudioTestRepo"
         }
-
 ]

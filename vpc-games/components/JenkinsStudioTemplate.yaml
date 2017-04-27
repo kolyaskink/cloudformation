@@ -49,6 +49,9 @@ Parameters:
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
 
+    StudioTemplateGitRepoName:
+        Type: String
+
 
 
 Resources:
@@ -183,6 +186,12 @@ Resources:
                 Resource:
                 - '*'
 
+    StudioTemplateGitRepo:
+        Type: "AWS::CodeCommit::Repository"
+        Properties: 
+          RepositoryName: !Ref StudioTemplateGitRepoName
+
+
 Outputs:
 
     LBSecurityGroupJenkinsId:
@@ -199,3 +208,9 @@ Outputs:
 
     JenkinsStudioTemplateBalanserDnsName:
         Value: !GetAtt JenkinsStudioTemplateBalanser.DNSName
+
+    StudioTemplateGitRepoName:
+        Value: !Ref StudioTemplateGitRepoName
+
+    StudioTemplateGitRepoId:
+        Value: !Ref StudioTemplateGitRepo
