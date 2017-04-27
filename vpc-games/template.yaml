@@ -283,4 +283,11 @@ Outputs:
     StudioTemplateGitRepoId:
         Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoId
 
+    StudioTemplateGitRepoArn:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoArn
 
+    StudioTemplateGitRepoUrlHttp:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoUrlHttp
+
+    StudioTemplateGitRepoUrlHttp:
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoUrlSsh

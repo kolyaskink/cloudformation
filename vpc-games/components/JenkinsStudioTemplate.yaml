@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-  Jenkins Master and Jenkins Slaves for a test Studio "Bullet-tooth Tony"
+  Jenkins Master and Jenkins Slaves, Git Repo for a test Studio "Bullet-tooth Tony"
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
@@ -214,3 +214,13 @@ Outputs:
 
     StudioTemplateGitRepoId:
         Value: !Ref StudioTemplateGitRepo
+
+    StudioTemplateGitRepoArn:
+        Value: !GetAtt StudioTemplateGitRepo.Arn
+
+    StudioTemplateGitRepoUrlHttp:
+        Value: !GetAtt StudioTemplateGitRepo.CloneUrlHttp
+
+    StudioTemplateGitRepoUrlSsh:
+        Value: !GetAtt StudioTemplateGitRepo.CloneUrlSsh
+
