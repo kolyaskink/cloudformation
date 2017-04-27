@@ -281,6 +281,6 @@ Outputs:
         Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoName
 
     StudioTemplateGitRepoId:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepo
+        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoId
 
 
