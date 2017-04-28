@@ -65,7 +65,7 @@ Resources:
                     GhosSslCert:            !Ref GhosSslCert
                     KeyName:                !Ref KeyName
                     StudioTemplateGitRepoName: !Ref StudioTemplateGitRepoName
-
+                    CFS3Name:                   !Ref CFS3Name
 
 Parameters:
 
