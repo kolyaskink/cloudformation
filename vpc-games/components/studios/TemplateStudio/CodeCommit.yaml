@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+  Git Repo for a test Studio "Bullet-tooth Tony"
+
+Parameters:
+
+    StudioTemplateGitRepoName:
+        Type: String
+
+Resources:
+
+    StudioTemplateGitRepo:
+        Type: "AWS::CodeCommit::Repository"
+        Properties: 
+          RepositoryName: !Ref StudioTemplateGitRepoName
+
+Outputs:
+
+    StudioTemplateGitRepoName:
+        Value: !Ref StudioTemplateGitRepoName
+
+    StudioTemplateGitRepoId:
+        Value: !Ref StudioTemplateGitRepo
+
+    StudioTemplateGitRepoArn:
+        Value: !GetAtt StudioTemplateGitRepo.Arn
+
+    StudioTemplateGitRepoUrlHttp:
+        Value: !GetAtt StudioTemplateGitRepo.CloneUrlHttp
+
+    StudioTemplateGitRepoUrlSsh:
+        Value: !GetAtt StudioTemplateGitRepo.CloneUrlSsh

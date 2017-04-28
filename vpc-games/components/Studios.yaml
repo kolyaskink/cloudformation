@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+  The top level template for whole project "Build street"
+
+
+Parameters:
+
+    #Shared parameters
+    CFS3Name:
+        Description: S3 bucket name with CF components
+        Type: String
+
+    #TemplateStudio
+    HttpsFrom1:
+        Type: String
+    
+    HttpsFrom2:
+        Type: String
+
+    HttpsFrom3:
+        Type: String
+
+    HttpsFrom4:
+        Type: String
+
+    VPCid:
+        Type: String
+
+    InfraVpcCIDR:
+        Type: String
+
+    PublicSubnet1Id:
+        Type: String
+
+    ApachePort:
+        Type: String
+
+    GhosSslCert:
+        Type: String
+
+    KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
+
+    StudioTemplateGitRepoName:
+        Type: String
+
+Resources:
+
+    TemplateStudio:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studiosTemplateStudio.yaml
+            Parameters:
+                StudioTemplateGitRepoName:                !Ref StudioTemplateGitRepoName
+                StudioTemplateHttpsFrom1:                 !Ref HttpsFrom1
+                StudioTemplateHttpsFrom2:                 !Ref HttpsFrom2                
+                StudioTemplateHttpsFrom3:                 !Ref HttpsFrom3
+                StudioTemplateHttpsFrom4:                 !Ref HttpsFrom4
+                VPCid:                                    !Ref VPCid
+                InfraVpcCIDR:                             !Ref InfraVpcCIDR
+                PublicSubnet1Id:                          !Ref PublicSubnet1Id
+                ApachePort:                               !Ref ApachePort
+                GhosSslCert:                              !Ref GhosSslCert
+                KeyName:                                  !Ref KeyName
+
+
+
+Outputs:
+
+    #TemplateStudio
+    LBSecurityGroupJenkinsStudioTemplateId:
+        Value: !GetAtt TemplateStudio.Outputs.LBSecurityGroupJenkinsStudioTemplate
+
+    EC2SecurityGroupJenkinsStudioTemplateId:
+        Value: !GetAtt TemplateStudio.Outputs.EC2SecurityGroupJenkinsStudioTemplate
+
+    JenkinsStudioTemplateEC2InstanceId: 
+        Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateEC2Instance
+
+    JenkinsStudioTemplateBalanserId: 
+        Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateBalanser
+
+    JenkinsStudioTemplateBalanserDnsName:
+        Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateBalanser.DNSName
+
+    StudioTemplateGitRepoName:
+        Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoName
+
+    StudioTemplateGitRepoId:
+        Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoId
+
+    StudioTemplateGitRepoArn:
+        Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoArn
+
+    StudioTemplateGitRepoUrlHttp:
+        Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoUrlHttp
+
+    StudioTemplateGitRepoUrlSsh:
+        Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoUrlSsh
+
+
+

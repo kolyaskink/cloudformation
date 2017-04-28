@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    The general template for TemplateStudio Environment. 
+
+Mappings:
+    AWSRegionToEC2DefaultAMI:
+        us-west-2:
+            AMI: ami-bd7beddd
+    AWSRegionToEC2FastlaneAMI:    
+        us-west-2:
+            AMI: ami-e0bc2980
+    AWSRegionToEC2StudioJenkinsAMI:    
+        us-west-2:
+            AMI: ami-5cbf2f3c   
+
+Resources:
+
+    TemplateStudioJenkins:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/TemplateStudio/Jenkins.yaml
+            Parameters:
+                HttpsFrom1:                 !Ref HttpsFrom1
+                HttpsFrom2:                 !Ref HttpsFrom2                
+                HttpsFrom3:                 !Ref HttpsFrom3
+                HttpsFrom4:                 !Ref HttpsFrom4
+                VPCid:                      !Ref VPCid
+                InfraVpcCIDR:               !Ref InfraVpcCIDR
+                PublicSubnet1Id:            !Ref PublicSubnet1Id
+                ApachePort:                 !Ref ApachePort
+                GhosSslCert:                !Ref GhosSslCert
+                KeyName:                    !Ref KeyName
+
+    TemplateStudioCodeCommit:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/TemplateStudio/CodeCommit.yaml
+            Parameters:
+                StudioTemplateGitRepoName:      !Ref StudioTemplateGitRepoName
+
+
+Parameters:
+
+    #Shared parameters
+    CFS3Name:
+        Description: S3 bucket name with CF components
+        Type: String
+
+    #Jenkins parameters
+    HttpsFrom1:
+        Type: String
+    
+    HttpsFrom2:
+        Type: String
+
+    HttpsFrom3:
+        Type: String
+
+    HttpsFrom4:
+        Type: String
+
+    VPCid:
+        Type: String
+
+    InfraVpcCIDR:
+        Type: String
+
+    PublicSubnet1Id:
+        Type: String
+
+    ApachePort:
+        Type: String
+
+    GhosSslCert:
+        Type: String
+
+    KeyName:
+        ConstraintDescription: must be the name of an existing EC2 KeyPair.
+        MinLength: '1'
+        Type: AWS::EC2::KeyPair::KeyName
+
+    #CodeCommit parameters
+    StudioTemplateGitRepoName:
+        Type: String
+
+Outputs:
+
+    #Jenkins outputs
+    LBSecurityGroupJenkinsStudioTemplateId:
+        Value: !GetAtt TemplateStudioJenkins.Outputs.LBSecurityGroupJenkinsStudioTemplate
+
+    EC2SecurityGroupJenkinsStudioTemplateId:
+        Value: !GetAtt TemplateStudioJenkins.Outputs.EC2SecurityGroupJenkinsStudioTemplate
+
+    JenkinsStudioTemplateEC2InstanceId: 
+        Value: !GetAtt TemplateStudioJenkins.Outputs.JenkinsStudioTemplateEC2Instance
+
+    JenkinsStudioTemplateBalanserId: 
+        Value: !GetAtt TemplateStudioJenkins.Outputs.JenkinsStudioTemplateBalanser
+
+    JenkinsStudioTemplateBalanserDnsName:
+        Value: !GetAtt TemplateStudioJenkins.Outputs.JenkinsStudioTemplateBalanser.DNSName
+
+
+    #CodeCommit outputs
+    StudioTemplateGitRepoName:
+        Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoName
+
+    StudioTemplateGitRepoId:
+        Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoId
+
+    StudioTemplateGitRepoArn:
+        Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoArn
+
+    StudioTemplateGitRepoUrlHttp:
+        Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoUrlHttp
+
+    StudioTemplateGitRepoUrlSsh:
+        Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoUrlSsh

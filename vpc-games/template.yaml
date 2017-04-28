@@ -49,15 +49,15 @@ Resources:
                 AccountId:                  !Ref AccountId
 
 
-    JenkinsStudioTemplate:
+    Studios:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/JenkinsStudioTemplate.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Studios.yaml
             Parameters:
-                    HttpsFrom1:             !Ref HttpsFrom1
-                    HttpsFrom2:             !Ref HttpsFrom2
-                    HttpsFrom3:             !Ref HttpsFrom3
-                    HttpsFrom4:             !Ref HttpsFrom4
+                    StudioTemplateHttpsFrom1:              !Ref StudioTemplateHttpsFrom1
+                    StudioTemplateHttpsFrom2:              !Ref StudioTemplateHttpsFrom2
+                    StudioTemplateHttpsFrom3:              !Ref StudioTemplateHttpsFrom3
+                    StudioTemplateHttpsFrom4:              !Ref StudioTemplateHttpsFrom4
                     VPCid:                  !GetAtt Vpc.Outputs.VpcId
                     InfraVpcCIDR:           !Ref InfraVpcCIDR
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
@@ -158,7 +158,7 @@ Parameters:
         Description: temp
         Type: String
 
-    HttpsFrom1:
+    StudioTemplateHttpsFrom1:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -167,7 +167,7 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 212.67.170.162/32
 
-    HttpsFrom2:
+    StudioTemplateHttpsFrom2:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -176,7 +176,7 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.1/32
 
-    HttpsFrom3:
+    StudioTemplateHttpsFrom3:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -185,7 +185,7 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.2/32
 
-    HttpsFrom4:
+    StudioTemplateHttpsFrom4:
         Description: IP address to grant access to
         Type: String
         MinLength: 9
@@ -251,19 +251,19 @@ Outputs:
         Value: !GetAtt Vpc.Outputs.VPCPeeringConnectionId
 
     LBSecurityGroupJenkinsId:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.LBSecurityGroupJenkinsId
+        Value: !GetAtt Studios.Outputs.LBSecurityGroupJenkinsId
 
     EC2SecurityGroupJenkinsId:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.EC2SecurityGroupJenkinsId
+        Value: !GetAtt Studios.Outputs.EC2SecurityGroupJenkinsId
 
     JenkinsStudioTemplateEC2InstanceId: 
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.JenkinsStudioTemplateEC2InstanceId
+        Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateEC2InstanceId
 
     JenkinsStudioTemplateBalanserId: 
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.JenkinsStudioTemplateBalanserId
+        Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserId
 
     JenkinsStudioTemplateBalanserDnsName:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.JenkinsStudioTemplateBalanserDnsName
+        Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserDnsName
 
     FastlaneEC2Instanced: 
         Value: !GetAtt Fastlane.Outputs.FastlaneEC2Instanced
@@ -278,16 +278,16 @@ Outputs:
         Value: !GetAtt Fastlane.Outputs.S3BucketAssetsId
 
     StudioTemplateGitRepoName:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoName
+        Value: !GetAtt Studios.Outputs.StudioTemplateGitRepoName
 
     StudioTemplateGitRepoId:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoId
+        Value: !GetAtt Studios.Outputs.StudioTemplateGitRepoId
 
     StudioTemplateGitRepoArn:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoArn
+        Value: !GetAtt Studios.Outputs.StudioTemplateGitRepoArn
 
     StudioTemplateGitRepoUrlHttp:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoUrlHttp
+        Value: !GetAtt Studios.Outputs.StudioTemplateGitRepoUrlHttp
 
     StudioTemplateGitRepoUrlSsh:
-        Value: !GetAtt JenkinsStudioTemplate.Outputs.StudioTemplateGitRepoUrlSsh
+        Value: !GetAtt Studios.Outputs.StudioTemplateGitRepoUrlSsh

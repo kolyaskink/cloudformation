@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
 
-  Jenkins Master, Jenkins Slaves and  Git Repo for a test Studio "Bullet-tooth Tony"
+  Jenkins Master, Jenkins Slaves for a test Studio "Bullet-tooth Tony"
 
 Mappings:
     AWSRegionToEC2DefaultAMI:
@@ -48,11 +48,6 @@ Parameters:
         ConstraintDescription: must be the name of an existing EC2 KeyPair.
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
-
-    StudioTemplateGitRepoName:
-        Type: String
-
-
 
 Resources:
 
@@ -186,18 +181,12 @@ Resources:
                 Resource:
                 - '*'
 
-    StudioTemplateGitRepo:
-        Type: "AWS::CodeCommit::Repository"
-        Properties: 
-          RepositoryName: !Ref StudioTemplateGitRepoName
-
-
 Outputs:
 
-    LBSecurityGroupJenkinsId:
+    LBSecurityGroupJenkinsStudioTemplateId:
         Value: !Ref LBSecurityGroupJenkinsStudioTemplate
 
-    EC2SecurityGroupJenkinsId:
+    EC2SecurityGroupJenkinsStudioTemplateId:
         Value: !Ref EC2SecurityGroupJenkinsStudioTemplate
 
     JenkinsStudioTemplateEC2InstanceId: 
@@ -209,18 +198,4 @@ Outputs:
     JenkinsStudioTemplateBalanserDnsName:
         Value: !GetAtt JenkinsStudioTemplateBalanser.DNSName
 
-    StudioTemplateGitRepoName:
-        Value: !Ref StudioTemplateGitRepoName
-
-    StudioTemplateGitRepoId:
-        Value: !Ref StudioTemplateGitRepo
-
-    StudioTemplateGitRepoArn:
-        Value: !GetAtt StudioTemplateGitRepo.Arn
-
-    StudioTemplateGitRepoUrlHttp:
-        Value: !GetAtt StudioTemplateGitRepo.CloneUrlHttp
-
-    StudioTemplateGitRepoUrlSsh:
-        Value: !GetAtt StudioTemplateGitRepo.CloneUrlSsh
 
