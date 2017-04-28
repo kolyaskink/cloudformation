@@ -13,16 +13,16 @@ Parameters:
         Type: String
 
     #TemplateStudio
-    HttpsFrom1:
+    StudioTemplateHttpsFrom1:
         Type: String
     
-    HttpsFrom2:
+    StudioTemplateHttpsFrom2:
         Type: String
 
-    HttpsFrom3:
+    StudioTemplateHttpsFrom3:
         Type: String
 
-    HttpsFrom4:
+    StudioTemplateHttpsFrom4:
         Type: String
 
     VPCid:
@@ -56,10 +56,10 @@ Resources:
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studiosTemplateStudio.yaml
             Parameters:
                 StudioTemplateGitRepoName:                !Ref StudioTemplateGitRepoName
-                StudioTemplateHttpsFrom1:                 !Ref HttpsFrom1
-                StudioTemplateHttpsFrom2:                 !Ref HttpsFrom2                
-                StudioTemplateHttpsFrom3:                 !Ref HttpsFrom3
-                StudioTemplateHttpsFrom4:                 !Ref HttpsFrom4
+                HttpsFrom1:                               !Ref StudioTemplateHttpsFrom1
+                HttpsFrom2:                               !Ref StudioTemplateHttpsFrom2                
+                HttpsFrom3:                               !Ref StudioTemplateHttpsFrom3
+                HttpsFrom4:                               !Ref StudioTemplateHttpsFrom4
                 VPCid:                                    !Ref VPCid
                 InfraVpcCIDR:                             !Ref InfraVpcCIDR
                 PublicSubnet1Id:                          !Ref PublicSubnet1Id
