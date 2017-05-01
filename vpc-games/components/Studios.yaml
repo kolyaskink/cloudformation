@@ -66,7 +66,7 @@ Resources:
                 ApachePort:                               !Ref ApachePort
                 GhosSslCert:                              !Ref GhosSslCert
                 KeyName:                                  !Ref KeyName
-
+                CFS3Name:                                 !Ref CFS3Name
 
 
 Outputs:
