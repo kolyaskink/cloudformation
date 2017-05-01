@@ -79,7 +79,7 @@ Outputs:
         Value: !GetAtt TemplateStudio.Outputs.EC2SecurityGroupJenkinsStudioTemplate
 
     JenkinsStudioTemplateEC2InstanceId: 
-        Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateEC2Instance
+        Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateEC2InstanceId
 
     JenkinsStudioTemplateBalanserId: 
         Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateBalanser
