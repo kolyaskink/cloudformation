@@ -288,3 +288,6 @@ Outputs:
 
     StudioTemplateGitRepoUrlSsh:
         Value: !GetAtt Studios.Outputs.StudioTemplateGitRepoUrlSsh
+
+    LBSecurityGroupJenkinsStudioTemplateId:
+        Value: !GetAtt Studios.Outputs.LBSecurityGroupJenkinsStudioTemplateId

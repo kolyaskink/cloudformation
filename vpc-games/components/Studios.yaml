@@ -73,7 +73,7 @@ Outputs:
 
     #TemplateStudio
     LBSecurityGroupJenkinsStudioTemplateId:
-        Value: !GetAtt TemplateStudio.Outputs.LBSecurityGroupJenkinsStudioTemplate
+        Value: !GetAtt TemplateStudio.Outputs.LBSecurityGroupJenkinsStudioTemplateId
 
     EC2SecurityGroupJenkinsStudioTemplateId:
         Value: !GetAtt TemplateStudio.Outputs.EC2SecurityGroupJenkinsStudioTemplate
