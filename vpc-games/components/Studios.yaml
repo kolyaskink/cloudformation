@@ -53,7 +53,7 @@ Resources:
     TemplateStudio:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studiosTemplateStudio.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/TemplateStudio.yaml
             Parameters:
                 StudioTemplateGitRepoName:                !Ref StudioTemplateGitRepoName
                 HttpsFrom1:                               !Ref StudioTemplateHttpsFrom1
