@@ -84,9 +84,6 @@ Outputs:
     JenkinsStudioTemplateBalanserId: 
         Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateBalanser
 
-    JenkinsStudioTemplateBalanserDnsName:
-        Value: !GetAtt TemplateStudio.Outputs.JenkinsStudioTemplateBalanserDNSName
-
     StudioTemplateGitRepoName:
         Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoName
 

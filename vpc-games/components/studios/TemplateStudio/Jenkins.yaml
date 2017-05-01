@@ -195,7 +195,6 @@ Outputs:
     JenkinsStudioTemplateBalanserId: 
         Value: !Ref JenkinsStudioTemplateBalanser
 
-    JenkinsStudioTemplateBalanserDnsName:
-        Value: !GetAtt JenkinsStudioTemplateBalanser.DnsName
+
 
 

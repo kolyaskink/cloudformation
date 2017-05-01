@@ -262,9 +262,6 @@ Outputs:
     JenkinsStudioTemplateBalanserId: 
         Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserId
 
-    JenkinsStudioTemplateBalanserDnsName:
-        Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserDnsName
-
     FastlaneEC2Instanced: 
         Value: !GetAtt Fastlane.Outputs.FastlaneEC2Instanced
 
