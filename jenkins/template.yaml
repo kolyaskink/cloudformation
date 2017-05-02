@@ -229,6 +229,16 @@ Resources:
                 Resource:
                 - '*'
 
+          - PolicyName: 'AllowAll-CodeCommit-Prod'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'codecommit:*'
+                Resource:
+                - '*'
+
           - PolicyName: 'AllowAssumeRole-Route53-Ops'
             PolicyDocument:
               Version: '2012-10-17'
