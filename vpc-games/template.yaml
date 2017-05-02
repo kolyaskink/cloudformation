@@ -250,15 +250,6 @@ Outputs:
         Description: The ID for VPC peering to InfraVpc
         Value: !GetAtt Vpc.Outputs.VPCPeeringConnectionId
 
-    LBSecurityGroupJenkinsId:
-        Value: !GetAtt Studios.Outputs.LBSecurityGroupJenkinsId
-
-    EC2SecurityGroupJenkinsId:
-        Value: !GetAtt Studios.Outputs.EC2SecurityGroupJenkinsId
-
-    JenkinsStudioTemplateEC2InstanceId: 
-        Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateEC2InstanceId
-
     JenkinsStudioTemplateBalanserId: 
         Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserId
 
@@ -291,3 +282,6 @@ Outputs:
 
     LBSecurityGroupJenkinsStudioTemplateId:
         Value: !GetAtt Studios.Outputs.LBSecurityGroupJenkinsStudioTemplateId
+
+    EC2SecurityGroupJenkinsStudioTemplateId:
+        Value: !GetAtt Studios.Outputs.EC2SecurityGroupJenkinsStudioTemplateId

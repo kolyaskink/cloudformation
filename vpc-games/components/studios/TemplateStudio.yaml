@@ -92,13 +92,13 @@ Outputs:
         Value: !GetAtt TemplateStudioJenkins.Outputs.LBSecurityGroupJenkinsStudioTemplateId
 
     EC2SecurityGroupJenkinsStudioTemplateId:
-        Value: !GetAtt TemplateStudioJenkins.Outputs.EC2SecurityGroupJenkinsStudioTemplate
+        Value: !GetAtt TemplateStudioJenkins.Outputs.EC2SecurityGroupJenkinsStudioTemplateId
 
     JenkinsStudioTemplateEC2InstanceId: 
         Value: !GetAtt TemplateStudioJenkins.Outputs.JenkinsStudioTemplateEC2InstanceId
 
     JenkinsStudioTemplateBalanserId: 
-        Value: !GetAtt TemplateStudioJenkins.Outputs.JenkinsStudioTemplateBalanser
+        Value: !GetAtt TemplateStudioJenkins.Outputs.JenkinsStudioTemplateBalanserId
 
     #CodeCommit outputs
     StudioTemplateGitRepoName:
