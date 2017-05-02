@@ -41,7 +41,7 @@ Parameters:
             - t2.medium 
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
 
-    PrivateSubnet1Id:
+    PublicSubnet1Id:
         Type: String
         Default: 10.51.2.0/24
 
@@ -95,7 +95,7 @@ Resources:
               IamInstanceProfile: !Ref InstanceProfileFastlane
               InstanceType: !Ref FastlaneHostInstanceType
               SecurityGroupIds: [!Ref EC2SecurityGroupFastlane]
-              SubnetId: !Ref PrivateSubnet1Id
+              SubnetId: !Ref PublicSubnet1Id
               Tags:
                 - Key: Name
                   Value: GamesFastlane

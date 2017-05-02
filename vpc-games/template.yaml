@@ -40,7 +40,7 @@ Resources:
                 VPCid:                      !GetAtt Vpc.Outputs.VpcId
                 KeyName:                    !Ref KeyName
                 FastlaneHostInstanceType:   !Ref FastlaneHostInstanceType
-                PrivateSubnet1Id:           !GetAtt Vpc.Outputs.PrivateSubnet1Id
+                PublicSubnet1Id:           !GetAtt Vpc.Outputs.PublicSubnet1Id
                 S3BucketAssetsName:         !Ref S3BucketAssetsName
                 DaysToIAAssets:             !Ref DaysToIAAssets
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
