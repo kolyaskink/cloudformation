@@ -140,7 +140,7 @@ Resources:
                 Action:
                 - 'ssm:UpdateInstanceInformation'
                 Resource:
-                - !Sub 'arn:aws:ec2:us-west-2:${AccountId}:instance/${FastlaneEC2Instance}'
+                - !Sub 'arn:aws:ec2:us-west-2:${AccountId}:instance/i-002268b7f1479c019'
 
           - PolicyName: 'S3BucketAssetsDownloadOnly'
             PolicyDocument:
@@ -240,7 +240,7 @@ Resources:
 
 Outputs:
 
-    FastlaneEC2Instanced: 
+    FastlaneEC2InstanceId: 
         Value: !Ref FastlaneEC2Instance
 
     AppUserName:

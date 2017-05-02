@@ -253,8 +253,8 @@ Outputs:
     JenkinsStudioTemplateBalanserId: 
         Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserId
 
-    FastlaneEC2Instanced: 
-        Value: !GetAtt Fastlane.Outputs.FastlaneEC2Instanced
+    FastlaneEC2InstanceId: 
+        Value: !GetAtt Fastlane.Outputs.FastlaneEC2InstanceId
 
     FastlaneAppUserName:
         Value: !GetAtt Fastlane.Outputs.AppUserName
