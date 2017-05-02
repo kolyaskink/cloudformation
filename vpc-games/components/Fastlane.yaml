@@ -138,9 +138,9 @@ Resources:
               Statement:
               - Effect: Allow
                 Action:
-                - !Sub 'ssm:UpdateInstanceInformation'
+                - 'ssm:UpdateInstanceInformation'
                 Resource:
-                - 'arn:aws:ec2:us-west-2:${AccountId}:instance/${FastlaneEC2Instance}'
+                - !Sub 'arn:aws:ec2:us-west-2:${AccountId}:instance/${FastlaneEC2Instance}'
 
           - PolicyName: 'S3BucketAssetsDownloadOnly'
             PolicyDocument:
