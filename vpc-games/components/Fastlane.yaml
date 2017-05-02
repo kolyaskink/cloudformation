@@ -142,8 +142,8 @@ Resources:
                 - "ec2messages:*"
                 - "ec2:DescribeInstanceStatus"
                 Resource:
-              #  - '*'
-                - arn:aws:ec2:us-west-2:${AccountId}:instance/i-002268b7f1479c019
+                  #  - '*'
+                - !Sub "arn:aws:ec2:us-west-2:${AccountId}:instance/i-002268b7f1479c019"
 
           - PolicyName: 'S3BucketAssetsDownloadOnly'
             PolicyDocument:
