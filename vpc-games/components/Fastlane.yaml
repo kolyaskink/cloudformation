@@ -132,6 +132,16 @@ Resources:
                 Resource:
                 - 'arn:aws:logs:*:*:*'
 
+          - PolicyName: 'SsmUpdateInstanceInfo'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - !Sub 'ssm:UpdateInstanceInformation'
+                Resource:
+                - 'arn:aws:ec2:us-west-2:${AccountId}:instance/${FastlaneEC2Instance}'
+
           - PolicyName: 'S3BucketAssetsDownloadOnly'
             PolicyDocument:
               Version: '2012-10-17'
