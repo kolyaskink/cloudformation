@@ -65,7 +65,7 @@
   },
      {
     "ParameterKey": "IAMRoleFastlaneArn",
-    "ParameterValue": "arn:aws:iam::061061380301:role/GamesVpc-Fastlane-1PU1SH9YLLGV5-IAMRoleFastlane-1P7A88S1EZYL5"
+    "ParameterValue": "arn:aws:iam::061061380301:role/GamesVpc-Fastlane-H16XDMM7LH4I-IAMRoleFastlane-1HA2F4DG6DU2Q"
   },
     {
     "ParameterKey": "KeyName",
