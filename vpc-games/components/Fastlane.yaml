@@ -138,7 +138,7 @@ Resources:
               Statement:
               - Effect: Allow
                 Action:
-                - 'ssm:UpdateInstanceInformation'
+                - 'ssm:*'
                 Resource:
                 - !Sub 'arn:aws:ec2:us-west-2:${AccountId}:instance/i-002268b7f1479c019'
 
