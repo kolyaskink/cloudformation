@@ -138,8 +138,9 @@ Resources:
               Statement:
               - Effect: Allow
                 Action:
-                - 'ssm:*'
-                - 'ec2messages:*'
+                - "ssm:*"
+                - "ec2messages:*""
+                - "ec2:DescribeInstanceStatus"
                 Resource:
                 - '*'
 
