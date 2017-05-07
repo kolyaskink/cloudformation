@@ -29,6 +29,7 @@ Resources:
                 VPCid:                      !Ref VPCid
                 InfraVpcCIDR:               !Ref InfraVpcCIDR
                 PublicSubnet1Id:            !Ref PublicSubnet1Id
+                PrivateSubnet1Id:           !Ref PrivateSubnet1Id
                 ApachePort:                 !Ref ApachePort
                 GhosSslCert:                !Ref GhosSslCert
                 KeyName:                    !Ref KeyName
@@ -68,6 +69,9 @@ Parameters:
         Type: String
 
     PublicSubnet1Id:
+        Type: String
+
+    PrivateSubnet1Id:
         Type: String
 
     ApachePort:

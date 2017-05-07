@@ -41,6 +41,9 @@ Parameters:
     PublicSubnet1Id:
         Type: String
 
+    PrivateSubnet1Id:
+        Type: String
+        
     ApachePort:
         Type: String
 

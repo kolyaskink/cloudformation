@@ -61,6 +61,7 @@ Resources:
                     VPCid:                  !GetAtt Vpc.Outputs.VpcId
                     InfraVpcCIDR:           !Ref InfraVpcCIDR
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
+                    PrivateSubnet1Id:        !GetAtt Vpc.Outputs.PrivateSubnet1Id
                     ApachePort:             !Ref ApachePort
                     GhosSslCert:            !Ref GhosSslCert
                     KeyName:                !Ref KeyName
