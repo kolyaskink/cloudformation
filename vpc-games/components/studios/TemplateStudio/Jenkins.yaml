@@ -14,6 +14,9 @@ Mappings:
     AWSRegionToEC2StudioJenkinsAMI:    
         us-west-2:
             AMI: ami-5cbf2f3c   
+    AWSRegionToEC2StudioJenkinsWindowsSlaveAMI:    
+        us-west-2:
+            AMI: ami-2ad04f4a  
 
 Parameters:
 
@@ -51,6 +54,7 @@ Parameters:
 
 Resources:
 
+    #Master
     LBSecurityGroupJenkinsStudioTemplate:
         Type: AWS::EC2::SecurityGroup
         Properties:
@@ -87,6 +91,10 @@ Resources:
                 FromPort: 80
                 ToPort: 80
                 SourceSecurityGroupId: !Ref LBSecurityGroupJenkinsStudioTemplate
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
               - IpProtocol: tcp
                 FromPort: 22
                 ToPort: 22
@@ -180,6 +188,83 @@ Resources:
                 - 'ec2:DescribeTags'
                 Resource:
                 - '*'
+
+    #Slaves
+    IAMRoleJenkinsStudioTemplateWindowsSlave:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+
+          - PolicyName: 'logs'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
+
+          - PolicyName: 'dnsupdate'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'route53:GetHostedZone'
+                - 'route53:ListHostedZones'
+                - 'route53:ListResourceRecordSets'
+                - 'route53:ChangeResourceRecordSets'
+                - 'route53:GetChange'
+                - 'ec2:DescribeTags'
+                Resource:
+                - '*'
+
+    InstanceProfileJenkinsStudioTemplateWindowsSlave:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRoleJenkinsStudioTemplateWindowsSlave
+
+    EC2SecurityGroupJenkinsStudioTemplateWindowsSlave:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: JenkinsStudioTemplate for WindowsSlave SG
+            VpcId: !Ref VPCid
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 22
+                ToPort: 22
+                CidrIp: !Ref InfraVpcCIDR
+            Tags:
+                - Key: Name
+                  Value: games-jenkins-template-windows-slave-ec2     
+
+    JenkinsStudioTemplateWindowsSlaveEC2Instance1: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsWindowsSlaveAMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplateWindowsSlave
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave]
+              SubnetId: !Ref PrivateSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: GamesJenkinsStudioTemplateWindowsSlave1
+                - Key: DNS
+                  Value: GamesJenkinsStudioTemplateWindowsSlave1
 
 Outputs:
 
