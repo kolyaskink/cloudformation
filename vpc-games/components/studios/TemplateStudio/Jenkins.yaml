@@ -103,7 +103,17 @@ Resources:
                 ToPort: 22
                 CidrIp: !Ref InfraVpcCIDR
               - IpProtocol: icmp
+                FromPort: -1
+                ToPort: -1
                 CidrIp: "10.150.3.0/24"
+              - IpProtocol: tcp
+                FromPort: 0 
+                ToPort: 65535 
+                CidrIp: "10.150.3.32/32"
+              - IpProtocol: udp
+                FromPort: 0 
+                ToPort: 65535 
+                CidrIp: "10.150.3.32/32"
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-ec2     
@@ -257,14 +267,16 @@ Resources:
                 ToPort: 3389 
                 CidrIp: "212.67.170.162/32"
               - IpProtocol: tcp
-                FromPort: 1 
-                ToPort: 49151 
+                FromPort: 0 
+                ToPort: 65535 
                 CidrIp: "10.150.3.19/32"
               - IpProtocol: udp
-                FromPort: 1 
-                ToPort: 49151 
+                FromPort: 0 
+                ToPort: 65535 
                 CidrIp: "10.150.3.19/32"
               - IpProtocol: icmp
+                FromPort: -1
+                ToPort: -1
                 CidrIp: "10.150.3.0/24"         
             Tags:
                 - Key: Name
