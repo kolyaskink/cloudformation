@@ -254,6 +254,10 @@ Resources:
                 FromPort: 3389 
                 ToPort: 3389 
                 CidrIp: "212.67.170.162/32"
+              - IpProtocol: tcp
+                FromPort: 135 
+                ToPort: 135 
+                CidrIp: "10.150.3.19/32"
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-windows-slave-ec2     
