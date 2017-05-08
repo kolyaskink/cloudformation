@@ -17,6 +17,10 @@ Mappings:
     AWSRegionToEC2StudioJenkinsWindowsSlaveAMI:    
         us-west-2:
             AMI: ami-2ad04f4a  
+    AWSRegionToEC2StudioJenkinsWindowsSlaveAMI2:    
+        us-west-2:
+            AMI: ami-444dd724
+
 
 Parameters:
 
@@ -296,6 +300,21 @@ Resources:
                   Value: GamesJenkinsStudioTemplateWindowsSlave1
                 - Key: DNS
                   Value: GamesJenkinsStudioTemplateWindowsSlave1
+
+    JenkinsStudioTemplateWindowsSlaveEC2Instance2: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsWindowsSlaveAMI2, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplateWindowsSlave
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: GamesJenkinsStudioTemplateWindowsSlave2
+                - Key: DNS
+                  Value: GamesJenkinsStudioTemplateWindowsSlave2
 
 Outputs:
 
