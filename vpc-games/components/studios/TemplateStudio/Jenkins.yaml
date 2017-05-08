@@ -102,6 +102,8 @@ Resources:
                 FromPort: 22
                 ToPort: 22
                 CidrIp: !Ref InfraVpcCIDR
+              - IpProtocol: icmp
+                CidrIp: "10.150.3.0/24"
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-ec2     
@@ -262,6 +264,8 @@ Resources:
                 FromPort: 1 
                 ToPort: 49151 
                 CidrIp: "10.150.3.19/32"
+              - IpProtocol: icmp
+                CidrIp: "10.150.3.0/24"         
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-windows-slave-ec2     
