@@ -114,24 +114,14 @@ Resources:
                 - Key: Name
                   Value: games-jenkins-template-ec2 
 
-    EC2SecurityGroupJenkinsStudioTemplateIngress1:
+    EC2SecurityGroupJenkinsStudioTemplateIngress:
         Type: AWS::EC2::SecurityGroupIngress     
         Properties: 
                 GroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate      
                 IpProtocol: tcp
                 FromPort: 0 
                 ToPort: 65535 
-                CidrIp: "10.150.3.32/32"
- 
- 
-    EC2SecurityGroupJenkinsStudioTemplateIngress2:
-        Type: AWS::EC2::SecurityGroupIngress     
-        Properties: 
-                GroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate      
-                IpProtocol: tcp
-                FromPort: 0 
-                ToPort: 65535 
-                CidrIp: "10.150.3.41/32"
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
 
     JenkinsStudioTemplateEC2Instance: 
             Type: "AWS::EC2::Instance"
@@ -296,7 +286,7 @@ Resources:
               IpProtocol: tcp
               FromPort: 0 
               ToPort: 65535 
-              CidrIp: "10.150.3.19/32"
+              SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate
        
     
     JenkinsStudioTemplateWindowsSlaveEC2Instance1: 
