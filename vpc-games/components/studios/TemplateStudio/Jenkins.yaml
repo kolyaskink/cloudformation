@@ -109,23 +109,15 @@ Resources:
               - IpProtocol: icmp
                 FromPort: -1
                 ToPort: -1
-                CidrIp: "10.150.3.0/24"
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
               - IpProtocol: tcp
                 FromPort: 0 
                 ToPort: 65535 
-                CidrIp: "10.150.3.32/32"
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
               - IpProtocol: udp
                 FromPort: 0 
                 ToPort: 65535 
-                CidrIp: "10.150.3.32/32"
-              - IpProtocol: tcp
-                FromPort: 0 
-                ToPort: 65535 
-                CidrIp: "10.150.3.41/32"
-              - IpProtocol: udp
-                FromPort: 0 
-                ToPort: 65535 
-                CidrIp: "10.150.3.41/32"
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-ec2     
@@ -281,15 +273,15 @@ Resources:
               - IpProtocol: tcp
                 FromPort: 0 
                 ToPort: 65535 
-                CidrIp: "10.150.3.19/32"
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate
               - IpProtocol: udp
                 FromPort: 0 
                 ToPort: 65535 
-                CidrIp: "10.150.3.19/32"
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate
               - IpProtocol: icmp
                 FromPort: -1
                 ToPort: -1
-                CidrIp: "10.150.3.0/24"         
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate          
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-windows-slave-ec2     
