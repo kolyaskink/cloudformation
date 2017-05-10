@@ -121,4 +121,4 @@ Outputs:
         Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoUrlSsh
 
     DNSNameJenkinsStudioTemplate:
-        Value: !GetAtt Jenkins.Outputs.DNSNameJenkinsStudioTemplate 
+        Value: !GetAtt TemplateStudioJenkins.Outputs.DNSNameJenkinsStudioTemplate 
