@@ -333,6 +333,13 @@ Outputs:
     JenkinsStudioTemplateBalanserId: 
         Value: !Ref JenkinsStudioTemplateBalanser
 
+    DNSName-JenkinsStudioTemplate:
+        Value: !GetAtt JenkinsStudioTemplateBalanser.DNSName
+
+
+
+
+
 
 
 

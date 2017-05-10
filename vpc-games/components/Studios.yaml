@@ -103,5 +103,8 @@ Outputs:
     StudioTemplateGitRepoUrlSsh:
         Value: !GetAtt TemplateStudio.Outputs.StudioTemplateGitRepoUrlSsh
 
+    DNSName-JenkinsStudioTemplate:
+        Value: !GetAtt TemplateStudio.Outputs.DNSName-JenkinsStudioTemplate  
+
 
 
