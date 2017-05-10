@@ -287,5 +287,5 @@ Outputs:
     EC2SecurityGroupJenkinsStudioTemplateId:
         Value: !GetAtt Studios.Outputs.EC2SecurityGroupJenkinsStudioTemplateId
 
-    DNSName-JenkinsStudioTemplate:
-        Value: !GetAtt Studios.Outputs.DNSName-JenkinsStudioTemplate  
+    DNSNameJenkinsStudioTemplate:
+        Value: !GetAtt Studios.Outputs.DNSNameJenkinsStudioTemplate  
