@@ -11,7 +11,7 @@ GetRecordValue=$(aws route53 list-resource-record-sets --hosted-zone-id=Z34FSVFA
 
 if [[ "$GetRecordValue" == "$RecordValue" ]]; then echo "Record is already there. Nothing to do" && exit 0
         else
-        		cp $WORKSPACE/$GITFOLDER/$ChangeSet /tmp/$ChangeSet.json
+        		cp $WORKSPACE/$GITFOLDER/$ChangeSet /tmp/$ChangeSet
                 sed -i "s/ChangeName/$RecordName/g" /tmp/$ChangeSet && \
                 sed -i "s/ChangeValue/$RecordValue/g" /tmp/$ChangeSet && \
                 aws route53 change-resource-record-sets --hosted-zone-id=Z34FSVFASXMJN9 \
