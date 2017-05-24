@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+# Version 1.2
+
 Zone="gamehouseos.com."
 ZoneId="Z2OLJMS5MY8APL"
 ChangeSet="change-resource-record-sets.json"
