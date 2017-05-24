@@ -1,6 +1,7 @@
 import boto3
 import collections
 import datetime
+import json
 
 region = 'us-west-2'    
 
@@ -59,14 +60,26 @@ def lambda_handler(event, context):
             
             if (snap):
                 print "\t\tSnapshot %s created in %s of [%s]" % ( snap['SnapshotId'], region, description )
-            to_tag[retention_days].append(snap['SnapshotId'])
-            print "\t\tRetaining snapshot %s of volume %s from instance %s (%s) for %d days" % (
-                snap['SnapshotId'],
-                vol_id,
-                instance['InstanceId'],
-                instance_name,
-                retention_days,
-            )
+                to_tag[retention_days].append(snap['SnapshotId'])
+                print "\t\tRetaining snapshot %s of volume %s from instance %s (%s) for %d days" % (
+                    snap['SnapshotId'],
+                    vol_id,
+                    instance['InstanceId'],
+                    instance_name,
+                    retention_days,
+                )
+                MessageText = "Snapshot created for volume %s from EC2 %s (%s) for %d days" % (
+                    vol_id,
+                    instance_name,
+                    instance['InstanceId'],
+                    retention_days,
+                )
+                client = boto3.client('sns')
+                response = client.publish (
+                    TopicArn='arn:aws:sns:us-west-2:777556643132:LambdaEBSSnapshots',
+                    Message= MessageText
+                )
+                
 
     for retention_days in to_tag.keys():
         delete_date = datetime.date.today() + datetime.timedelta(days=retention_days)
@@ -79,3 +92,6 @@ def lambda_handler(event, context):
                 { 'Key': 'Type', 'Value': 'Automated' },
             ]
         )
+        
+   
+   

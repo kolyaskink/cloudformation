@@ -37,3 +37,9 @@ def lambda_handler(event, context):
         else:
             print "Deleting snapshot %s" % snap['SnapshotId']
             ec.delete_snapshot(SnapshotId=snap['SnapshotId'])
+            MessageText = "Snapshot %s has been deleted" % snap['SnapshotId']
+            client = boto3.client('sns')
+            response = client.publish (
+                    TopicArn='arn:aws:sns:us-west-2:777556643132:LambdaEBSSnapshots',
+                    Message= MessageText
+            )
