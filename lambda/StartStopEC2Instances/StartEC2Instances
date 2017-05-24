@@ -3,6 +3,7 @@ import boto3
 
 region = 'us-west-2'
 
+# Pls add name of EC2 here
 # GamesJenkinsStudioTemplateWindowsSlave2, GamesJenkinsStudioTemplateWindowsSlave1
 # GamesJenkinsStudioTemplate, GamesFastlane
 instances = ['i-06d6e9f4f70752caf', 'i-01d4fbbceb47dd68b', 'i-047ce1ebf30318dba', 'i-002268b7f1479c019']
