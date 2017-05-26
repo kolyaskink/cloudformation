@@ -58,6 +58,16 @@ Parameters:
         Type: String
         Default: 10.51.2.0/24
 
+    VpnAsEhv:
+        Description: IpSec As for Lux
+        Type: String
+        Default: none
+
+    VpnIpEhv:
+        Description: IP address of Lux IpSec endpoint
+        Type: String
+        Default: none
+
 Resources:
 
     VPC:
@@ -256,6 +266,58 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             DestinationCidrBlock: !Ref InfraVpcCIDR
             VpcPeeringConnectionId: !Ref VPCPeeringConnection
+
+    # Ipsec
+    EhvVPNGW:    
+        Type: "AWS::EC2::VPNGateway"
+        Properties: 
+          Type: ipsec.1
+          Tags:
+              - Key: Name
+                Value: EhvVPNGW            
+              - Key: Destination
+                Value: Ehv
+
+    EhvVPNCG:    
+        Type: "AWS::EC2::CustomerGateway"
+        Properties:
+          BgpAsn: !Ref VpnAsEhv
+          IpAddress: !Ref VpnIpEhv
+          Type: ipsec.1
+          Tags: 
+              - Key: Name
+                Value: EhvVPNCG   
+              - Key: Destination
+                Value: Ehv
+
+    EhvVPN:
+        Type: "AWS::EC2::VPNConnection"
+        Properties: 
+          Type: ipsec.1
+          CustomerGatewayId: !Ref EhvVPNCG
+          StaticRoutesOnly: false
+          VpnGatewayId: !Ref EhvVPNGW
+          Tags:
+              - Key: Name
+                Value: EhvVPN   
+              - Key: Destination
+                Value: Ehv              
+ 
+    EhvVPNAttachment:
+        Type: "AWS::EC2::VPCGatewayAttachment"
+        Properties: 
+          VpcId: !Ref VPC
+          VpnGatewayId: !Ref EhvVPNGW      
+
+    EhvVPNRoutePropagation:
+        Type: "AWS::EC2::VPNGatewayRoutePropagation"
+        DependsOn: EhvVPNGW
+        Properties: 
+          RouteTableIds:
+            - !Ref PublicRouteTable
+            - !Ref PrivateRouteTable1 
+            - !Ref PrivateRouteTable2
+          VpnGatewayId: !Ref EhvVPNGW   
 
 Outputs:
 

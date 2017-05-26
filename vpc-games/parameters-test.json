@@ -82,5 +82,14 @@
    {
     "ParameterKey": "StudioTemplateGitRepoName",
     "ParameterValue": "StudioTestRepo"
+        },
+   {
+    "ParameterKey": "VpnAsEhv",
+    "ParameterValue": "65000"
+        },
+   {
+    "ParameterKey": "VpnIpEhv",
+    "ParameterValue": "212.67.170.171"
         }
+
 ]
