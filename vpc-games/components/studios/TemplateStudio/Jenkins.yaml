@@ -13,7 +13,7 @@ Mappings:
             AMI: ami-e0bc2980
     AWSRegionToEC2StudioJenkinsAMI:    
         us-west-2:
-            AMI: ami-5cbf2f3c   
+            AMI: ami-4e5c3f2e   
     AWSRegionToEC2StudioJenkinsWindowsSlaveAMI:    
         us-west-2:
             AMI: ami-2ad04f4a  
