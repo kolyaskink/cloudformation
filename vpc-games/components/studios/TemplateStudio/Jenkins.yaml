@@ -137,6 +137,8 @@ Resources:
                   Value: GamesJenkinsStudioTemplate
                 - Key: DNS
                   Value: GamesJenkinsStudioTemplate
+                - Key: Scheduler
+                  Value: WorkingDays
               UserData:
                 'Fn::Base64': !Sub |
                   #!/bin/bash -x
@@ -303,6 +305,8 @@ Resources:
                   Value: GamesJenkinsStudioTemplateWindowsSlave1
                 - Key: DNS
                   Value: GamesJenkinsStudioTemplateWindowsSlave1
+                - Key: Scheduler
+                  Value: WorkingDays
 
     JenkinsStudioTemplateWindowsSlaveEC2Instance2: 
             Type: "AWS::EC2::Instance"
@@ -318,6 +322,8 @@ Resources:
                   Value: GamesJenkinsStudioTemplateWindowsSlave2
                 - Key: DNS
                   Value: GamesJenkinsStudioTemplateWindowsSlave2
+                - Key: Scheduler
+                  Value: WorkingDays
 
 Outputs:
 
