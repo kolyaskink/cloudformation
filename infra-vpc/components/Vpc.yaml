@@ -36,42 +36,6 @@ Parameters:
         Type: String
         Default: 10.51.0.192/26
 
-    SshFrom1:
-        Description: IP address to grant access to
-        Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 212.67.170.162/32
-
-    SshFrom2:
-        Description: IP address to grant access to
-        Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 127.0.0.1/32
-
-    SshFrom3:
-        Description: IP address to grant access to
-        Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 127.0.0.2/32
-
-    SshFrom4:
-        Description: IP address to grant access to
-        Type: String
-        MinLength: 9
-        MaxLength: 18
-        AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-        ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
-        Default: 127.0.0.3/32
-
     PeerVpcCIDRGhMisc:
         Description: Please enter the IP range (CIDR notation) for peering VPC
         Type: String
