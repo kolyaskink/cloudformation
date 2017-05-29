@@ -44,6 +44,10 @@
     "ParameterValue": "pcx-5837be31"
   },
   {
+    "ParameterKey": "CFS3Name",
+    "ParameterValue": "5154197496-cf-templates"
+  },
+  {
     "ParameterKey": "VpnAsLux",
     "ParameterValue": "65000"
   },

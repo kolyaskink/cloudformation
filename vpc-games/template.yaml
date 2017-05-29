@@ -221,7 +221,7 @@ Outputs:
 
     VpcId:
         Description: The ID for the created VPC 
-        Value: !GetAtt Vpc.Outputs.PrivateSubnet1Id
+        Value: !GetAtt Vpc.Outputs.VpcId
 
     PublicSubnets:
         Description: A list of the public subnets
