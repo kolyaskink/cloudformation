@@ -295,6 +295,28 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             SubnetId: !Ref PrivateSubnet2
 
+    #Peering
+    # GH-MISC
+    PeerPublicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
+
+    PeerPrivateRoute1:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
+
+    PeerPrivateRoute2:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
     # Games
     PeerPublicRouteGames:
