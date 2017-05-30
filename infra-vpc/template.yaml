@@ -129,15 +129,15 @@ Parameters:
     #     Type: String
     #     Default: none
 
-    # PeerVpcCIDRGames:
-    #     Description: Please enter the IP range (CIDR notation) for peering VPC
-    #     Type: String
-    #     Default: 10.51.3.0/24
+    PeerVpcCIDRGames:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.3.0/24
 
-    # VPCPeeringConnectionGames:
-    #     Description: Please enter the ID of the peering VPC
-    #     Type: String
-    #     Default: none
+    VPCPeeringConnectionGames:
+        Description: Please enter the ID of the peering VPC
+        Type: String
+        Default: none
 
     VpnAsLux:
         Description: IpSec As for Lux
