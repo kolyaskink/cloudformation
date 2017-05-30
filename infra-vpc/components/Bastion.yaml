@@ -73,14 +73,6 @@ Parameters:
         Type: String
         Default: 10.51.0.0/24
 
-    PublicSubnet2Id:
-        Type: String
-        Default: 10.51.0.0/24
-
-    EIP:
-        Type: String
-        Default: 127.0.0.100/32
-
 Resources:
 
     BastionSecurityGroup:
@@ -109,53 +101,21 @@ Resources:
                 - Key: Name
                   Value: bastion
 
-    BastionLaunchConfiguration:
-        Type: 'AWS::AutoScaling::LaunchConfiguration'
-        Metadata:
-            'AWS::CloudFormation::Init':
-                configSets:
-                    default:
-                        - ssh-access
-                ssh-access:
-                  services:
-                    sysvinit:
-                      sshd:
-                        enabled: true
-                        ensureRunning: true
-        Properties:
-              AssociatePublicIpAddress: true
-              EbsOptimized: false
-              IamInstanceProfile: !Ref BastionInstanceProfile
-              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
-              InstanceType: !Ref BastionHostInstanceType
-              SecurityGroups:
-              - !Ref BastionSecurityGroup
-              KeyName: !Ref KeyName
-              UserData:
-                'Fn::Base64': !Sub |
-                  #!/bin/bash -x
-                  INSTANCEID=$(curl -s -m 60 http://169.254.169.254/latest/meta-data/instance-id)
-                  aws --region ${AWS::Region} ec2 associate-address --instance-id $INSTANCEID --allocation-id $EIP && /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource BastionLaunchConfiguration --region ${AWS::Region}
-                  /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource BastionAutoScalingGroup --region ${AWS::Region}
 
-    BastionAutoScalingGroup:
-        Type: 'AWS::AutoScaling::AutoScalingGroup'
-        Properties:
-          DesiredCapacity: 1
-          LaunchConfigurationName: !Ref BastionLaunchConfiguration
-          MaxSize: 1
-          MinSize: 1
-          VPCZoneIdentifier:
-          - !Ref PublicSubnet1Id  
-          - !Ref PublicSubnet2Id
-        CreationPolicy:
-          ResourceSignal:
-            Count: 1
-            Timeout: PT10M
-        UpdatePolicy:
-          AutoScalingRollingUpdate:
-            PauseTime: PT10M
-            WaitOnResourceSignals: true
+    BastionEC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2AMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref BastionInstanceProfile
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref BastionSecurityGroup]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: BastionTest
+                - Key: Scheduler
+                  Value: WorkingDays                 
 
     BastionInstanceProfile:
         Type: 'AWS::IAM::InstanceProfile'

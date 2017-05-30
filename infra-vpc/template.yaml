@@ -45,8 +45,7 @@ Resources:
                 KeyName:                    !Ref KeyName
                 BastionHostInstanceType:    !Ref BastionHostInstanceType
                 PublicSubnet1Id:            !GetAtt Vpc.Outputs.PublicSubnet1Id
-                PublicSubnet2Id:            !GetAtt Vpc.Outputs.PublicSubnet2Id
-                EIP:                        !GetAtt Vpc.Outputs.EIP
+
 
 Parameters:
 
