@@ -203,10 +203,6 @@ Resources:
 
 Outputs:
 
-    BastionIp:
-        Description: IP of Bastion Host
-        Value: !Ref EIP
-
     BastionSecurityGroup:
         Description: A reference to the Security Group where the Bastion Hosts are in
         Value: !Ref BastionSecurityGroup
