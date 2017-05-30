@@ -29,8 +29,8 @@ Resources:
                 # VPCPeeringConnectionGhMisc: !Ref VPCPeeringConnectionGhMisc
                 # PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
                 # VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
-                VpnAsLux:                   !Ref VpnAsLux
-                VpnIpLux:                   !Ref VpnIpLux
+                # VpnAsLux:                   !Ref VpnAsLux
+                # VpnIpLux:                   !Ref VpnIpLux
 
     Bastion:
         Type: AWS::CloudFormation::Stack
@@ -139,15 +139,15 @@ Parameters:
     #     Type: String
     #     Default: none
 
-    VpnAsLux:
-        Description: IpSec As for Lux
-        Type: String
-        Default: none
+    # VpnAsLux:
+    #     Description: IpSec As for Lux
+    #     Type: String
+    #     Default: none
 
-    VpnIpLux:
-        Description: IP address of Lux IpSec endpoint
-        Type: String
-        Default: none
+    # VpnIpLux:
+    #     Description: IP address of Lux IpSec endpoint
+    #     Type: String
+    #     Default: none
 
     KeyName:
         ConstraintDescription: must be the name of an existing EC2 KeyPair.
