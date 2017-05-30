@@ -31,10 +31,6 @@
     "ParameterKey": "SshFrom2",
     "ParameterValue": "77.171.192.128/32"
   },
-    {
-    "ParameterKey": "PeerVpcCIDRGames",
-    "ParameterValue": "10.150.3.0/24"
-  },
   {
     "ParameterKey": "CFS3Name",
     "ParameterValue": "5154197496-cf-templates"
