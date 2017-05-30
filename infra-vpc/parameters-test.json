@@ -35,6 +35,14 @@
     "ParameterKey": "CFS3Name",
     "ParameterValue": "5154197496-cf-templates"
   },
+    {
+    "ParameterKey": "VpnAsLux",
+    "ParameterValue": "65000"
+  },
+  {
+    "ParameterKey": "VpnIpLux",
+    "ParameterValue": "149.13.34.143"
+  },
 	{
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"

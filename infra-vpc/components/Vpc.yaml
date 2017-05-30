@@ -56,15 +56,15 @@ Parameters:
     #     Type: String
     #     Default: none
 
-    # VpnAsLux:
-    #     Description: IpSec As for Lux
-    #     Type: String
-    #     Default: none
+    VpnAsLux:
+        Description: IpSec As for Lux
+        Type: String
+        Default: none
 
-    # VpnIpLux:
-    #     Description: IP address of Lux IpSec endpoint
-    #     Type: String
-    #     Default: none
+    VpnIpLux:
+        Description: IP address of Lux IpSec endpoint
+        Type: String
+        Default: none
 
 Resources:
 
@@ -164,53 +164,53 @@ Resources:
             RouteTableId: !Ref PublicRouteTable
             SubnetId: !Ref PublicSubnet2
 
-    # Ipsec
-    # LuxVPNGW:    
-    #     Type: "AWS::EC2::VPNGateway"
-    #     Properties: 
-    #       Type: ipsec.1
-    #       Tags:
-    #           - Key: Name
-    #             Value: LuxVPNGW            
-    #           - Key: Env
-    #             Value: !Ref EnvironmentName
-    #           - Key: Destination
-    #             Value: Lux
+    #Ipsec
+    LuxVPNGW:    
+        Type: "AWS::EC2::VPNGateway"
+        Properties: 
+          Type: ipsec.1
+          Tags:
+              - Key: Name
+                Value: LuxVPNGW            
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Destination
+                Value: Lux
 
-    # LuxVPNCG:    
-    #     Type: "AWS::EC2::CustomerGateway"
-    #     Properties:
-    #       BgpAsn: !Ref VpnAsLux
-    #       IpAddress: !Ref VpnIpLux
-    #       Type: ipsec.1
-    #       Tags: 
-    #           - Key: Name
-    #             Value: LuxVPNCG   
-    #           - Key: Env
-    #             Value: !Ref EnvironmentName
-    #           - Key: Destination
-    #             Value: Lux
+    LuxVPNCG:    
+        Type: "AWS::EC2::CustomerGateway"
+        Properties:
+          BgpAsn: !Ref VpnAsLux
+          IpAddress: !Ref VpnIpLux
+          Type: ipsec.1
+          Tags: 
+              - Key: Name
+                Value: LuxVPNCG   
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Destination
+                Value: Lux
 
-    # LuxVPN:
-    #     Type: "AWS::EC2::VPNConnection"
-    #     Properties: 
-    #       Type: ipsec.1
-    #       CustomerGatewayId: !Ref LuxVPNCG
-    #       StaticRoutesOnly: false
-    #       VpnGatewayId: !Ref LuxVPNGW
-    #       Tags:
-    #           - Key: Name
-    #             Value: LuxVPN   
-    #           - Key: Env
-    #             Value: !Ref EnvironmentName
-    #           - Key: Destination
-    #             Value: Lux              
+    LuxVPN:
+        Type: "AWS::EC2::VPNConnection"
+        Properties: 
+          Type: ipsec.1
+          CustomerGatewayId: !Ref LuxVPNCG
+          StaticRoutesOnly: false
+          VpnGatewayId: !Ref LuxVPNGW
+          Tags:
+              - Key: Name
+                Value: LuxVPN   
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Destination
+                 Value: Lux              
  
-    # LuxVPNAttachment:
-    #     Type: "AWS::EC2::VPCGatewayAttachment"
-    #     Properties: 
-    #       VpcId: !Ref VPC
-    #       VpnGatewayId: !Ref LuxVPNGW      
+    LuxVPNAttachment:
+        Type: "AWS::EC2::VPCGatewayAttachment"
+        Properties: 
+          VpcId: !Ref VPC
+          VpnGatewayId: !Ref LuxVPNGW      
 
     # LuxVPNRoutePropagation:
     #     Type: "AWS::EC2::VPNGatewayRoutePropagation"
