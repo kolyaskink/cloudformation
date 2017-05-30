@@ -372,3 +372,6 @@ Outputs:
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
         Value: !Ref PrivateRouteTable2
+    EIP:
+        Description: Elsatic IP for Bastion
+        Value: !Ref EIP

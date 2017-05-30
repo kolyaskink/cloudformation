@@ -46,6 +46,7 @@ Resources:
                 BastionHostInstanceType:    !Ref BastionHostInstanceType
                 PublicSubnet1Id:            !GetAtt Vpc.Outputs.PublicSubnet1Id
                 PublicSubnet2Id:            !GetAtt Vpc.Outputs.PublicSubnet2Id
+                EIP:                        !GetAtt Vpc.Outputs.EIP
 
 Parameters:
 
@@ -205,7 +206,9 @@ Outputs:
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
         Value: !GetAtt Vpc.Outputs.PrivateRouteTable2
-
+    EIP:
+        Description: Elsatic IP for Bastion
+        Value: !GetAtt Vpc.Outputs.EIP
     BastionIp:
         Description: The route table for private subnet in AZ2
         Value: !GetAtt Bastion.Outputs.BastionIp

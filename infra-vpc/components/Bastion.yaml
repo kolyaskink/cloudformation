@@ -77,6 +77,10 @@ Parameters:
         Type: String
         Default: 10.51.0.0/24
 
+    EIP:
+        Type: String
+        Default: 127.0.0.100/32
+
 Resources:
 
     BastionSecurityGroup:
