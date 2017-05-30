@@ -204,7 +204,7 @@ Resources:
               - Key: Env
                 Value: !Ref EnvironmentName
               - Key: Destination
-                 Value: Lux              
+                Value: Lux              
  
     LuxVPNAttachment:
         Type: "AWS::EC2::VPCGatewayAttachment"
