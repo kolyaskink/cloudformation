@@ -43,6 +43,14 @@
     "ParameterKey": "VpnIpLux",
     "ParameterValue": "149.13.34.143"
   },
+    {
+    "ParameterKey": "VPCPeeringConnectionGames",
+    "ParameterValue": "pcx-5837be31"
+  },
+  {
+    "ParameterKey": "PeerVpcCIDRGames",
+    "ParameterValue": "10.150.3.0/24"
+  },
 	{
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
