@@ -101,7 +101,6 @@ Resources:
                 - Key: Name
                   Value: bastion
 
-
     BastionEC2Instance: 
             Type: "AWS::EC2::Instance"
             Properties: 
@@ -167,3 +166,5 @@ Outputs:
         Description: A reference to the Security Group where the Bastion Hosts are in
         Value: !Ref BastionSecurityGroup
 
+    BastionIp:
+        Value: !GetAtt BastionEC2Instance.PrivateIp
