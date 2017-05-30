@@ -25,10 +25,10 @@ Resources:
                 PublicSubnet2CIDR:         !Ref PublicSubnet2CIDR
                 PrivateSubnet1CIDR:        !Ref PrivateSubnet1CIDR
                 PrivateSubnet2CIDR:        !Ref PrivateSubnet2CIDR
-                PeerVpcCIDRGhMisc:          !Ref PeerVpcCIDRGhMisc
-                VPCPeeringConnectionGhMisc: !Ref VPCPeeringConnectionGhMisc
-                PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
-                VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
+                # PeerVpcCIDRGhMisc:          !Ref PeerVpcCIDRGhMisc
+                # VPCPeeringConnectionGhMisc: !Ref VPCPeeringConnectionGhMisc
+                # PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
+                # VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
                 VpnAsLux:                   !Ref VpnAsLux
                 VpnIpLux:                   !Ref VpnIpLux
 
@@ -119,25 +119,25 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.3/32
 
-    PeerVpcCIDRGhMisc:
-        Description: Please enter the IP range (CIDR notation) for peering VPC
-        Type: String
-        Default: 10.51.0.0/24
+    # PeerVpcCIDRGhMisc:
+    #     Description: Please enter the IP range (CIDR notation) for peering VPC
+    #     Type: String
+    #     Default: 10.51.0.0/24
 
-    VPCPeeringConnectionGhMisc:
-        Description: Please enter the ID of the peering VPC
-        Type: String
-        Default: none
+    # VPCPeeringConnectionGhMisc:
+    #     Description: Please enter the ID of the peering VPC
+    #     Type: String
+    #     Default: none
 
-    PeerVpcCIDRGames:
-        Description: Please enter the IP range (CIDR notation) for peering VPC
-        Type: String
-        Default: 10.51.3.0/24
+    # PeerVpcCIDRGames:
+    #     Description: Please enter the IP range (CIDR notation) for peering VPC
+    #     Type: String
+    #     Default: 10.51.3.0/24
 
-    VPCPeeringConnectionGames:
-        Description: Please enter the ID of the peering VPC
-        Type: String
-        Default: none
+    # VPCPeeringConnectionGames:
+    #     Description: Please enter the ID of the peering VPC
+    #     Type: String
+    #     Default: none
 
     VpnAsLux:
         Description: IpSec As for Lux
