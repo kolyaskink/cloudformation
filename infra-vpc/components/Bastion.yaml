@@ -135,7 +135,7 @@ Resources:
                 'Fn::Base64': !Sub |
                   #!/bin/bash -x
                   INSTANCEID=$(curl -s -m 60 http://169.254.169.254/latest/meta-data/instance-id)
-                  aws --region ${AWS::Region} ec2 associate-address --instance-id $INSTANCEID --allocation-id ${EIP.AllocationId} && /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource BastionLaunchConfiguration --region ${AWS::Region}
+                  aws --region ${AWS::Region} ec2 associate-address --instance-id $INSTANCEID --allocation-id $EIP && /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource BastionLaunchConfiguration --region ${AWS::Region}
                   /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource BastionAutoScalingGroup --region ${AWS::Region}
 
     BastionAutoScalingGroup:
