@@ -46,15 +46,15 @@ Parameters:
     #     Type: String
     #     Default: none
 
-    # PeerVpcCIDRGames:
-    #     Description: Please enter the IP range (CIDR notation) for peering VPC
-    #     Type: String
-    #     Default: 10.51.3.0/24
+    PeerVpcCIDRGames:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.3.0/24
 
-    # VPCPeeringConnectionGames:
-    #     Description: Please enter the ID of the peering VPC
-    #     Type: String
-    #     Default: none
+    VPCPeeringConnectionGames:
+        Description: Please enter the ID of the peering VPC
+        Type: String
+        Default: none
 
     VpnAsLux:
         Description: IpSec As for Lux
@@ -318,27 +318,27 @@ Resources:
     #         DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
     #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
-    # # Games
-    # PeerPublicRouteGames:
-    #     Type: AWS::EC2::Route
-    #     Properties:
-    #         RouteTableId: !Ref PublicRouteTable
-    #         DestinationCidrBlock: !Ref PeerVpcCIDRGames
-    #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    # Games
+    PeerPublicRouteGames:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref PeerVpcCIDRGames
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
-    # PeerPrivateRoute1Games:
-    #     Type: AWS::EC2::Route
-    #     Properties:
-    #         RouteTableId: !Ref PrivateRouteTable1
-    #         DestinationCidrBlock: !Ref PeerVpcCIDRGames
-    #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    PeerPrivateRoute1Games:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref PeerVpcCIDRGames
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
-    # PeerPrivateRoute2Games:
-    #     Type: AWS::EC2::Route
-    #     Properties:
-    #         RouteTableId: !Ref PrivateRouteTable2
-    #         DestinationCidrBlock: !Ref PeerVpcCIDRGames
-    #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    PeerPrivateRoute2Games:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref PeerVpcCIDRGames
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
 Outputs:
 

@@ -27,8 +27,8 @@ Resources:
                 PrivateSubnet2CIDR:        !Ref PrivateSubnet2CIDR
                 # PeerVpcCIDRGhMisc:          !Ref PeerVpcCIDRGhMisc
                 # VPCPeeringConnectionGhMisc: !Ref VPCPeeringConnectionGhMisc
-                # PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
-                # VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
+                PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
+                VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
                 VpnAsLux:                   !Ref VpnAsLux
                 VpnIpLux:                   !Ref VpnIpLux
 
