@@ -13,7 +13,7 @@ def lambda_handler(event, context):
             ec2.start_instances(InstanceIds=[instance["InstanceId"]])
             
     
-    MessageText = "Test instances stopped. Bye-bye =)"
+    MessageText = "Good morning! Test instances started"
     client = boto3.client('sns')
     response = client.publish (
         TopicArn='arn:aws:sns:us-west-2:061061380301:LambdaStartStopEC2',

@@ -17,7 +17,7 @@ Resources:
     Vpc:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Vpc.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/infra-vpc/components/Vpc.yaml
             Parameters:
                 EnvironmentName:           !Ref EnvironmentName
                 VpcCIDR:                   !Ref VpcCIDR
@@ -35,7 +35,7 @@ Resources:
     Bastion:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/Bastion.yaml
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/infra-vpc/components/Bastion.yaml
             Parameters:
                 VPCid:                      !GetAtt Vpc.Outputs.VpcId
                 SshFrom1:                   !Ref SshFrom1
