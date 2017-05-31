@@ -5,8 +5,8 @@
 Zone="gamehouseos.com."
 ZoneId="Z2OLJMS5MY8APL"
 ChangeSet="change-resource-record-sets.json"
-RecordValue=$(cat /tmp/outputs-games.txt | grep DNSName | gawk '{ print $3 }')
-RecordName=$(cat /tmp/outputs-games.txt | grep DNSName | gawk '{ print $2 }' | sed 's/DNSName//g' | tr '[:upper:]' '[:lower:]')
+RecordValue=$(cat /tmp/outputs-infra.txt | grep DNSName | gawk '{ print $3 }')
+RecordName=$(cat /tmp/outputs-infra.txt | grep DNSName | gawk '{ print $2 }' | sed 's/DNSName//g' | tr '[:upper:]' '[:lower:]')
 
 GetRecordValue=$(aws route53 list-resource-record-sets --hosted-zone-id=$ZoneId \
 --query "ResourceRecordSets[?Name == '$RecordName.$Zone']" \
