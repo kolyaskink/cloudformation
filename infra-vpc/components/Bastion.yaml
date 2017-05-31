@@ -166,5 +166,8 @@ Outputs:
         Description: A reference to the Security Group where the Bastion Hosts are in
         Value: !Ref BastionSecurityGroup
 
-    BastionIp:
-        Value: !GetAtt BastionEC2Instance.PublicIp
+    DNSNameBastion:
+        Value: !GetAtt BastionEC2Instance.PublicDnsName
+
+
+

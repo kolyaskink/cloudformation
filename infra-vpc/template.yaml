@@ -209,9 +209,8 @@ Outputs:
         Description: Elsatic IP for Bastion
         Value: !GetAtt Vpc.Outputs.EIP
         
-    BastionIp:
-        Description: The route table for private subnet in AZ2
-        Value: !GetAtt Bastion.Outputs.BastionIp
+    DNSNameBastion:
+        Value: !GetAtt Bastion.Outputs.DNSNameBastion
 
     BastionSecurityGroup:
         Description: The route table for private subnet in AZ2
