@@ -46,5 +46,13 @@
   {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
-  }  
+  },
+      {
+    "ParameterKey": "PeerVpcCIDRGames",
+    "ParameterValue": "10.150.3.0/24"
+  },
+     {
+    "ParameterKey": "VPCPeeringConnectionGames",
+    "ParameterValue": "pcx-e7e8798e"
+  }
 ]
