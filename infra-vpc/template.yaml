@@ -25,10 +25,6 @@ Resources:
                 PublicSubnet2CIDR:         !Ref PublicSubnet2CIDR
                 PrivateSubnet1CIDR:        !Ref PrivateSubnet1CIDR
                 PrivateSubnet2CIDR:        !Ref PrivateSubnet2CIDR
-                # PeerVpcCIDRGhMisc:          !Ref PeerVpcCIDRGhMisc
-                # VPCPeeringConnectionGhMisc: !Ref VPCPeeringConnectionGhMisc
-                PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
-                VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
                 VpnAsLux:                   !Ref VpnAsLux
                 VpnIpLux:                   !Ref VpnIpLux
 
