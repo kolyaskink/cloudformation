@@ -275,7 +275,7 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             SubnetId: !Ref PrivateSubnet2
 
-    Outputs:
+Outputs:
 
     VpcId:
         Description: The ID for the created VPC
