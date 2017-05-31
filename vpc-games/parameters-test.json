@@ -29,7 +29,7 @@
   },
  {
     "ParameterKey": "InfraVpcId",
-    "ParameterValue": "vpc-1b88da7c"
+    "ParameterValue": "vpc-497c632e"
   },
   {
     "ParameterKey": "S3BucketAssetsName",
