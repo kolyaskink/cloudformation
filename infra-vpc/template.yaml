@@ -29,6 +29,8 @@ Resources:
                 VpnIpLux:                   !Ref VpnIpLux
                 PeerVpcCIDRGames:           !Ref PeerVpcCIDRGames
                 VPCPeeringConnectionGames:  !Ref VPCPeeringConnectionGames
+                PeerVpcCIDRGhMisc:          !Ref PeerVpcCIDRGhMisc
+                VPCPeeringConnectionGhMisc: !Ref VPCPeeringConnectionGhMisc
 
     Bastion:
         Type: AWS::CloudFormation::Stack
@@ -117,15 +119,15 @@ Parameters:
         ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
         Default: 127.0.0.3/32
 
-    # PeerVpcCIDRGhMisc:
-    #     Description: Please enter the IP range (CIDR notation) for peering VPC
-    #     Type: String
-    #     Default: 10.51.0.0/24
+    PeerVpcCIDRGhMisc:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.3.0/24
 
-    # VPCPeeringConnectionGhMisc:
-    #     Description: Please enter the ID of the peering VPC
-    #     Type: String
-    #     Default: none
+    VPCPeeringConnectionGhMisc:
+        Description: Please enter the ID of the peering VPC
+        Type: String
+        Default: none
 
     PeerVpcCIDRGames:
         Description: Please enter the IP range (CIDR notation) for peering VPC

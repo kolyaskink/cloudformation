@@ -56,6 +56,16 @@ Parameters:
         Type: String
         Default: none
 
+    PeerVpcCIDRGhMisc:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.3.0/24
+
+    VPCPeeringConnectionGhMisc:
+        Description: Please enter the ID of the peering VPC
+        Type: String
+        Default: none
+
 Resources:
 
     # VPC and Subnets 
@@ -307,6 +317,27 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             DestinationCidrBlock: !Ref PeerVpcCIDRGames
             VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    #GH-MiSC
+    PeerPublicRouteGhMisc:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
+
+    PeerPrivateRoute1GhMisc:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
+
+    PeerPrivateRoute2GhMisc:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
 Outputs:
 
