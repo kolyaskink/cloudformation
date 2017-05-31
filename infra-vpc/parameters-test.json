@@ -43,8 +43,8 @@
     "ParameterKey": "VpnIpLux",
     "ParameterValue": "149.13.34.143"
   },
-	{
+  {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
-  }
+  }  
 ]
