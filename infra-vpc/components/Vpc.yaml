@@ -287,26 +287,26 @@ Resources:
 
     #Peering
     #Games
-    PeerPublicRouteGames:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PublicRouteTable
-            DestinationCidrBlock: !Ref PeerVpcCIDRGames
-            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    # PeerPublicRouteGames:
+    #     Type: AWS::EC2::Route
+    #     Properties:
+    #         RouteTableId: !Ref PublicRouteTable
+    #         DestinationCidrBlock: !Ref PeerVpcCIDRGames
+    #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
-    PeerPrivateRoute1Games:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable1
-            DestinationCidrBlock: !Ref PeerVpcCIDRGames
-            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    # PeerPrivateRoute1Games:
+    #     Type: AWS::EC2::Route
+    #     Properties:
+    #         RouteTableId: !Ref PrivateRouteTable1
+    #         DestinationCidrBlock: !Ref PeerVpcCIDRGames
+    #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
-    PeerPrivateRoute2Games:
-        Type: AWS::EC2::Route
-        Properties:
-            RouteTableId: !Ref PrivateRouteTable2
-            DestinationCidrBlock: !Ref PeerVpcCIDRGames
-            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    # PeerPrivateRoute2Games:
+    #     Type: AWS::EC2::Route
+    #     Properties:
+    #         RouteTableId: !Ref PrivateRouteTable2
+    #         DestinationCidrBlock: !Ref PeerVpcCIDRGames
+    #         VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
 Outputs:
 
