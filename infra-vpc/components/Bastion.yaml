@@ -167,4 +167,4 @@ Outputs:
         Value: !Ref BastionSecurityGroup
 
     BastionIp:
-        Value: !GetAtt BastionEC2Instance.PrivateIp
+        Value: !GetAtt BastionEC2Instance.PublicIp
