@@ -309,15 +309,15 @@ Resources:
           VpcId: !Ref VPC
           VpnGatewayId: !Ref EhvVPNGW      
 
-    EhvVPNRoutePropagation:
-        Type: "AWS::EC2::VPNGatewayRoutePropagation"
-        DependsOn: EhvVPNGW
-        Properties: 
-          RouteTableIds:
-            - !Ref PublicRouteTable
-            - !Ref PrivateRouteTable1 
-            - !Ref PrivateRouteTable2
-          VpnGatewayId: !Ref EhvVPNGW   
+    # EhvVPNRoutePropagation:
+    #     Type: "AWS::EC2::VPNGatewayRoutePropagation"
+    #     DependsOn: EhvVPNGW
+    #     Properties: 
+    #       RouteTableIds:
+    #         - !Ref PublicRouteTable
+    #         - !Ref PrivateRouteTable1 
+    #         - !Ref PrivateRouteTable2
+    #       VpnGatewayId: !Ref EhvVPNGW   
 
 Outputs:
 
