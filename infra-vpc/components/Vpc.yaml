@@ -4,18 +4,6 @@ Description: >
     
         VPC, Subnets, IGW, NatGW and peering
 
-Mappings:
-    
-    AWSRegionToEC2DefaultAMI:
-        us-west-2:
-            AMI: ami-bd7beddd
-    AWSRegionToEC2FastlaneAMI:    
-        us-west-2:
-            AMI: ami-e0bc2980
-    AWSRegionToEC2StudioJenkinsAMI:    
-        us-west-2:
-            AMI: ami-5cbf2f3c   
-
 Parameters:
 
     EnvironmentName:
@@ -26,50 +14,61 @@ Parameters:
     VpcCIDR:
         Description: Please enter the IP range (CIDR notation) for this VPC
         Type: String
-        Default: 10.51.3.0/24
+        Default: 10.51.0.0/24
 
     PublicSubnet1CIDR:
         Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
         Type: String
-        Default: 10.51.3.0/26
+        Default: 10.51.0.0/26
 
     PublicSubnet2CIDR:
         Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
         Type: String
-        Default: 10.51.3.64/26
+        Default: 10.51.0.64/26
 
     PrivateSubnet1CIDR:
         Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
         Type: String
-        Default: 10.51.3.128/26
+        Default: 10.51.0.128/26
 
     PrivateSubnet2CIDR:
         Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
         Type: String
-        Default: 10.51.3.192/26
+        Default: 10.51.0.192/26
 
-    InfraVpcId:
-        Description: Please enter the Id of InfraVpc
-        Type: String
-        Default: vpc-a23e58c5
-    
-    InfraVpcCIDR:
-        Description: Please enter the IP range (CIDR notation) for INFRA VPC
-        Type: String
-        Default: 10.51.2.0/24
-
-    VpnAsEhv:
+    VpnAsLux:
         Description: IpSec As for Lux
         Type: String
         Default: none
 
-    VpnIpEhv:
+    VpnIpLux:
         Description: IP address of Lux IpSec endpoint
+        Type: String
+        Default: none
+
+    PeerVpcCIDRGames:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.3.0/24
+
+    VPCPeeringConnectionGames:
+        Description: Please enter the ID of the peering VPC
+        Type: String
+        Default: none
+
+    PeerVpcCIDRGhMisc:
+        Description: Please enter the IP range (CIDR notation) for peering VPC
+        Type: String
+        Default: 10.51.3.0/24
+
+    VPCPeeringConnectionGhMisc:
+        Description: Please enter the ID of the peering VPC
         Type: String
         Default: none
 
 Resources:
 
+    # VPC and Subnets 
     VPC:
         Type: AWS::EC2::VPC
         Properties:
@@ -78,7 +77,7 @@ Resources:
             EnableDnsHostnames: true
             Tags:
                 - Key: Name
-                  Value: !Ref EnvironmentName
+                  Value: !Sub vpc-${EnvironmentName}
 
     PublicSubnet1:
         Type: AWS::EC2::Subnet
@@ -165,6 +164,64 @@ Resources:
             RouteTableId: !Ref PublicRouteTable
             SubnetId: !Ref PublicSubnet2
 
+    #Ipsec
+    LuxVPNGW:    
+        Type: "AWS::EC2::VPNGateway"
+        Properties: 
+          Type: ipsec.1
+          Tags:
+              - Key: Name
+                Value: LuxVPNGW            
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Destination
+                Value: Lux
+
+    LuxVPNCG:    
+        Type: "AWS::EC2::CustomerGateway"
+        Properties:
+          BgpAsn: !Ref VpnAsLux
+          IpAddress: !Ref VpnIpLux
+          Type: ipsec.1
+          Tags: 
+              - Key: Name
+                Value: LuxVPNCG   
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Destination
+                Value: Lux
+
+    LuxVPN:
+        Type: "AWS::EC2::VPNConnection"
+        Properties: 
+          Type: ipsec.1
+          CustomerGatewayId: !Ref LuxVPNCG
+          StaticRoutesOnly: false
+          VpnGatewayId: !Ref LuxVPNGW
+          Tags:
+              - Key: Name
+                Value: LuxVPN   
+              - Key: Env
+                Value: !Ref EnvironmentName
+              - Key: Destination
+                Value: Lux              
+ 
+    LuxVPNAttachment:
+        Type: "AWS::EC2::VPCGatewayAttachment"
+        Properties: 
+          VpcId: !Ref VPC
+          VpnGatewayId: !Ref LuxVPNGW      
+
+    LuxVPNRoutePropagation:
+        Type: "AWS::EC2::VPNGatewayRoutePropagation"
+        DependsOn: LuxVPNGW
+        Properties: 
+          RouteTableIds:
+            - !Ref PublicRouteTable
+            - !Ref PrivateRouteTable1 
+            - !Ref PrivateRouteTable2
+          VpnGatewayId: !Ref LuxVPNGW        
+
 
     # NAT GW and etc
     EIP:
@@ -239,85 +296,48 @@ Resources:
             SubnetId: !Ref PrivateSubnet2
 
     #Peering
-
-    VPCPeeringConnection:
-        Type: AWS::EC2::VPCPeeringConnection
-        Properties:
-            VpcId: !Ref VPC
-            PeerVpcId: !Ref InfraVpcId
-
-    PeerPublicRoute:
+    #Games
+    PeerPublicRouteGames:
         Type: AWS::EC2::Route
         Properties:
             RouteTableId: !Ref PublicRouteTable
-            DestinationCidrBlock: !Ref InfraVpcCIDR
-            VpcPeeringConnectionId: !Ref VPCPeeringConnection
+            DestinationCidrBlock: !Ref PeerVpcCIDRGames
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
-    PeerPrivateRoute1:
+    PeerPrivateRoute1Games:
         Type: AWS::EC2::Route
         Properties:
             RouteTableId: !Ref PrivateRouteTable1
-            DestinationCidrBlock: !Ref InfraVpcCIDR
-            VpcPeeringConnectionId: !Ref VPCPeeringConnection
+            DestinationCidrBlock: !Ref PeerVpcCIDRGames
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
 
-    PeerPrivateRoute2:
+    PeerPrivateRoute2Games:
         Type: AWS::EC2::Route
         Properties:
             RouteTableId: !Ref PrivateRouteTable2
-            DestinationCidrBlock: !Ref InfraVpcCIDR
-            VpcPeeringConnectionId: !Ref VPCPeeringConnection
-
-    # Ipsec
-    EhvVPNGW:    
-        Type: "AWS::EC2::VPNGateway"
-        Properties: 
-          Type: ipsec.1
-          Tags:
-              - Key: Name
-                Value: EhvVPNGW            
-              - Key: Destination
-                Value: Ehv
-
-    EhvVPNCG:    
-        Type: "AWS::EC2::CustomerGateway"
+            DestinationCidrBlock: !Ref PeerVpcCIDRGames
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGames
+    #GH-MiSC
+    PeerPublicRouteGhMisc:
+        Type: AWS::EC2::Route
         Properties:
-          BgpAsn: !Ref VpnAsEhv
-          IpAddress: !Ref VpnIpEhv
-          Type: ipsec.1
-          Tags: 
-              - Key: Name
-                Value: EhvVPNCG   
-              - Key: Destination
-                Value: Ehv
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
-    EhvVPN:
-        Type: "AWS::EC2::VPNConnection"
-        Properties: 
-          Type: ipsec.1
-          CustomerGatewayId: !Ref EhvVPNCG
-          StaticRoutesOnly: false
-          VpnGatewayId: !Ref EhvVPNGW
-          Tags:
-              - Key: Name
-                Value: EhvVPN   
-              - Key: Destination
-                Value: Ehv              
- 
-    EhvVPNAttachment:
-        Type: "AWS::EC2::VPCGatewayAttachment"
-        Properties: 
-          VpcId: !Ref VPC
-          VpnGatewayId: !Ref EhvVPNGW      
+    PeerPrivateRoute1GhMisc:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable1
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
-    EhvVPNRoutePropagation:
-        Type: "AWS::EC2::VPNGatewayRoutePropagation"
-        DependsOn: EhvVPNGW
-        Properties: 
-          RouteTableIds:
-            - !Ref PublicRouteTable
-            - !Ref PrivateRouteTable1 
-            - !Ref PrivateRouteTable2
-          VpnGatewayId: !Ref EhvVPNGW   
+    PeerPrivateRoute2GhMisc:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref PrivateRouteTable2
+            DestinationCidrBlock: !Ref PeerVpcCIDRGhMisc
+            VpcPeeringConnectionId: !Ref VPCPeeringConnectionGhMisc
 
 Outputs:
 
@@ -351,6 +371,6 @@ Outputs:
     PrivateRouteTable2:
         Description: The route table for private subnet in AZ2
         Value: !Ref PrivateRouteTable2
-    VPCPeeringConnectionId:
-        Description: The ID for VPC peering to InfraVpc
-        Value: !Ref VPCPeeringConnection
+    EIP:
+        Description: Elsatic IP for Bastion
+        Value: !Ref EIP

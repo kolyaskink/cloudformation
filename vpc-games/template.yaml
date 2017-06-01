@@ -29,7 +29,9 @@ Resources:
                 PrivateSubnet1CIDR:        !Ref PrivateSubnet1CIDR
                 PrivateSubnet2CIDR:        !Ref PrivateSubnet2CIDR
                 InfraVpcId:                !Ref InfraVpcId
-                InfraVpcCIDR:              !Ref InfraVpcCIDR         
+                InfraVpcCIDR:              !Ref InfraVpcCIDR     
+                VpnAsEhv:                  !Ref VpnAsEhv
+                VpnIpEhv:                  !Ref VpnIpEhv    
 
     Fastlane:
         Type: AWS::CloudFormation::Stack
@@ -40,7 +42,7 @@ Resources:
                 VPCid:                      !GetAtt Vpc.Outputs.VpcId
                 KeyName:                    !Ref KeyName
                 FastlaneHostInstanceType:   !Ref FastlaneHostInstanceType
-                PrivateSubnet1Id:           !GetAtt Vpc.Outputs.PrivateSubnet1Id
+                PublicSubnet1Id:           !GetAtt Vpc.Outputs.PublicSubnet1Id
                 S3BucketAssetsName:         !Ref S3BucketAssetsName
                 DaysToIAAssets:             !Ref DaysToIAAssets
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
@@ -61,6 +63,7 @@ Resources:
                     VPCid:                  !GetAtt Vpc.Outputs.VpcId
                     InfraVpcCIDR:           !Ref InfraVpcCIDR
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
+                    PrivateSubnet1Id:        !GetAtt Vpc.Outputs.PrivateSubnet1Id
                     ApachePort:             !Ref ApachePort
                     GhosSslCert:            !Ref GhosSslCert
                     KeyName:                !Ref KeyName
@@ -204,11 +207,21 @@ Parameters:
     StudioTemplateGitRepoName:
         Type: String
 
+    VpnAsEhv:
+        Description: IpSec As for Lux
+        Type: String
+        Default: none
+
+    VpnIpEhv:
+        Description: IP address of Lux IpSec endpoint
+        Type: String
+        Default: none
+
 Outputs:
 
     VpcId:
         Description: The ID for the created VPC 
-        Value: !GetAtt Vpc.Outputs.PrivateSubnet1Id
+        Value: !GetAtt Vpc.Outputs.VpcId
 
     PublicSubnets:
         Description: A list of the public subnets
@@ -253,8 +266,8 @@ Outputs:
     JenkinsStudioTemplateBalanserId: 
         Value: !GetAtt Studios.Outputs.JenkinsStudioTemplateBalanserId
 
-    FastlaneEC2Instanced: 
-        Value: !GetAtt Fastlane.Outputs.FastlaneEC2Instanced
+    FastlaneEC2InstanceId: 
+        Value: !GetAtt Fastlane.Outputs.FastlaneEC2InstanceId
 
     FastlaneAppUserName:
         Value: !GetAtt Fastlane.Outputs.AppUserName
@@ -285,3 +298,6 @@ Outputs:
 
     EC2SecurityGroupJenkinsStudioTemplateId:
         Value: !GetAtt Studios.Outputs.EC2SecurityGroupJenkinsStudioTemplateId
+
+    DNSNameJenkinsStudioTemplate:
+        Value: !GetAtt Studios.Outputs.DNSNameJenkinsStudioTemplate  

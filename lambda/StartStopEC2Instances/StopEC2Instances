@@ -1,0 +1,21 @@
+import boto3
+
+region = 'us-west-2'
+
+def lambda_handler(event, context):
+
+    ec2 = boto3.client('ec2')
+    response = ec2.describe_instances(Filters=[{'Name': 'tag:Scheduler', 'Values': ['WorkingDays']}])
+    
+    for reservation in response["Reservations"]:
+        for instance in reservation["Instances"]:
+            print(instance["InstanceId"])
+            ec2.stop_instances(InstanceIds=[instance["InstanceId"]])
+            
+    
+    MessageText = "Test instances stopped. Bye-bye =)"
+    client = boto3.client('sns')
+    response = client.publish (
+        TopicArn='arn:aws:sns:us-west-2:061061380301:LambdaStartStopEC2',
+        Message= MessageText
+    )

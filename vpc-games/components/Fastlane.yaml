@@ -41,7 +41,7 @@ Parameters:
             - t2.medium 
         Description: Enter t2.small, t2.medium or m4.large. Default is t2.small.
 
-    PrivateSubnet1Id:
+    PublicSubnet1Id:
         Type: String
         Default: 10.51.2.0/24
 
@@ -95,10 +95,12 @@ Resources:
               IamInstanceProfile: !Ref InstanceProfileFastlane
               InstanceType: !Ref FastlaneHostInstanceType
               SecurityGroupIds: [!Ref EC2SecurityGroupFastlane]
-              SubnetId: !Ref PrivateSubnet1Id
+              SubnetId: !Ref PublicSubnet1Id
               Tags:
                 - Key: Name
                   Value: GamesFastlane
+                - Key: Scheduler
+                  Value: WorkingDays
 
     InstanceProfileFastlane:
         Type: 'AWS::IAM::InstanceProfile'
@@ -132,6 +134,18 @@ Resources:
                 Resource:
                 - 'arn:aws:logs:*:*:*'
 
+          - PolicyName: 'Ssm'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - "ssm:*"
+                - "ec2messages:*"
+                - "ec2:DescribeInstanceStatus"
+                Resource:
+                - '*'
+               
           - PolicyName: 'S3BucketAssetsDownloadOnly'
             PolicyDocument:
               Version: '2012-10-17'
@@ -230,7 +244,7 @@ Resources:
 
 Outputs:
 
-    FastlaneEC2Instanced: 
+    FastlaneEC2InstanceId: 
         Value: !Ref FastlaneEC2Instance
 
     AppUserName:

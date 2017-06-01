@@ -13,7 +13,14 @@ Mappings:
             AMI: ami-e0bc2980
     AWSRegionToEC2StudioJenkinsAMI:    
         us-west-2:
-            AMI: ami-5cbf2f3c   
+            AMI: ami-4e5c3f2e   
+    AWSRegionToEC2StudioJenkinsWindowsSlaveAMI:    
+        us-west-2:
+            AMI: ami-2ad04f4a  
+    AWSRegionToEC2StudioJenkinsWindowsSlaveAMI2:    
+        us-west-2:
+            AMI: ami-444dd724
+
 
 Parameters:
 
@@ -38,6 +45,9 @@ Parameters:
     PublicSubnet1Id:
         Type: String
 
+    PrivateSubnet1Id:
+        Type: String
+        
     ApachePort:
         Type: String
 
@@ -51,6 +61,7 @@ Parameters:
 
 Resources:
 
+    #Master
     LBSecurityGroupJenkinsStudioTemplate:
         Type: AWS::EC2::SecurityGroup
         Properties:
@@ -88,12 +99,29 @@ Resources:
                 ToPort: 80
                 SourceSecurityGroupId: !Ref LBSecurityGroupJenkinsStudioTemplate
               - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
+              - IpProtocol: tcp
                 FromPort: 22
                 ToPort: 22
                 CidrIp: !Ref InfraVpcCIDR
+              - IpProtocol: icmp
+                FromPort: -1
+                ToPort: -1
+                CidrIp: "10.150.3.0/24"
             Tags:
                 - Key: Name
-                  Value: games-jenkins-template-ec2     
+                  Value: games-jenkins-template-ec2 
+
+    EC2SecurityGroupJenkinsStudioTemplateIngress:
+        Type: AWS::EC2::SecurityGroupIngress     
+        Properties: 
+                GroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate      
+                IpProtocol: tcp
+                FromPort: 0 
+                ToPort: 65535 
+                SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave
 
     JenkinsStudioTemplateEC2Instance: 
             Type: "AWS::EC2::Instance"
@@ -109,6 +137,8 @@ Resources:
                   Value: GamesJenkinsStudioTemplate
                 - Key: DNS
                   Value: GamesJenkinsStudioTemplate
+                - Key: Scheduler
+                  Value: WorkingDays
               UserData:
                 'Fn::Base64': !Sub |
                   #!/bin/bash -x
@@ -181,6 +211,120 @@ Resources:
                 Resource:
                 - '*'
 
+    #Slaves
+    IAMRoleJenkinsStudioTemplateWindowsSlave:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+
+          - PolicyName: 'logs'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
+
+          - PolicyName: 'dnsupdate'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'route53:GetHostedZone'
+                - 'route53:ListHostedZones'
+                - 'route53:ListResourceRecordSets'
+                - 'route53:ChangeResourceRecordSets'
+                - 'route53:GetChange'
+                - 'ec2:DescribeTags'
+                Resource:
+                - '*'
+
+    InstanceProfileJenkinsStudioTemplateWindowsSlave:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRoleJenkinsStudioTemplateWindowsSlave
+
+    EC2SecurityGroupJenkinsStudioTemplateWindowsSlave:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: JenkinsStudioTemplate for WindowsSlave SG
+            VpcId: !Ref VPCid
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 3389 
+                ToPort: 3389 
+                CidrIp: "77.171.192.128/32"
+              - IpProtocol: tcp
+                FromPort: 3389 
+                ToPort: 3389 
+                CidrIp: "212.67.170.162/32"
+              - IpProtocol: icmp
+                FromPort: -1
+                ToPort: -1
+                CidrIp: "10.150.3.0/24" 
+            Tags:
+                - Key: Name
+                  Value: games-jenkins-template-windows-slave-ec2 
+
+    EC2SecurityGroupJenkinsStudioTemplateWindowsSlaveIngress:
+        Type: AWS::EC2::SecurityGroupIngress     
+        Properties: 
+              GroupId: !Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave       
+              IpProtocol: tcp
+              FromPort: 0 
+              ToPort: 65535 
+              SourceSecurityGroupId: !Ref EC2SecurityGroupJenkinsStudioTemplate
+       
+    
+    JenkinsStudioTemplateWindowsSlaveEC2Instance1: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsWindowsSlaveAMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplateWindowsSlave
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: GamesJenkinsStudioTemplateWindowsSlave1
+                - Key: DNS
+                  Value: GamesJenkinsStudioTemplateWindowsSlave1
+                - Key: Scheduler
+                  Value: WorkingDays
+
+    JenkinsStudioTemplateWindowsSlaveEC2Instance2: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionToEC2StudioJenkinsWindowsSlaveAMI2, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfileJenkinsStudioTemplateWindowsSlave
+              InstanceType: t2.small
+              SecurityGroupIds: [!Ref EC2SecurityGroupJenkinsStudioTemplateWindowsSlave]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: GamesJenkinsStudioTemplateWindowsSlave2
+                - Key: DNS
+                  Value: GamesJenkinsStudioTemplateWindowsSlave2
+                - Key: Scheduler
+                  Value: WorkingDays
+
 Outputs:
 
     LBSecurityGroupJenkinsStudioTemplateId:
@@ -194,6 +338,13 @@ Outputs:
 
     JenkinsStudioTemplateBalanserId: 
         Value: !Ref JenkinsStudioTemplateBalanser
+
+    DNSNameJenkinsStudioTemplate:
+        Value: !GetAtt JenkinsStudioTemplateBalanser.DNSName
+
+
+
+
 
 
 

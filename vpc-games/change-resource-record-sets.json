@@ -1,0 +1,18 @@
+{
+  "Comment": "AutoUpdate made by Jenkins",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "ChangeName.gamehouseos.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "ChangeValue"
+          }
+        ]
+      }
+    }
+  ]
+}
