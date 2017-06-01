@@ -41,6 +41,14 @@ Parameters:
         - 'test'
         - 'preproduction'
         - 'production'
+    NotificationTopic:
+        Description: topic to forward notifications to
+        Type: String
+    AlertTopic:
+        Description: topic to forward notifications to
+        Type: String
+
+
 
 Resources:
 
@@ -52,6 +60,7 @@ Resources:
       CacheSubnetGroupName: !Ref RedisSubnetGroup
       Engine: redis
       EngineVersion: "3.2.4"
+      NotificationTopicArn: !Ref NotificationTopic
       NumCacheNodes: 1
       PreferredAvailabilityZone: us-west-2a
       PreferredMaintenanceWindow: mon:05:00-mon:06:00
@@ -59,6 +68,29 @@ Resources:
       SnapshotWindow: 07:00-08:00
       VpcSecurityGroupIds: 
       - !Ref RedisSecurityGroup
+
+  RedisAlertPctCPU:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      ActionsEnabled: True
+      AlarmActions:
+        - !Ref AlertTopic
+      AlarmDescription: ">90% of Elasticache CPU used"
+      ComparisonOperator: "GreaterThanOrEqualToThreshold"
+      Dimensions:
+        - Name: CacheClusterId
+          Value: !Ref RedisCache
+      EvaluationPeriods: 2
+      Period: 60
+      InsufficientDataActions:
+        - !Ref AlertTopic
+      MetricName: CPUUtilization
+      Namespace: "AWS/ElastiCache"
+      OKActions:
+        - !Ref AlertTopic
+      Statistic: Average
+      Threshold: 23
+      Unit: Percent
         
 Outputs:
     MasterJDBCConnectionString:

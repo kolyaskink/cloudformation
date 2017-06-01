@@ -14,12 +14,31 @@ Parameters:
 
   CanonicalUser:
     Type: String
+
+  OriginId:
+    Type: String
+
+  UploadUserName:
+    Type: String
+    Description: Name for the user that uploads content
     
   S3Domain:
     Type: String
     Default: 's3.amazonaws.com'
 
 Resources:
+
+  UploadUser:
+    Type: "AWS::IAM::User"
+    Properties: 
+      UserName: !Ref UploadUserName
+
+  UploadAccessKey:
+    Type: "AWS::IAM::AccessKey"
+    Properties: 
+      Serial: 1
+      Status: Active
+      UserName: !Ref UploadUser
 
   OriginBucket:
     Type: "AWS::S3::Bucket"
@@ -39,6 +58,18 @@ Resources:
         Ref: "OriginBucket"
       PolicyDocument: 
         Statement: 
+          - Action: 
+              - "s3:ListBucket"
+            Effect: "Allow"
+            Resource: 
+              Fn::Join: 
+                - ""
+                - 
+                  - "arn:aws:s3:::"
+                  - 
+                    Ref: "OriginBucket"
+            Principal:
+              CanonicalUser: [ Ref: CanonicalUser ]          
           - Action: 
               - "s3:GetObject"
             Effect: "Allow"
@@ -62,8 +93,37 @@ Resources:
                   - "arn:aws:s3:::"
                   - 
                     Ref: "OriginBucket"
-            Principal:
-              CanonicalUser: [ Ref: CanonicalUser ]          
+            Principal: 
+              AWS:
+              - !GetAtt UploadUser.Arn
+          - Action: 
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource: 
+              Fn::Join: 
+                - ""
+                - 
+                  - "arn:aws:s3:::"
+                  - 
+                    Ref: "OriginBucket"
+                  - "/*"
+            Principal: 
+              AWS:
+              - !GetAtt UploadUser.Arn                        
+          - Action: 
+              - "s3:PutObject"
+            Effect: "Allow"
+            Resource: 
+              Fn::Join: 
+                - ""
+                - 
+                  - "arn:aws:s3:::"
+                  - 
+                    Ref: "OriginBucket"
+                  - "/*"
+            Principal: 
+              AWS:
+              - !GetAtt UploadUser.Arn   
 
   CloudFrontDistribution:
     Type: "AWS::CloudFront::Distribution"
@@ -95,7 +155,8 @@ Resources:
 #          MaxTTL: Number
 #          MinTTL: Number
 #          SmoothStreaming: Boolean
-          TargetOriginId: "E3NBCYGV4RKG5T"
+#          PathPattern: ''
+          TargetOriginId: !Ref OriginId
 #          TrustedSigners:
 #            - String
           ViewerProtocolPolicy : allow-all
@@ -111,9 +172,15 @@ Resources:
               -
                 - !Ref BucketName
                 - !Ref S3Domain
-          Id: "E3NBCYGV4RKG5T"
+          Id: !Ref OriginId
           S3OriginConfig:
-            OriginAccessIdentity: origin-access-identity/cloudfront/E3NBCYGV4RKG5T
+            OriginAccessIdentity:
+              "Fn::Join":
+                - "/"
+                - 
+                  - "origin-access-identity"
+                  - "cloudfront"
+                  - !Ref OriginId
         PriceClass: "PriceClass_100"
 #        Restrictions:
 #          Restriction
@@ -122,6 +189,13 @@ Resources:
 #        WebACLId: String
 
 Outputs:
-  OriginBucket:
-    Value: !Ref OriginBucket
-    Description: Name of the s3 origin bucket
+
+  DistributionDomain:
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    Description: Name of the CloudFront Domain
+  
+  UploadAccessKeyId:
+    Value: !Ref UploadAccessKey
+  
+  UploadAccessSecretKey:
+    Value: !GetAtt UploadAccessKey.SecretAccessKey

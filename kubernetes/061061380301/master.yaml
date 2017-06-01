@@ -101,6 +101,7 @@ Parameters:
         AllowedValues:
             - db.t1.micro
             - db.t2.small
+            - db.t2.large
             - db.m1.small
             - db.m1.medium
             - db.m1.large
@@ -177,7 +178,13 @@ Parameters:
     HostedZoneName:
         Description: Domain of the internal Route53 hosted zone
         Type: String
-        Default: 'REGION.ACCOUNTID.gamehouseos.internal'
+    NotificationEndpoint:
+        Description: Where to send notifications to
+        Type: String
+    AlertEndpoint:
+        Description: Where to send alerts to
+        Type: String
+
 #    ElasticSearchDedicatedMasterType: 
 #        Description: Instance type for the dedicated master node
 #        Type: String
@@ -207,6 +214,16 @@ Mappings:
       cidr: 10.0.0.0/16
 
 Resources:
+
+    Notifications:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/notifications.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                VPC:                        !GetAtt VPC.Outputs.VPC
+                VpcCIDR:                    !FindInMap [VpcCidrs, vpc, cidr]
+                BastionSecurityGroup:       !GetAtt VPC.Outputs.BastionSecurityGroup
 
     VPC:
         Type: AWS::CloudFormation::Stack
@@ -240,6 +257,8 @@ Resources:
                 RDSSecurityGroup:           !GetAtt Security.Outputs.RDSSecurityGroup
                 MultiAZ:                    !Ref MultiAZ
                 EnvironmentType:            !Ref EnvironmentType
+                AlertTopic:                 !GetAtt Notifications.Outputs.AlertTopic   
+                NotificationTopic:          !GetAtt Notifications.Outputs.NotificationTopic                 
 
     RedisCache:
         Type: AWS::CloudFormation::Stack
@@ -251,7 +270,9 @@ Resources:
                 RedisSecurityGroup:         !GetAtt Security.Outputs.WorkerSecurityGroup
                 RedisSubnetGroup:           !GetAtt VPC.Outputs.RedisSubnetGroup
                 EnvironmentType:            !Ref EnvironmentType                
-
+                AlertTopic:                 !GetAtt Notifications.Outputs.AlertTopic
+                NotificationTopic:          !GetAtt Notifications.Outputs.NotificationTopic
+                   
     Security:
         Type: AWS::CloudFormation::Stack
         Properties:
@@ -274,10 +295,20 @@ Resources:
                 ElasticSearchInstanceCount:         !Ref ElasticSearchInstanceCount
                 ElasticSearchZoneAwarenessEnabled:  !Ref ElasticSearchZoneAwarenessEnabled
                 ElasticSearchInstanceType:          !Ref ElasticSearchInstanceType
+                AlertTopic:                 !GetAtt Notifications.Outputs.AlertTopic   
+                NotificationTopic:          !GetAtt Notifications.Outputs.NotificationTopic
 #                ElasticSearchDedicatedMasterType:   !Ref ElasticSearchDedicatedMasterType
 #                VPC:                                !GetAtt VPC.Outputs.VPC
 #                BastionSecurityGroup:               !GetAtt VPC.Outputs.BastionSecurityGroup
 
+    Notifications:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3.amazonaws.com/cf-templates-nb-usw2/kubeclusterinfra/components/notifications.yaml
+            Parameters:
+                EnvironmentName:            !Ref AWS::StackName
+                NotificationEndpoint:       !Ref NotificationEndpoint
+                AlertEndpoint:              !Ref AlertEndpoint
 
     HostedZone:
         Type: AWS::CloudFormation::Stack

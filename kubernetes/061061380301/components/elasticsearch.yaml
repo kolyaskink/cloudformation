@@ -64,6 +64,12 @@ Parameters:
 #        Type: Number
 #        MinValue: '1'
 #        MaxValue: '20'
+    AlertTopic:
+        Description: topic to forward alerts to
+        Type: String
+    NotificationTopic:
+        Description: topic to forward notifications to
+        Type: String
 
 Resources:
 
@@ -131,6 +137,132 @@ Resources:
          ElasticsearchVersion: "5.1"
          SnapshotOptions: 
             AutomatedSnapshotStartHour: 0
+
+    ElasticSearchNotifyFreeStorageSpace:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref NotificationTopic
+            AlarmDescription: "Less than 1GB of free diskspace"
+            ComparisonOperator: "LessThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DomainName
+                Value: !Ref ElasticsearchDomain
+              - Name: ClientId
+                Value: !Ref AWS::AccountId
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref NotificationTopic
+            MetricName: FreeStorageSpace
+            Namespace: "AWS/ES"
+            OKActions:
+              - !Ref NotificationTopic
+            Statistic: Minimum
+            Threshold: 1073741824
+            Unit: Bytes
+
+    ElasticSearchAlertFreeStorageSpace:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: "Less than 512MB of free diskspace"
+            ComparisonOperator: "LessThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DomainName
+                Value: !Ref ElasticsearchDomain
+              - Name: ClientId
+                Value: !Ref AWS::AccountId
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: FreeStorageSpace
+            Namespace: "AWS/ES"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Minimum
+            Threshold: 536870912
+            Unit: Bytes
+
+    ElasticSearchNotifyJVMMemoryPressure:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref NotificationTopic
+            AlarmDescription: ">80% JVM Memory Pressure"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DomainName
+                Value: !Ref ElasticsearchDomain
+              - Name: ClientId
+                Value: !Ref AWS::AccountId
+            EvaluationPeriods: 15
+            Period: 60
+            InsufficientDataActions:
+              - !Ref NotificationTopic
+            MetricName: JVMMemoryPressure
+            Namespace: "AWS/ES"
+            OKActions:
+              - !Ref NotificationTopic
+            Statistic: Average
+            Threshold: 80
+            Unit: Percent
+
+    ElasticSearchAlertJVMMemoryPressure:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: ">90% JVM Memory Pressure"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DomainName
+                Value: !Ref ElasticsearchDomain
+              - Name: ClientId
+                Value: !Ref AWS::AccountId
+            EvaluationPeriods: 15
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: JVMMemoryPressure
+            Namespace: "AWS/ES"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Average
+            Threshold: 90
+            Unit: Percent
+
+    ElasticSearchAlertSnapshotFailure:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: "Failed Automatic Snapshot"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DomainName
+                Value: !Ref ElasticsearchDomain
+              - Name: ClientId
+                Value: !Ref AWS::AccountId
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: AutomatedSnapshotFailure
+            Namespace: "AWS/ES"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Average
+            Threshold: 1
+            Unit: Count
+
 
 Outputs:
     ElasticSearchDomain:

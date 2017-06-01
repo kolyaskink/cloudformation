@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    This creates the notification Endpoints for both Alerts (critical) and Notifications (informational)
+
+Parameters:
+  EnvironmentName:
+    Description: The Stack Name
+    Type: String
+  NotificationEndpoint:
+    Description: The notification endpoint
+    Type: String
+    Default: 'aws-notifications@gamehouse.com'   
+  AlertEndpoint:
+    Description: The alert endpoint
+    Type: String
+    Default: 'aws-alerts@gamehouse.com' 
+
+Resources:
+
+  AlertTopic:
+    Type: "AWS::SNS::Topic"
+    Properties: 
+      DisplayName: AWS Alerts
+      TopicName: AWSAlerts
+  
+  AlertSubscription:    
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Endpoint: !Ref AlertEndpoint
+      Protocol: email
+      TopicArn: !Ref AlertTopic
+  
+  NotificationTopic:
+    Type: "AWS::SNS::Topic"
+    Properties: 
+      DisplayName: AWS Notifications
+      TopicName: AWSNotifications
+  
+  NotificationSubscription:    
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Endpoint: !Ref NotificationEndpoint
+      Protocol: email
+      TopicArn: !Ref NotificationTopic
+     
+Outputs:
+
+    AlertTopic:
+        Description: A reference to the alert SNS topic
+        Value: !Ref AlertTopic   
+
+    NotificationTopic:
+        Description: A reference to the notification SNS topic
+        Value: !Ref NotificationTopic           

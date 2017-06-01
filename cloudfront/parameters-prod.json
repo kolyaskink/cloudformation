@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey":"BucketName",
+    "ParameterValue":"cdnghosprd"
+  },
+  {
+    "ParameterKey":"Cname",
+    "ParameterValue":"cdn.gamehouseoriginalstories.com"
+  },
+  {
+    "ParameterKey":"CanonicalUser",
+  	"ParameterValue": "177e6141ac84aff02912f6bdf061cab656135c2b11de2c9252f3b92142f13c41011967ee2403b777389847085015991d"
+  },
+  {
+    "ParameterKey":"OriginId",
+  	"ParameterValue": "E2TEK4T5DAZ0KK"
+  },  
+  {
+    "ParameterKey":"UploadUserName",
+  	"ParameterValue": "srv-cdnghos"
+  }
+]

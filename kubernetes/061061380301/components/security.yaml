@@ -48,7 +48,6 @@ Resources:
                   ToPort: '5432'
                   CidrIp: '212.67.170.172/32'                                 
                  
-
     WorkerSecurityGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
@@ -59,7 +58,6 @@ Resources:
               FromPort: '0'
               IpProtocol: "-1"
               ToPort: '65535'
-
 
 Outputs:
 

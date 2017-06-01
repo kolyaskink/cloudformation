@@ -4,6 +4,7 @@ Description: >
     This creates a (by default small) RDS instance in a Database Subnet.
 
 Parameters:
+
     DBName:
         Default: MyDatabase
         Description: The database name
@@ -107,6 +108,12 @@ Parameters:
         - 'test'
         - 'preproduction'
         - 'production'
+    AlertTopic:
+        Description: topic to forward alerts to
+        Type: String
+    NotificationTopic:
+        Description: topic to forward notifications to
+        Type: String
 
 Resources:
 
@@ -121,6 +128,8 @@ Resources:
                 Ref: DBInstanceClass
             DBSubnetGroupName:
                 Ref: RDSSubnetGroup
+            DBParameterGroupName:
+                Ref: RDSMasterParameterGroup
             BackupRetentionPeriod: 7
             Engine: postgres
             EngineVersion: 9.5.4
@@ -149,7 +158,9 @@ Resources:
             DBInstanceClass:
                 Ref: DBInstanceClass
             DBSubnetGroupName:
-                Ref: RDSReadReplicaSubnetGroup                
+                Ref: RDSReadReplicaSubnetGroup
+            DBParameterGroupName:
+                Ref: RDSReplicaParameterGroup                
             Engine: postgres
             EngineVersion: 9.5.4
             PubliclyAccessible: yes
@@ -160,6 +171,226 @@ Resources:
                   Value: !Ref EnvironmentType
             VPCSecurityGroups:
                 - Ref: RDSSecurityGroup
+
+    RDSMasterParameterGroup:
+        Type: "AWS::RDS::DBParameterGroup"
+        Properties: 
+            Description: Parameter Group for RDS Master Instance
+            Family: postgres9.5
+            Parameters:
+                max_connections: 260
+
+    RDSReplicaParameterGroup:
+        Type: "AWS::RDS::DBParameterGroup"
+        Properties: 
+            Description: Parameter Group for RDS Replica Instance
+            Family: postgres9.5
+            Parameters:
+                max_connections: 260
+
+    EventSubscription:
+        Type: "AWS::RDS::EventSubscription"
+        Properties: 
+            Enabled: True
+            SnsTopicArn: !Ref NotificationTopic
+
+    AlertSubscription:
+        Type: "AWS::RDS::EventSubscription"
+        Properties: 
+            EventCategories:
+              - "availability"
+              - "deletion"
+              - "failover"
+              - "failure"
+            Enabled: True
+            SourceType: db-instance
+            SnsTopicArn: !Ref AlertTopic
+
+# For now, various thresholds are hardcoded in this template. Todo is make this more dynamic. If possible. At all. 
+
+    MasterDBNotifyPctDiskSpace:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref NotificationTopic
+            AlarmDescription: ">80% of RDS diskspace used"
+            ComparisonOperator: "LessThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref NotificationTopic
+            MetricName: FreeStorageSpace
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref NotificationTopic
+            Statistic: Average
+            Threshold: 1073741824
+            Unit: Bytes
+
+    MasterDBAlertPctDiskSpace:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: ">90% of RDS diskspace used"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: CPUUtilization
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Average
+            Threshold: 90
+            Unit: Percent
+
+    MasterDBNotifyPctCPU:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref NotificationTopic
+            AlarmDescription: ">80% of RDS CPU used"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref NotificationTopic
+            MetricName: CPUUtilization
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref NotificationTopic
+            Statistic: Average
+            Threshold: 80
+            Unit: Percent
+
+    MasterDBAlertPctCPU:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: ">90% of RDS CPU used"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: CPUUtilization
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Average
+            Threshold: 90
+            Unit: Percent
+
+    MasterDBNotifyPctConnections:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref NotificationTopic
+            AlarmDescription: ">80% of connections used"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref NotificationTopic
+            MetricName: DatabaseConnections
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref NotificationTopic
+            Statistic: Average
+            Threshold: 208
+            Unit: Count
+
+    MasterDBAlertPctConnections:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: ">90% of connections used"
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: DatabaseConnections
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Average
+            Threshold: 234
+            Unit: Count
+
+    MasterDBNotifyFreeableMemory:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: "<20% of freeablememory"
+            ComparisonOperator: "LessThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref NotificationTopic
+            MetricName: FreeableMemory
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref NotificationTopic
+            Statistic: Average
+            Threshold: 1073741824
+            Unit: Bytes
+
+    MasterDBAlertFreeableMemory:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            ActionsEnabled: True
+            AlarmActions:
+              - !Ref AlertTopic
+            AlarmDescription: "<10% of freeablememory"
+            ComparisonOperator: "LessThanOrEqualToThreshold"
+            Dimensions:
+              - Name: DBInstanceIdentifier
+                Value: !Ref MasterDB
+            EvaluationPeriods: 2
+            Period: 60
+            InsufficientDataActions:
+              - !Ref AlertTopic
+            MetricName: FreeableMemory
+            Namespace: "AWS/RDS"
+            OKActions:
+              - !Ref AlertTopic
+            Statistic: Average
+            Threshold: 536870912
+            Unit: Bytes
 
 Outputs:
     MasterJDBCConnectionString:
