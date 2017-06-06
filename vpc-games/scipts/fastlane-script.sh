@@ -11,6 +11,8 @@ BundleId=$3
 function DeployAndroid {
 	cd /tmp/$ProjectName/android/
 	export FASTLANE_PASSWORD=$Pass
+	export LANG=en_US.UTF-8
+	export LANGUAGE=en_US:en
 	/usr/local/bin/fastlane supply -p $BundleId --json_key $GPAccessFile --skip_upload_apk > /tmp/FastlaneDeployment.log 2>&1
 	if [[ "$?" != 0 ]]; then
 		echo "ERROR! Fastlane problem"
@@ -23,6 +25,8 @@ function DeployAndroid {
 function DeployIOS {
 	cd /tmp/$ProjectName/ios/
 	export FASTLANE_PASSWORD=$Pass
+	export LANG=en_US.UTF-8
+	export LANGUAGE=en_US:en
 	/usr/local/bin/fastlane deliver -u $User -a $BundleId --force true > /tmp/FastlaneDeployment.log 2>&1
 	if [[ "$?" != 0 ]]; then
 		echo "ERROR! Fastlane problem"
