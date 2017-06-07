@@ -107,7 +107,7 @@ Resources:
             Properties:
                 VolumeType: gp2
                 SnapshotId: snap-0043705092f02ca90
-                AvailabilityZone: !GetAtt PublicSubnet1Id.AvailabilityZone
+                AvailabilityZone: !GetAtt FastlaneEC2Instance.AvailabilityZone
                 Encrypted: false
                 Size: 100
                 Tags:
