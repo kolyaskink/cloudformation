@@ -112,7 +112,7 @@ Resources:
                 Size: 100
                 Tags:
                     - Key: Name
-                    Value: GamesFastlaneTmp
+                      Value: GamesFastlaneTmp
 
     FastlaneVolumeTmpAttachment:
             Type: AWS::EC2::VolumeAttachment
