@@ -37,12 +37,12 @@ Resources:
             GroupName: !Ref StudioTemplateGeneralGroup
             Users:
                 - adm-kirillk
-                - !Ref UserTest
+                - !Ref git-test
 
-    UserTest:
+    git-test:
         Type: "AWS::IAM::User"
         Properties: 
-            UserName: test        
+            UserName: git-test        
 
 
 
