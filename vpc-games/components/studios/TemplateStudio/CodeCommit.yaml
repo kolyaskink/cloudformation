@@ -38,6 +38,13 @@ Resources:
             Users:
                 - adm-kirillk
 
+    UserTest:
+        Type: "AWS::IAM::User"
+        Properties: 
+            Groups:
+                - !Ref StudioTemplateGeneralGroupAssociation
+            UserName: test        
+
 
 
 Outputs:
