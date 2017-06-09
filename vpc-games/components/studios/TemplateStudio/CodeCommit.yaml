@@ -34,7 +34,7 @@ Resources:
     StudioTemplateGeneralGroupAssociation:
         Type: "AWS::IAM::UserToGroupAddition"
         Properties: 
-            GroupName: !Ref StudioTemplateGeneralGroup
+            GroupName: "CBS-StudioTemplate-GeneralGroup"
             Users:
                 - adm-kirillk
 
