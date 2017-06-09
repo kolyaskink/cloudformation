@@ -29,7 +29,7 @@ function DeployAndroid () {
 	if [[ "$?" != 0 ]]; then
 		OutputText="Fastlane returned en error"
 		echo "ERROR! $OutputText"
-		PushToSns ERROR $ProjectName $OutputText
+		PushToSns ERROR $ProjectName "$OutputText"
 		mv /tmp/FastlaneDeployment.log /tmp/FastlaneDeployment.error 
 		tail -30 /tmp/FastlaneDeployment.error
 		exit 2
@@ -43,7 +43,7 @@ function DeployIOS () {
 	if [[ "$?" != 0 ]]; then
 		OutputText="Fastlane returned en error"
 		echo "ERROR! $OutputText"
-		PushToSns ERROR $ProjectName $OutputText
+		PushToSns ERROR $ProjectName "$OutputText"
 		mv /tmp/FastlaneDeployment.log /tmp/FastlaneDeployment.error
 		tail -30 /tmp/FastlaneDeployment.error
 		exit 2
@@ -55,7 +55,7 @@ function DeployIOS () {
 if [[ -z "$ProjectName" ]] || [[ -z "$Platform" ]] || [[ -z "$BundleId" ]]; then 
 	OutputText="Some variable is empty"
 	echo "ERROR! $OutputText"
-	PushToSns ERROR $ProjectName $OutputText
+	PushToSns ERROR $ProjectName "$OutputText"
 	exit 2
 fi
 
@@ -64,7 +64,7 @@ Response=$(aws s3 ls "s3://$BucketName/$ProjectName/" | wc -l)
 if [[ "$Response" == 0 ]]; then
 	OutputText="Folder for project $ProjectName does not exist"
 	echo "ERROR! $OutputText"
-	PushToSns ERROR $ProjectName $OutputText
+	PushToSns ERROR $ProjectName "$OutputText"
 	exit 2
 fi
 
@@ -75,7 +75,7 @@ aws s3 sync "s3://$BucketName/$ProjectName/" /tmp/$ProjectName/ > /tmp/$ProjectN
 if [[ "$?" != 0 ]]; then
 	OutputText="Cant download project $ProjectName from S3"
     echo "ERROR! $OutputText"
-    PushToSns ERROR $ProjectName $OutputText
+    PushToSns ERROR $ProjectName "$OutputText"
     mv /tmp/$ProjectName.log /tmp/$ProjectName.error
     rm -rf /tmp/$ProjectName
     exit 2
@@ -89,7 +89,7 @@ elif [[ "$Platform" = "ios" ]]; then
 else
 	OutputText="Wrong platform name."
 	echo "$OutputText"
-	PushToSns ERROR $ProjectName $OutputText
+	PushToSns ERROR $ProjectName "$OutputText"
 fi
 
 # Cleaning up
@@ -100,5 +100,5 @@ rm -f /tmp/*.png
 rm -f /tmp/spaceship*
 
 OutputText="Platform is $Platform; BundleId is $BundleId"
-PushToSns SUCCESS $ProjectName $OutputText
+PushToSns SUCCESS $ProjectName "$OutputText"
 exit 0

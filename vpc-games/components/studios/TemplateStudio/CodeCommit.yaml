@@ -16,6 +16,21 @@ Resources:
         Properties: 
           RepositoryName: !Ref StudioTemplateGitRepoName
 
+    StudioTemplateGroup:
+        Type: "AWS::IAM::Group"
+        Properties:
+            GroupName: "StudioTemplateGeneralGroup"
+            Policies:
+                - PolicyName: 'StudioTemplateGeneralPolicy'
+                  PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                    - Effect: Allow
+                      Action:
+                      - 'codecommit:*'
+                      Resource: 
+                      - !GetAtt StudioTemplateGitRepo.Arn
+
 Outputs:
 
     StudioTemplateGitRepoName:
