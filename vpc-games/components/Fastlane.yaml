@@ -10,7 +10,7 @@ Mappings:
             AMI: ami-bd7beddd
     AWSRegionToEC2FastlaneAMI:    
         us-west-2:
-            AMI: ami-02f1fe7b
+            AMI: ami-875f56fe
     AWSRegionToEC2StudioJenkinsAMI:    
         us-west-2:
             AMI: ami-5cbf2f3c 
