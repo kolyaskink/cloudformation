@@ -37,7 +37,7 @@ Resources:
             GroupName: !Ref StudioTemplateGeneralGroup
             Users:
                 - adm-kirillk
-                - !Ref git-test
+                - !Ref gittest
 
     gittest:
         Type: "AWS::IAM::User"
