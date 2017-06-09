@@ -16,12 +16,12 @@ Resources:
         Properties: 
           RepositoryName: !Ref StudioTemplateGitRepoName
 
-    StudioTemplateGroup:
+    StudioTemplateGeneralGroup:
         Type: "AWS::IAM::Group"
         Properties:
-            GroupName: "StudioTemplateGeneralGroup"
+            GroupName: "CBS-StudioTemplate-GeneralGroup"
             Policies:
-                - PolicyName: 'StudioTemplateGeneralPolicy'
+                - PolicyName: 'StudioTemplate-GeneralPolicy'
                   PolicyDocument:
                     Version: '2012-10-17'
                     Statement:
@@ -30,6 +30,15 @@ Resources:
                       - 'codecommit:*'
                       Resource: 
                       - !GetAtt StudioTemplateGitRepo.Arn
+
+    StudioTemplateGeneralGroupAssociation:
+        Type: "AWS::IAM::UserToGroupAddition"
+        Properties: 
+            GroupName: !Ref StudioTemplateGeneralGroup
+            Users:
+                - adm-kirillk
+
+
 
 Outputs:
 
