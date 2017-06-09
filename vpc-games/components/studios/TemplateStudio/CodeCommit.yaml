@@ -39,7 +39,7 @@ Resources:
                 - adm-kirillk
                 - !Ref git-test
 
-    git-test:
+    gittest:
         Type: "AWS::IAM::User"
         Properties: 
             UserName: git-test        
