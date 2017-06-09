@@ -19,6 +19,10 @@ Resources:
     StudioTemplateGeneralGroup:
         Type: "AWS::IAM::Group"
         Properties:
+            ManagedPolicyArns:
+                - arn:aws:iam::aws:policy/IAMUserSSHKeys
+                - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+                - arn:aws:iam::aws:policy/IAMSelfManageServiceSpecificCredentials
             GroupName: "CBS-StudioTemplate-GeneralGroup"
             Policies:
                 - PolicyName: 'StudioTemplate-GeneralPolicy'
@@ -36,7 +40,6 @@ Resources:
         Properties: 
             GroupName: !Ref StudioTemplateGeneralGroup
             Users:
-                - adm-kirillk
                 - !Ref gittest
 
     gittest:
