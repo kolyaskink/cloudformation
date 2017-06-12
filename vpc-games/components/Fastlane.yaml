@@ -114,12 +114,12 @@ Resources:
                     - Key: Name
                       Value: GamesFastlaneTmp
 
-    # FastlaneVolumeTmpAttachment:
-    #         Type: AWS::EC2::VolumeAttachment
-    #         Properties:
-    #             Device: xvdf
-    #             InstanceId: !Ref FastlaneEC2Instance
-    #             VolumeId: !Ref FastlaneVolumeTmp
+    FastlaneVolumeTmpAttachment:
+            Type: AWS::EC2::VolumeAttachment
+            Properties:
+                Device: xvdf
+                InstanceId: !Ref FastlaneEC2Instance
+                VolumeId: !Ref FastlaneVolumeTmp
 
     
     InstanceProfileFastlane:
