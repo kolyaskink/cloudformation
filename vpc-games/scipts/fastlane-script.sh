@@ -11,6 +11,7 @@ ProjectName=$2
 BundleId=$3
 
 function ExportEnvVar () {
+	sudo mount -a
 	export FASTLANE_PASSWORD=$Pass
 	export LANG=en_US.UTF-8
 	export LANGUAGE=en_US:en
