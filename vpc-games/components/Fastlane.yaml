@@ -204,7 +204,7 @@ Resources:
                         TransitionInDays: !Ref DaysToGLACIERAssets
             Tags:
                     - Key: ResourceGroup
-                      Value: Fastlanes                
+                      Value: Fastlane                
 
     S3BucketAssetsPolicy:   
         Type: "AWS::S3::BucketPolicy"
