@@ -16,6 +16,44 @@ Resources:
         Properties: 
           RepositoryName: !Ref StudioTemplateGitRepoName
 
+    StudioTemplateGeneralGroup:
+        Type: "AWS::IAM::Group"
+        Properties:
+            ManagedPolicyArns:
+                - arn:aws:iam::aws:policy/IAMUserSSHKeys
+                - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+                - arn:aws:iam::aws:policy/IAMSelfManageServiceSpecificCredentials
+            GroupName: "CBS-StudioTemplate-GeneralGroup"
+            Policies:
+                - PolicyName: 'StudioTemplate-GeneralPolicy'
+                  PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                    - Effect: Allow
+                      Action:
+                      - 'codecommit:*'
+                      Resource: 
+                      - !GetAtt StudioTemplateGitRepo.Arn
+                    - Effect: Allow
+                      Action:
+                      - 'codecommit:ListRepositories'
+                      Resource: 
+                      - '*'
+
+    StudioTemplateGeneralGroupAssociation:
+        Type: "AWS::IAM::UserToGroupAddition"
+        Properties: 
+            GroupName: !Ref StudioTemplateGeneralGroup
+            Users:
+                - !Ref gittest
+
+    gittest:
+        Type: "AWS::IAM::User"
+        Properties: 
+            UserName: git-test        
+
+
+
 Outputs:
 
     StudioTemplateGitRepoName:
