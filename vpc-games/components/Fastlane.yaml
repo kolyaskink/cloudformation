@@ -101,6 +101,8 @@ Resources:
                   Value: GamesFastlane
                 - Key: Scheduler
                   Value: WorkingDays
+                - Key: ResourceGroup
+                  Value: Fastlane
     
     FastlaneVolumeTmp:
             Type: "AWS::EC2::Volume"
@@ -113,6 +115,8 @@ Resources:
                 Tags:
                     - Key: Name
                       Value: GamesFastlaneTmp
+                    - Key: ResourceGroup
+                      Value: Fastlane
 
     FastlaneVolumeTmpAttachment:
             Type: AWS::EC2::VolumeAttachment
@@ -198,6 +202,9 @@ Resources:
                     -
                         StorageClass: "GLACIER"
                         TransitionInDays: !Ref DaysToGLACIERAssets
+            Tags:
+                    - Key: ResourceGroup
+                      Value: Fastlanes                
 
     S3BucketAssetsPolicy:   
         Type: "AWS::S3::BucketPolicy"
