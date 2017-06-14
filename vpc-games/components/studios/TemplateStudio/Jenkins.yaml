@@ -59,8 +59,7 @@ Parameters:
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
 
-    GhosSslCert:
-        Type: S3BucketStudioTemplateName
+    S3BucketStudioTemplateName:
         Type: String
 
 Resources:
