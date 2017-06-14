@@ -69,6 +69,7 @@ Resources:
                     KeyName:                !Ref KeyName
                     StudioTemplateGitRepoName: !Ref StudioTemplateGitRepoName
                     CFS3Name:                   !Ref CFS3Name
+                    S3BucketStudioTemplateName:                    !Ref S3BucketStudioTemplateName
 
 Parameters:
 
@@ -161,6 +162,9 @@ Parameters:
         Description: temp
         Type: String
 
+    S3BucketStudioTemplateName:
+        Type: String
+
     StudioTemplateHttpsFrom1:
         Description: IP address to grant access to
         Type: String
@@ -216,6 +220,8 @@ Parameters:
         Description: IP address of Lux IpSec endpoint
         Type: String
         Default: none
+
+
 
 Outputs:
 

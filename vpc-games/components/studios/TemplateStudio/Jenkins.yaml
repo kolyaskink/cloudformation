@@ -59,6 +59,9 @@ Parameters:
         MinLength: '1'
         Type: AWS::EC2::KeyPair::KeyName
 
+    GhosSslCert:
+        Type: S3BucketStudioTemplateName
+
 Resources:
 
     #Master
@@ -87,6 +90,8 @@ Resources:
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-lb
+                - Key: ResourceGroup
+                  Value: StudioTemplate  
 
     EC2SecurityGroupJenkinsStudioTemplate:
         Type: AWS::EC2::SecurityGroup
@@ -113,6 +118,8 @@ Resources:
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-ec2 
+                - Key: ResourceGroup
+                  Value: StudioTemplate  
 
     EC2SecurityGroupJenkinsStudioTemplateIngress:
         Type: AWS::EC2::SecurityGroupIngress     
@@ -139,6 +146,8 @@ Resources:
                   Value: GamesJenkinsStudioTemplate
                 - Key: Scheduler
                   Value: WorkingDays
+                - Key: ResourceGroup
+                  Value: StudioTemplate  
               UserData:
                 'Fn::Base64': !Sub |
                   #!/bin/bash -x
@@ -280,6 +289,8 @@ Resources:
             Tags:
                 - Key: Name
                   Value: games-jenkins-template-windows-slave-ec2 
+                - Key: ResourceGroup
+                  Value: StudioTemplate  
 
     EC2SecurityGroupJenkinsStudioTemplateWindowsSlaveIngress:
         Type: AWS::EC2::SecurityGroupIngress     
@@ -307,6 +318,8 @@ Resources:
                   Value: GamesJenkinsStudioTemplateWindowsSlave1
                 - Key: Scheduler
                   Value: WorkingDays
+                - Key: ResourceGroup
+                  Value: StudioTemplate  
 
     JenkinsStudioTemplateWindowsSlaveEC2Instance2: 
             Type: "AWS::EC2::Instance"
@@ -324,6 +337,34 @@ Resources:
                   Value: GamesJenkinsStudioTemplateWindowsSlave2
                 - Key: Scheduler
                   Value: WorkingDays
+                - Key: ResourceGroup
+                  Value: StudioTemplate  
+
+#S3 
+
+    S3BucketStudioTemplate:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: !Ref S3BucketStudioTemplateName
+            Tags:
+                    - Key: ResourceGroup
+                      Value: StudioTemplate                
+
+    S3BucketStudioTemplatePolicy:   
+        Type: "AWS::S3::BucketPolicy"
+        Properties:
+            Bucket: !Ref S3BucketStudioTemplate
+            PolicyDocument:
+                Statement:
+                    - 
+                        Action:
+                            - "s3:*"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketStudioTemplateName}
+                        Principal: 
+                            AWS: 
+                            - !Ref IAMRoleJenkinsStudioTemplate
+
 
 Outputs:
 

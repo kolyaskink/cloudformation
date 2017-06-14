@@ -51,6 +51,9 @@ Parameters:
     StudioTemplateGitRepoName:
         Type: String
 
+    S3BucketStudioTemplateName:
+        Type: String
+
 Resources:
 
     TemplateStudio:
@@ -71,6 +74,7 @@ Resources:
                 GhosSslCert:                              !Ref GhosSslCert
                 KeyName:                                  !Ref KeyName
                 CFS3Name:                                 !Ref CFS3Name
+                S3BucketStudioTemplateName:                    !Ref S3BucketStudioTemplateName
 
 
 Outputs:

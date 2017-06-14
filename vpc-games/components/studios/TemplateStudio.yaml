@@ -33,6 +33,7 @@ Resources:
                 ApachePort:                 !Ref ApachePort
                 GhosSslCert:                !Ref GhosSslCert
                 KeyName:                    !Ref KeyName
+                S3BucketStudioTemplateName:                    !Ref S3BucketStudioTemplateName
 
     TemplateStudioCodeCommit:
         Type: AWS::CloudFormation::Stack
@@ -80,6 +81,9 @@ Parameters:
     GhosSslCert:
         Type: String
 
+    S3BucketStudioTemplateName:
+        Type: String
+
     KeyName:
         ConstraintDescription: must be the name of an existing EC2 KeyPair.
         MinLength: '1'
@@ -88,6 +92,7 @@ Parameters:
     #CodeCommit parameters
     StudioTemplateGitRepoName:
         Type: String
+
 
 Outputs:
 
