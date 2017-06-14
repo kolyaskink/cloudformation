@@ -61,6 +61,7 @@ Parameters:
 
     GhosSslCert:
         Type: S3BucketStudioTemplateName
+        Type: String
 
 Resources:
 
