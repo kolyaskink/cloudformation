@@ -76,6 +76,10 @@
     "ParameterValue": "5154197496-cf-templates"
         },
    {
+    "ParameterKey": "S3BucketStudioTemplateName",
+    "ParameterValue": "3750245091-studiotemplate"
+        },
+   {
     "ParameterKey": "AccountId",
     "ParameterValue": "061061380301"
         },
