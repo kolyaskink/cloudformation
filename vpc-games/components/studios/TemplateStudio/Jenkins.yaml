@@ -363,7 +363,7 @@ Resources:
                         Resource: !Sub arn:aws:s3:::${S3BucketStudioTemplateName}
                         Principal: 
                             AWS: 
-                            - arn:aws:iam::061061380301:role/GamesVpc-Fastlane-H16XDMM7LH4I-IAMRoleFastlane-1HA2F4DG6DU2Q
+                            - !GetAtt IAMRoleJenkinsStudioTemplate.Arn
 
 
 Outputs:
