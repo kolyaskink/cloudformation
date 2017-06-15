@@ -202,7 +202,7 @@ Resources:
                     ExpirationInDays: 7
             Tags:
                 - Key: ResourceGroup
-                Value: Fastlane  
+                  Value: Fastlane  
 
     S3BucketOutputPolicy:   
         Type: "AWS::S3::BucketPolicy"
