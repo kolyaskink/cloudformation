@@ -215,7 +215,7 @@ Resources:
                             - "s3:GetObject"
                             - "s3:GetObjectVersion"
                         Effect:  "Allow"
-                        Resource: !Sub arn:aws:s3:::${S3BucketOutputName}/
+                        Resource: !Sub arn:aws:s3:::${S3BucketOutputName}/*
                         Principal: "*"
                     - 
                         Action:
