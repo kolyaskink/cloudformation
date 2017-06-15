@@ -44,6 +44,7 @@ Resources:
                 FastlaneHostInstanceType:   !Ref FastlaneHostInstanceType
                 PublicSubnet1Id:           !GetAtt Vpc.Outputs.PublicSubnet1Id
                 S3BucketAssetsName:         !Ref S3BucketAssetsName
+                S3BucketOutputName:         !Ref S3BucketOutputName
                 DaysToIAAssets:             !Ref DaysToIAAssets
                 DaysToGLACIERAssets:        !Ref DaysToGLACIERAssets
                 AppUserName:                !Ref AppUserName
@@ -221,6 +222,9 @@ Parameters:
         Type: String
         Default: none
 
+    S3BucketOutputName:
+        Description: Name of Bucket for Assets
+        Type: String
 
 
 Outputs:

@@ -36,6 +36,10 @@
     "ParameterValue": "7626681997-gamesassets"
   },
     {
+    "ParameterKey": "S3BucketOutputName",
+    "ParameterValue": "4426581877-fastlaneoutput"
+  },
+    {
     "ParameterKey": "AppUserName",
     "ParameterValue": "src-S3BucketAssets"
   },

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-BucketName="8911037875-gamesassets"
+BucketAssets="8911037875-gamesassets"
+BucketOutput=""
 GPAccessFile="/home/ec2-user/googlePlayApiAccess.json"
 User="fastlane@gamehouse.com"
 Pass="Fastlane170"
@@ -9,6 +10,7 @@ AwsRegion="us-west-2"
 Platform=$1
 ProjectName=$2
 BundleId=$3
+Parameter=$4
 
 function ExportEnvVar () {
 	sudo mount -a
@@ -23,16 +25,25 @@ function PushToSns () {
 	aws sns publish --region=$AwsRegion --topic-arn $SnsTopic --message "Project $2 status is $1: $3"
 }
 
+
+function FastlaneErrorhandler () {
+	ErrorFile="/tmp/FastlaneDeploymentError-$(date +%F_%R).txt"
+	mv /tmp/FastlaneDeployment.log $ErrorFile
+
+	aws s3 sync --region=$AwsRegion \
+	--storage-class REDUCED_REDUNDANCY $ErrorFile "s3://$BucketOutput/$ErrorFile" 
+
+	OutputText="Fastlane returned en error. Pls see logs "
+	echo "ERROR! $OutputText"
+	PushToSns ERROR $ProjectName "$OutputText"
+}
+
 function DeployAndroid () {
 	ExportEnvVar
 	cd /tmp/$ProjectName/android/
-	/usr/local/bin/fastlane supply -p $BundleId --json_key $GPAccessFile --skip_upload_apk > /tmp/FastlaneDeployment.log 2>&1
+	/usr/local/bin/fastlane supply -p $BundleId --json_key $GPAccessFile --skip_upload_apk $Parameter > /tmp/FastlaneDeployment.log 2>&1
 	if [[ "$?" != 0 ]]; then
-		OutputText="Fastlane returned en error"
-		echo "ERROR! $OutputText"
-		PushToSns ERROR $ProjectName "$OutputText"
-		mv /tmp/FastlaneDeployment.log /tmp/FastlaneDeployment.error 
-		tail -30 /tmp/FastlaneDeployment.error
+		FastlaneErrorhandler
 		exit 2
 	fi
 }
@@ -40,47 +51,75 @@ function DeployAndroid () {
 function DeployIOS () {
 	ExportEnvVar
 	cd /tmp/$ProjectName/ios/
-	/usr/local/bin/fastlane deliver -u $User -a $BundleId --force true > /tmp/FastlaneDeployment.log 2>&1
+	/usr/local/bin/fastlane deliver -u $User -a $BundleId --force true $Parameter > /tmp/FastlaneDeployment.log 2>&1
 	if [[ "$?" != 0 ]]; then
-		OutputText="Fastlane returned en error"
-		echo "ERROR! $OutputText"
-		PushToSns ERROR $ProjectName "$OutputText"
-		mv /tmp/FastlaneDeployment.log /tmp/FastlaneDeployment.error
-		tail -30 /tmp/FastlaneDeployment.error
+		FastlaneErrorhandler
 		exit 2
 	fi	
 }
 
 
-# If var is empty - return error
-if [[ -z "$ProjectName" ]] || [[ -z "$Platform" ]] || [[ -z "$BundleId" ]]; then 
-	OutputText="Some variable is empty"
-	echo "ERROR! $OutputText"
-	PushToSns ERROR $ProjectName "$OutputText"
-	exit 2
-fi
+function PreSyncTests () {
 
-# If folder is not there - print error
-Response=$(aws s3 ls "s3://$BucketName/$ProjectName/" | wc -l)
-if [[ "$Response" == 0 ]]; then
-	OutputText="Folder for project $ProjectName does not exist"
-	echo "ERROR! $OutputText"
-	PushToSns ERROR $ProjectName "$OutputText"
-	exit 2
-fi
+	# If var is empty - return error
+	if [[ -z "$ProjectName" || -z "$Platform" || -z "$BundleId" ]]; then 
+		OutputText="Some variable is empty"
+		echo "ERROR! $OutputText"
+		PushToSns ERROR $ProjectName "$OutputText"
+		exit 2
+	fi
+
+	# Check if any --skip parameter is there
+	if [[ -n "$Parameter" &&  ( "$Parameter" == "skip_screenshots" || "$Parameter" == "skip_metadata" ) ]]; then 
+			Parameter=$(echo "--$Parameter true")
+	elif [[ -z "$Parameter" ]]; then
+		echo "It's just empty"
+	else
+		OutputText="$Parameter is a wrong value"
+		echo "ERROR! $OutputText"
+		PushToSns ERROR $ProjectName "$OutputText"
+		exit 2
+	fi
+
+	# If folder is not there - print error
+	Response=$(aws s3 ls "s3://$BucketAssets/$ProjectName/" | wc -l)
+	if [[ "$Response" == 0 ]]; then
+		OutputText="Folder for project $ProjectName does not exist"
+		echo "ERROR! $OutputText"
+		PushToSns ERROR $ProjectName "$OutputText"
+		exit 2
+	fi
+}
+
+function PostSyncTests () {
+
+	# If sync not ok - print error, delete temp folder and exit
+	if [[ "$?" != 0 ]]; then
+		OutputText="Cant download project $ProjectName from S3"
+    	echo "ERROR! $OutputText"
+    	PushToSns ERROR $ProjectName "$OutputText"
+    	mv /tmp/$ProjectName.log /tmp/$ProjectName.error
+    	rm -rf /tmp/$ProjectName
+    	exit 2
+	fi
+}
+
+function CleanUp () {
+
+	# Cleaning up
+	rm -rf /tmp/$ProjectName/
+	rm -f /tmp/$ProjectName.log
+	rm -f /tmp/FastlaneDeployment.log
+	rm -f /tmp/*.png
+	rm -f /tmp/spaceship*
+}
+
+PreSyncTests
 
 # Sync S3 to a temp folder 
-aws s3 sync "s3://$BucketName/$ProjectName/" /tmp/$ProjectName/ > /tmp/$ProjectName.log 2>&1
+aws s3 sync "s3://$BucketAssets/$ProjectName/" /tmp/$ProjectName/ > /tmp/$ProjectName.log 2>&1
 
-# If sync not ok - print error, delete temp folder and exit
-if [[ "$?" != 0 ]]; then
-	OutputText="Cant download project $ProjectName from S3"
-    echo "ERROR! $OutputText"
-    PushToSns ERROR $ProjectName "$OutputText"
-    mv /tmp/$ProjectName.log /tmp/$ProjectName.error
-    rm -rf /tmp/$ProjectName
-    exit 2
-fi
+PostSyncTests
 
 # Deployment
 if [[ "$Platform" = "android" ]]; then
@@ -93,12 +132,7 @@ else
 	PushToSns ERROR $ProjectName "$OutputText"
 fi
 
-# Cleaning up
-rm -rf /tmp/$ProjectName/
-rm -f /tmp/$ProjectName.log
-rm -f /tmp/FastlaneDeployment.log
-rm -f /tmp/*.png
-rm -f /tmp/spaceship*
+CleanUp
 
 OutputText="Platform is $Platform; BundleId is $BundleId"
 PushToSns SUCCESS $ProjectName "$OutputText"

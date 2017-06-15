@@ -49,6 +49,10 @@ Parameters:
         Description: Name of Bucket for Assets
         Type: String
 
+    S3BucketOutputName:
+        Description: Name of Bucket for Assets
+        Type: String
+
     DaysToIAAssets:
         Description: Days before file moved to IA storage
         Type: Number
@@ -118,12 +122,12 @@ Resources:
                     - Key: ResourceGroup
                       Value: Fastlane
 
-    # FastlaneVolumeTmpAttachment:
-    #         Type: AWS::EC2::VolumeAttachment
-    #         Properties:
-    #             Device: xvdf
-    #             InstanceId: !Ref FastlaneEC2Instance
-    #             VolumeId: !Ref FastlaneVolumeTmp
+     FastlaneVolumeTmpAttachment:
+             Type: AWS::EC2::VolumeAttachment
+             Properties:
+                 Device: xvdf
+                 InstanceId: !Ref FastlaneEC2Instance
+                 VolumeId: !Ref FastlaneVolumeTmp
 
     
     InstanceProfileFastlane:
@@ -185,6 +189,35 @@ Resources:
                     - "s3:ListBucket"
                 Resource:
                 - !Sub arn:aws:s3:::${S3BucketAssetsName}/
+
+    S3BucketOutput:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: !Ref S3BucketOutputName
+            LifecycleConfiguration: 
+                Rules:
+                - 
+                    Id: !Sub ${S3BucketOutputName}RemoveIn7Days
+                    Status: "Enabled"
+                    ExpirationInDays: 7
+            Tags:
+                - Key: ResourceGroup
+                Value: Fastlane  
+
+    S3BucketOutputPolicy:   
+        Type: "AWS::S3::BucketPolicy"
+        Properties:
+            Bucket: !Ref S3BucketOutput
+            PolicyDocument:
+                Statement:
+                    - 
+                        Action:
+                            - "s3:ListBucket"
+                            - "s3:GetObject"
+                            - "s3:GetObjectVersion"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketOutputName}
+                        Principal: "*"
 
     S3BucketAssets:
         Type: "AWS::S3::Bucket"
