@@ -1,7 +1,10 @@
 #!/bin/bash
+# GPlay and AppStore release script.
+# kirillk@gamehouse.com
+# Version 2.0
 
 BucketAssets="8911037875-gamesassets"
-BucketOutput=""
+BucketOutput="4426581877-fastlaneoutput"
 GPAccessFile="/home/ec2-user/googlePlayApiAccess.json"
 User="fastlane@gamehouse.com"
 Pass="Fastlane170"
@@ -27,13 +30,13 @@ function PushToSns () {
 
 
 function FastlaneErrorhandler () {
-	ErrorFile="/tmp/FastlaneDeploymentError-$(date +%F_%R).txt"
-	mv /tmp/FastlaneDeployment.log $ErrorFile
+	ErrorFile="FastlaneDeploymentError-$(date +%F_%R).txt"
+	mv /tmp/FastlaneDeployment.log /tmp/$ErrorFile
 
 	aws s3 sync --region=$AwsRegion \
-	--storage-class REDUCED_REDUNDANCY $ErrorFile "s3://$BucketOutput/$ErrorFile" 
+	--storage-class REDUCED_REDUNDANCY /tmp/$ErrorFile "s3://$BucketOutput/$ErrorFile" 
 
-	OutputText="Fastlane returned en error. Pls see logs "
+	OutputText="Fastlane returned en error. Pls see logs https://s3-$AwsRegion.amazonaws.com/$BucketOutput/$ErrorFile"
 	echo "ERROR! $OutputText"
 	PushToSns ERROR $ProjectName "$OutputText"
 }

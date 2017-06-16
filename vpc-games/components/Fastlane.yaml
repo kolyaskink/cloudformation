@@ -210,6 +210,14 @@ Resources:
             Bucket: !Ref S3BucketOutput
             PolicyDocument:
                 Statement:
+                    -
+                        Action:
+                            - "s3:PutObject"
+                        Effect:  "Allow"
+                        Resource: !Sub arn:aws:s3:::${S3BucketOutputName}/*
+                        Principal:
+                            AWS: 
+                            - !Ref IAMRoleFastlaneArn
                     - 
                         Action:
                             - "s3:GetObject"
