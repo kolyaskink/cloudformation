@@ -190,6 +190,21 @@ Resources:
                 Resource:
                 - !Sub arn:aws:s3:::${S3BucketAssetsName}/
 
+          - PolicyName: 'S3BucketOutput'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                    - "s3:PutObject"
+                Resource:
+                - !Sub arn:aws:s3:::${S3BucketOutputName}/*
+              - Effect: Allow
+                Action:
+                    - "s3:ListBucket"
+                Resource:
+                - !Sub arn:aws:s3:::${S3BucketOutputName}/
+
     S3BucketOutput:
         Type: "AWS::S3::Bucket"
         Properties:

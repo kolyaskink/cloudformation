@@ -1,7 +1,7 @@
 #!/bin/bash
 # GPlay and AppStore release script.
 # kirillk@gamehouse.com
-# Version 2.0
+# Version 2.1
 
 BucketAssets="8911037875-gamesassets"
 BucketOutput="4426581877-fastlaneoutput"
@@ -28,17 +28,28 @@ function PushToSns () {
 	aws sns publish --region=$AwsRegion --topic-arn $SnsTopic --message "Project $2 status is $1: $3"
 }
 
+function CleanUp () {
+
+	# Cleaning up
+	rm -rf /tmp/$ProjectName/
+	rm -f /tmp/$ProjectName.log
+	rm -f /tmp/FastlaneDeployment.log
+	rm -f /tmp/*.png
+	rm -f /tmp/spaceship*
+}
 
 function FastlaneErrorhandler () {
-	ErrorFile="FastlaneDeploymentError-$(date +%F_%R).txt"
+	ErrorFile="FastlaneDeploymentError-$(date +"%Y%m%d_%H%M%S").txt"
 	mv /tmp/FastlaneDeployment.log /tmp/$ErrorFile
 
-	aws s3 sync --region=$AwsRegion \
-	--storage-class REDUCED_REDUNDANCY /tmp/$ErrorFile "s3://$BucketOutput/$ErrorFile" 
+	aws s3 cp --region=$AwsRegion \
+	--storage-class REDUCED_REDUNDANCY /tmp/$ErrorFile "s3://$BucketOutput/" 
 
 	OutputText="Fastlane returned en error. Pls see logs https://s3-$AwsRegion.amazonaws.com/$BucketOutput/$ErrorFile"
 	echo "ERROR! $OutputText"
 	PushToSns ERROR $ProjectName "$OutputText"
+
+	CleanUp
 }
 
 function DeployAndroid () {
@@ -107,15 +118,8 @@ function PostSyncTests () {
 	fi
 }
 
-function CleanUp () {
 
-	# Cleaning up
-	rm -rf /tmp/$ProjectName/
-	rm -f /tmp/$ProjectName.log
-	rm -f /tmp/FastlaneDeployment.log
-	rm -f /tmp/*.png
-	rm -f /tmp/spaceship*
-}
+# Main part starts here
 
 PreSyncTests
 
