@@ -1,13 +1,21 @@
 import boto3
 import argparse
 import json
-from troposphere import Template, Ref, FindInMap, Base64, Parameter
+from troposphere import Template, Ref, FindInMap, Base64, Parameter, Join, GetAZs
 from troposphere.s3 import Bucket, PublicRead
+from troposphere.ec2 import SecurityGroup, SecurityGroupIngress
+from awacs.aws import Allow, Statement, Principal, Policy
+from awacs.sts import AssumeRole
 import troposphere.ec2 as ec2
-from troposphere.ec2 import SecurityGroup
+import troposphere.iam as iam
+import troposphere.elasticloadbalancing as elb
+
+
 
 t = Template()
 
+
+#Classes definition
 class Input:
     def __init__(self):
         # Parse CLI arguments
@@ -32,9 +40,42 @@ class Input:
         self.MasterAMI = args.MasterAMI
         self.WindowsAMI = args.WindowsAMI
 
+class Parametrs:
+    def __init__(self):
+        # Creating parametrs
+        self.VPCid = t.add_parameter(Parameter(
+            "VPCid",
+            Type="String",
+        ))
+        self.PublicSubnet1Id = t.add_parameter(Parameter(
+            "PublicSubnet1Id",
+            Type="String",
+        ))
+        self.InfraVpcCIDR = t.add_parameter(Parameter(
+            "InfraVpcCIDR",
+            Type="String",
+        ))
+        self.GamesVpcCIDR = t.add_parameter(Parameter(
+            "GamesVpcCIDR",
+            Type="String",
+        ))
+        self.Ec2TypeMaster = t.add_parameter(Parameter(
+            "Ec2TypeJenkinsMaster",
+            Type="String",
+        ))
+        self.KEYName = t.add_parameter(Parameter(
+            "KeyName",
+            Type="AWS::EC2::KeyPair::KeyName",
+        ))
+
+# Functions to call classes
 def GetInput():
     return Input()
 
+def Getparametrs():
+    return Parametrs()
+
+# Functions
 def CreateDescription(StudioName):
     Description =  "Python-generated template for " + StudioName + " studio"
     t.add_description(Description)
@@ -48,30 +89,167 @@ def CreateMapping(Region, MasterAMI, WindowsAMI):
         Region: {"AMI": WindowsAMI}
     })
 
-def CreateStaticResources(Windows, StudioName):
+def CreateStaticResources(StudioName, PublicSubnet1Id, VPCid, InfraVpcCIDR, GamesVpcCIDR, Ec2TypeMaster, KEYName):
+
+    # Creating SGs
+    # ELB SG
+    SGElbName = StudioName + "SgElb"
+    SGElb = t.add_resource(
+        SecurityGroup(
+            SGElbName,
+            GroupDescription='Enable access to the Jenkins LB',
+            VpcId=Ref(VPCid),
+        ))
+
+    # Slave SG
+    SGWindowsName = StudioName + "SgEc2JenkinsWindows"
+    SGWindows = t.add_resource(
+        SecurityGroup(
+            SGWindowsName,
+            GroupDescription='Jenkins Windows Slave EC2 SG',
+            VpcId=Ref(VPCid),
+        ))
+
+    # Master SG
+    SGMasterName = StudioName + "SgEc2JenkinsMaster"
+    SGMaster = t.add_resource(
+        SecurityGroup(
+            SGMasterName,
+            GroupDescription='Jenkins Master EC2 SG',
+            SecurityGroupIngress=[
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="80",
+                    ToPort="80",
+                    SourceSecurityGroupId=Ref(SGElb),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="80",
+                    ToPort="80",
+                    SourceSecurityGroupId=Ref(SGWindows),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="tcp",
+                    FromPort="22",
+                    ToPort="22",
+                    SourceSecurityGroupId=Ref(InfraVpcCIDR),
+                ),
+                ec2.SecurityGroupRule(
+                    IpProtocol="icmp",
+                    FromPort="-1",
+                    ToPort="-1",
+                    CidrIp=Ref(GamesVpcCIDR),
+                ),
+            ],
+            VpcId=Ref(VPCid),
+        ))
+
+    # Ingress rules
+    SGIName = StudioName + "IngressMasterSlaves"
+    t.add_resource(
+        SecurityGroupIngress(
+            SGIName,
+            GroupId=Ref(SGMaster),
+            SourceSecurityGroupId=Ref(SGWindows),
+            IpProtocol="tcp",
+            FromPort="0",
+            ToPort="65535",
+        )
+    )
+
+    # Creating Master Jenkins Role
+    JenkinsMasterRoleName = StudioName + "JenkinsMasterRole"
+    JenkinsMasterRole = t.add_resource(iam.Role(
+        JenkinsMasterRoleName,
+        Path="/",
+        AssumeRolePolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[AssumeRole],
+                Principal=Principal("Service", ["ec2.amazonaws.com"])
+            )
+        ]),
+        Policies=[
+            iam.Policy(
+                PolicyName="logs",
+                PolicyDocument={
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": "logs:*",
+                        "Resource": "arn:aws:logs:*:*:*"
+                    }],
+                }
+            ),
+            iam.Policy(
+                PolicyName="dnsupdate",
+                PolicyDocument={
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [
+                            "ec2:DescribeTags",
+                            "route53:GetHostedZone",
+                            "route53:ListHostedZones",
+                            "route53:ListResourceRecordSets",
+                            "route53:ChangeResourceRecordSets",
+                            "route53:GetChange",
+                            ],
+                        "Resource": "*"
+                    }],
+                }
+            )
+        ],
+    ))
+
+    # Creating Master Jenkins Instance Profile
+    JenkinsMasterProfileName = StudioName + "InstanceProfileJenkinsMaster"
+    JenkinsMasterProfile = t.add_resource(iam.InstanceProfile(
+        JenkinsMasterProfileName,
+        Path="/",
+        Roles=[Ref(JenkinsMasterRole)],
+    ))
+
+    # Creating Master Jenkins Instance
+    JenkinsMasterName = StudioName + "JenkinsMaster"
+    JenkinsMaster = t.add_resource(ec2.Instance(
+        JenkinsMasterName,
+        ImageId=FindInMap("JenkinsMaster", Ref("AWS::Region"), "AMI"),
+        InstanceType=Ref(Ec2TypeMaster),
+        KeyName=Ref(KEYName),
+        SecurityGroups=[Ref(SGMaster)],
+        SubnetId=Ref(PublicSubnet1Id),
+        IamInstanceProfile=Ref(JenkinsMasterProfile)
+    ))
+
+    # Creating ELB for Jenkins
+    ElbJenkinsName = StudioName + "ElbJenkins"
+    ElbJenkins = t.add_resource(elb.LoadBalancer(
+        ElbJenkinsName,
+        Subnets=[Ref(PublicSubnet1Id)],
+        SecurityGroups=[Ref(SGElbName)],
+        Scheme="internet-facing",
+        Instances=[Ref(JenkinsMaster)],
+        Listeners=[
+            elb.Listener(
+                LoadBalancerPort="443",
+                InstancePort="80",
+                Protocol="HTTPS",
+            ),
+        ],
+        HealthCheck=elb.HealthCheck(
+            Target="HTTP:80/static/19c0b418/images/headshot.png",
+            HealthyThreshold="3",
+            UnhealthyThreshold="5",
+            Interval="30",
+            Timeout="5",
+        )
+    ))
 
     # Creating S3 bucket
     s3Name = StudioName + 'S3'
     t.add_resource(Bucket(s3Name, AccessControl=PublicRead, ))
 
-    # Creating SGs for instances
-    # Master
-    SGMasterName = StudioName + "SgEc2JenkinsMaster"
-    t.add_resource(
-        SecurityGroup(
-            SGMasterName,
-            GroupDescription='Jenkins Master EC2 SG',
-            VpcId="111",
-        ))
-
-    # Slave
-    SGWindowsName = StudioName + "SsEc2JenkinsWindows"
-    t.add_resource(
-        SecurityGroup(
-            SGWindowsName,
-            GroupDescription='Jenkins Windows Slave EC2 SG',
-            VpcId="111",
-        ))
 
 def CreateDynamicResources(Windows, StudioName):
     # Creating Windows slaves
@@ -91,30 +269,14 @@ def CreateDynamicResources(Windows, StudioName):
 
 
 
-def CreateParameters(Parametrs):
-    # Parse CloudFormation parametrs
-    with open(Parametrs) as data_file:
-        data = json.load(data_file)
-        for record in data:
-            ParameterKey = (record["ParameterKey"])
-
-            t.add_parameter(Parameter(
-                record["ParameterKey"],
-                Type="String"
-            ))
-
-            # ParameterValue = (record["ParameterValue"])
-            # print(ParameterValue)
-
-
 def main():
 
     i = GetInput()
+    p = Getparametrs()
 
-    #CreateParameters(i.Parametrs)
-    #CreateDescription(i.StudioName)
-    #CreateMapping(i.Region, i.MasterAMI, i.WindowsAMI)
-    CreateStaticResources(i.Windows, i.StudioName)
+    CreateDescription(i.StudioName)
+    CreateMapping(i.Region, i.MasterAMI, i.WindowsAMI)
+    CreateStaticResources(i.StudioName, p.PublicSubnet1Id, p.VPCid, p.InfraVpcCIDR, p.GamesVpcCIDR, p.Ec2TypeMaster, p.KEYName)
     CreateDynamicResources(i.Windows, i.StudioName)
     print(t.to_json())
 

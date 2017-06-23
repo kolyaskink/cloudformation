@@ -1,0 +1,22 @@
+[ 
+  {
+    "ParameterKey": "PublicSubnet1Id",
+    "ParameterValue": "VALUE"
+  },
+   {
+    "ParameterKey": "VPCid",
+    "ParameterValue": "VALUE"
+  },
+   {
+    "ParameterKey": "InfraVpcCIDR",
+    "ParameterValue": "VALUE"
+  },
+   {
+    "ParameterKey": "Ec2TypeJenkinsMaster",
+    "ParameterValue": "VALUE"
+  },
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "VALUE"
+  }    
+]
