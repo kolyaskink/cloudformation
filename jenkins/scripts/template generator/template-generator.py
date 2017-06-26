@@ -235,6 +235,7 @@ class StaticResources:
             Path="/",
             Roles=[Ref(s.JenkinsRole)],
         ))
+        
 
         # Creating Master Jenkins Instance
         s.JenkinsMasterName = StudioName + "JenkinsMaster"
