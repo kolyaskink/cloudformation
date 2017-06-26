@@ -15,6 +15,10 @@
     "ParameterKey": "Ec2TypeJenkinsMaster",
     "ParameterValue": "VALUE"
   },
+   {
+    "ParameterKey": "WhiteIp1",
+    "ParameterValue": "VALUE"
+  },
   {
     "ParameterKey": "KeyName",
     "ParameterValue": "VALUE"
