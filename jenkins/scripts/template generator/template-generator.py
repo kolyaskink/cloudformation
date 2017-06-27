@@ -2,7 +2,7 @@
 
 import argparse
 
-from troposphere import Template, Ref, FindInMap, Base64, Parameter
+from troposphere import Template, Ref, FindInMap, Base64, Parameter, Output
 from troposphere.s3 import Bucket
 from troposphere.ec2 import SecurityGroup, SecurityGroupIngress
 import troposphere.ec2 as ec2
@@ -284,8 +284,8 @@ class DynamicResources:
     def __init__(self, StudioName, Windows, KeyName, Ec2TypeWindows, SGWindows):
         s = self
         # Creating Windows slaves
-        W = int(Windows)
-        for i in range(0, W):
+        w = int(Windows)
+        for i in range(0, w):
             Number = str(i)
             s.ec2name = StudioName + "JenkinsWindows" + Number
             t.add_resource(ec2.Instance(
@@ -333,6 +333,16 @@ def create_mapping(Region, MasterAMI, WindowsAMI):
     })
 
 
+def get_static_outputs(*argv):
+    for arg in argv:
+        t.add_output([
+            Output(
+                arg[1],
+                Value=Ref(arg[0]),
+                ),
+        ])
+
+
 def main():
     i = get_input()
     p = get_parametrs()
@@ -341,8 +351,10 @@ def main():
     create_mapping(i.Region, i.MasterAMI, i.WindowsAMI)
 
     sr = get_static_resources(i.StudioName, p.PublicSubnet1Id, p.VpcId, p.InfraVpcCIDR, p.GamesVpcCIDR,
-                              p.Ec2TypeMaster, p.KeyName, p.WhiteIp1)
+                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1)
     dr = get_dynamic_resources(i.StudioName, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows)
+
+    get_static_outputs([sr.s3, sr.s3Name], [sr.SGElb, sr.SGElbName], [sr.SGWindows, sr.SGWindowsName])
 
     print(t.to_json())
 
