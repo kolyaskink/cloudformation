@@ -72,6 +72,10 @@ class Parametrs:
             "WhiteIp1",
             Type="String",
         ))
+        self.GhosSslCert = t.add_parameter(Parameter(
+            "GhosSslCert",
+            Type="String",
+        ))
         self.KeyName = t.add_parameter(Parameter(
             "KeyName",
             Type="AWS::EC2::KeyPair::KeyName",
@@ -80,7 +84,7 @@ class Parametrs:
 
 class StaticResources:
     def __init__(self, STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR, Ec2TypeMaster,
-                 KeyName, WhiteIp1):
+                 KeyName, WhiteIp1, GhosSslCert):
         s = self
 
         # Creating SGs
@@ -160,7 +164,7 @@ class StaticResources:
             ))
 
         # Ingress rules
-        s.SGIName = STUDIONAME + "IngressMasterSlaves"
+        s.SGIName = STUDIONAME + "SgIngressMasterSlaves"
         t.add_resource(
             SecurityGroupIngress(
                 s.SGIName,
@@ -172,7 +176,7 @@ class StaticResources:
             )
         )
 
-        s.SGIName = STUDIONAME + "IngressSlavesMaster"
+        s.SGIName = STUDIONAME + "SgIngressSlavesMaster"
         t.add_resource(
             SecurityGroupIngress(
                 s.SGIName,
@@ -253,6 +257,7 @@ class StaticResources:
         s.ElbJenkins = t.add_resource(elb.LoadBalancer(
             s.ElbJenkinsName,
             Subnets=[Ref(PublicSubnet1Id)],
+            LoadBalancerName=s.ElbJenkinsName,
             SecurityGroups=[Ref(s.SGElbName)],
             Scheme="internet-facing",
             Instances=[Ref(s.JenkinsMaster)],
@@ -261,6 +266,7 @@ class StaticResources:
                     LoadBalancerPort="443",
                     InstancePort="80",
                     Protocol="HTTPS",
+                    SSLCertificateId=Ref(GhosSslCert)
                 ),
             ],
             HealthCheck=elb.HealthCheck(
@@ -281,7 +287,7 @@ class StaticResources:
 
 
 class DynamicResources:
-    def __init__(self, STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows):
+    def __init__(self, STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows, PublicSubnet1Id):
         s = self
         # Creating Windows slaves
         s.d = {}
@@ -295,7 +301,7 @@ class DynamicResources:
                 InstanceType=Ref(Ec2TypeWindows),
                 KeyName=Ref(KeyName),
                 SecurityGroups=[Ref(SGWindows)],
-                UserData=Base64("80")
+                SubnetId=Ref(PublicSubnet1Id)
             ))
             i += 1
 
@@ -310,13 +316,13 @@ def get_parametrs():
 
 
 def get_static_resources(STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
-                         Ec2TypeMaster, KeyName,WhiteIp1):
+                         Ec2TypeMaster, KeyName, WhiteIp1, GhosSslCert):
     return StaticResources(STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
-                           Ec2TypeMaster, KeyName,WhiteIp1)
+                           Ec2TypeMaster, KeyName, WhiteIp1, GhosSslCert)
 
 
-def get_dynamic_resources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows):
-    return DynamicResources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows)
+def get_dynamic_resources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows, PublicSubnet1Id):
+    return DynamicResources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows, PublicSubnet1Id)
 
 
 # Functions
@@ -364,8 +370,8 @@ def main():
     create_mapping(i.Region, i.MASTERAMI, i.WINDOWSAMI)
 
     sr = get_static_resources(i.STUDIONAME, p.PublicSubnet1Id, p.VpcId, p.InfraVpcCIDR, p.GamesVpcCIDR,
-                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1)
-    dr = get_dynamic_resources(i.STUDIONAME, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows)
+                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1, p.GhosSslCert)
+    dr = get_dynamic_resources(i.STUDIONAME, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows, p.PublicSubnet1Id)
 
     get_static_outputs([sr.s3, sr.s3Name], [sr.SGElb, sr.SGElbName], [sr.SGWindows, sr.SGWindowsName],
                        [sr.SGMaster, sr.SGMasterName], [sr.JenkinsRole, sr.JenkinsRoleName],
