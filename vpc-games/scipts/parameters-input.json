@@ -1,0 +1,30 @@
+[ 
+  {
+    "ParameterKey": "PublicSubnet1Id",
+    "ParameterValue": "10.150.3.0/26"
+  },
+   {
+    "ParameterKey": "VPCid",
+    "ParameterValue": "vpc-cfd5e8a8"
+  },
+   {
+    "ParameterKey": "InfraVpcCIDR",
+    "ParameterValue": "10.150.2.0/24"
+  },
+   {
+    "ParameterKey": "Ec2TypeJenkinsMaster",
+    "ParameterValue": "t2.small"
+  },
+   {
+    "ParameterKey": "Ec2TypeWindows",
+    "ParameterValue": "t2.small"
+  },
+   {
+    "ParameterKey": "WhiteIp1",
+    "ParameterValue": "212.67.170.162/32"
+  },
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "gh-misc-test"
+  }    
+]
