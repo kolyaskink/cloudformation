@@ -21,24 +21,24 @@ class Input:
         # Parse CLI arguments
         parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins')
         parser.add_argument('--REGION', '-R', action='store', required=True)
-        parser.add_argument('--StudioName', '-S', action='store', required=True)
+        parser.add_argument('--STUDIONAME', '-S', action='store', required=True)
         parser.add_argument('--WINDOWS', '-W', action='store', required=True)
         parser.add_argument('--LINUX', '-L', action='store', required=True)
         parser.add_argument('--MAC', '-M', action='store', required=False)
         parser.add_argument('--PARAMETRS', '-P', action='store', required=True)
-        parser.add_argument('--MasterAMI', '-m', action='store', required=True)
-        parser.add_argument('--WindowsAMI', '-w', action='store', required=True)
+        parser.add_argument('--MASTERAMI', '-m', action='store', required=True)
+        parser.add_argument('--WINDOWSAMI', '-w', action='store', required=True)
         args = parser.parse_args()
 
         # Assign aruments to a local variables
         self.Region = args.REGION
-        self.StudioName = args.StudioName
+        self.STUDIONAME = args.STUDIONAME
         self.Windows = args.WINDOWS
         self.Linux = args.LINUX
         self.Mac = args.MAC
         self.Parametrs = args.PARAMETRS
-        self.MasterAMI = args.MasterAMI
-        self.WindowsAMI = args.WindowsAMI
+        self.MASTERAMI = args.MASTERAMI
+        self.WINDOWSAMI = args.WINDOWSAMI
 
 
 class Parametrs:
@@ -79,13 +79,13 @@ class Parametrs:
 
 
 class StaticResources:
-    def __init__(self, StudioName, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR, Ec2TypeMaster,
+    def __init__(self, STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR, Ec2TypeMaster,
                  KeyName, WhiteIp1):
         s = self
 
         # Creating SGs
         # ELB SG
-        s.SGElbName = StudioName + "SgElb"
+        s.SGElbName = STUDIONAME + "SgElb"
         s.SGElb = t.add_resource(
             SecurityGroup(
                 s.SGElbName,
@@ -102,7 +102,7 @@ class StaticResources:
             ))
 
         # Slave SG
-        s.SGWindowsName = StudioName + "SgEc2JenkinsWindows"
+        s.SGWindowsName = STUDIONAME + "SgEc2JenkinsWindows"
         s.SGWindows = t.add_resource(
             SecurityGroup(
                 s.SGWindowsName,
@@ -125,7 +125,7 @@ class StaticResources:
             ))
 
         # Master SG
-        s.SGMasterName = StudioName + "SgEc2JenkinsMaster"
+        s.SGMasterName = STUDIONAME + "SgEc2JenkinsMaster"
         s.SGMaster = t.add_resource(
             SecurityGroup(
                 s.SGMasterName,
@@ -160,7 +160,7 @@ class StaticResources:
             ))
 
         # Ingress rules
-        s.SGIName = StudioName + "IngressMasterSlaves"
+        s.SGIName = STUDIONAME + "IngressMasterSlaves"
         t.add_resource(
             SecurityGroupIngress(
                 s.SGIName,
@@ -172,7 +172,7 @@ class StaticResources:
             )
         )
 
-        s.SGIName = StudioName + "IngressSlavesMaster"
+        s.SGIName = STUDIONAME + "IngressSlavesMaster"
         t.add_resource(
             SecurityGroupIngress(
                 s.SGIName,
@@ -185,7 +185,7 @@ class StaticResources:
         )
 
         # Creating Jenkins Role
-        s.JenkinsRoleName = StudioName + "JenkinsRole"
+        s.JenkinsRoleName = STUDIONAME + "JenkinsRole"
         s.JenkinsRole = t.add_resource(iam.Role(
             s.JenkinsRoleName,
             Path="/",
@@ -229,7 +229,7 @@ class StaticResources:
         ))
 
         # Creating Jenkins Instance Profile
-        s.JenkinsProfileName = StudioName + "InstanceProfileJenkins"
+        s.JenkinsProfileName = STUDIONAME + "InstanceProfileJenkins"
         s.JenkinsProfile = t.add_resource(iam.InstanceProfile(
             s.JenkinsProfileName,
             Path="/",
@@ -237,7 +237,7 @@ class StaticResources:
         ))
 
         # Creating Master Jenkins Instance
-        s.JenkinsMasterName = StudioName + "JenkinsMaster"
+        s.JenkinsMasterName = STUDIONAME + "JenkinsMaster"
         s.JenkinsMaster = t.add_resource(ec2.Instance(
             s.JenkinsMasterName,
             ImageId=FindInMap("JenkinsMaster", Ref("AWS::Region"), "AMI"),
@@ -249,7 +249,7 @@ class StaticResources:
         ))
 
         # Creating ELB for Jenkins
-        s.ElbJenkinsName = StudioName + "ElbJenkins"
+        s.ElbJenkinsName = STUDIONAME + "ElbJenkins"
         s.ElbJenkins = t.add_resource(elb.LoadBalancer(
             s.ElbJenkinsName,
             Subnets=[Ref(PublicSubnet1Id)],
@@ -273,7 +273,7 @@ class StaticResources:
         ))
 
         # Creating S3 bucket
-        s.s3Name = StudioName + 'S3'
+        s.s3Name = STUDIONAME + 'S3'
         s.s3 = t.add_resource(Bucket(
             s.s3Name,
             AccessControl="Private",
@@ -281,14 +281,15 @@ class StaticResources:
 
 
 class DynamicResources:
-    def __init__(self, StudioName, Windows, KeyName, Ec2TypeWindows, SGWindows):
+    def __init__(self, STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows):
         s = self
         # Creating Windows slaves
+        s.d = {}
         w = int(Windows)
         for i in range(0, w):
             Number = str(i)
-            s.ec2name = StudioName + "JenkinsWindows" + Number
-            t.add_resource(ec2.Instance(
+            s.ec2name = STUDIONAME + "JenkinsWindows" + Number
+            s.d["Windows{0}".format(i)] = t.add_resource(ec2.Instance(
                 s.ec2name,
                 ImageId=FindInMap("RegionMap", Ref("AWS::Region"), "AMI"),
                 InstanceType=Ref(Ec2TypeWindows),
@@ -308,28 +309,28 @@ def get_parametrs():
     return Parametrs()
 
 
-def get_static_resources(StudioName, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
+def get_static_resources(STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
                          Ec2TypeMaster, KeyName,WhiteIp1):
-    return StaticResources(StudioName, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
+    return StaticResources(STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
                            Ec2TypeMaster, KeyName,WhiteIp1)
 
 
-def get_dynamic_resources(StudioName, Windows, KeyName, Ec2TypeWindows, SGWindows):
-    return DynamicResources(StudioName, Windows, KeyName, Ec2TypeWindows, SGWindows)
+def get_dynamic_resources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows):
+    return DynamicResources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows)
 
 
 # Functions
-def create_description(StudioName):
-    Description = "Python-generated template for " + StudioName + " studio"
+def create_description(STUDIONAME):
+    Description = "Python-generated template for " + STUDIONAME + " studio"
     t.add_description(Description)
 
 
-def create_mapping(Region, MasterAMI, WindowsAMI):
+def create_mapping(Region, MASTERAMI, WINDOWSAMI):
     t.add_mapping('JenkinsMaster', {
-        Region: {"AMI": MasterAMI}
+        Region: {"AMI": MASTERAMI}
     })
     t.add_mapping('JenkinsWindows', {
-        Region: {"AMI": WindowsAMI}
+        Region: {"AMI": WINDOWSAMI}
     })
 
 
@@ -341,20 +342,37 @@ def get_static_outputs(*argv):
                 Value=Ref(arg[0]),
                 ),
         ])
+    print(*argv)
+
+
+def get_dynamic_outputs(d):
+    for key in list(d.keys()):
+        print(key, d.values)
+        t.add_output([
+            Output(
+                key,
+                Value=Ref(d.values),
+            ),
+        ])
 
 
 def main():
     i = get_input()
     p = get_parametrs()
 
-    create_description(i.StudioName)
-    create_mapping(i.Region, i.MasterAMI, i.WindowsAMI)
+    create_description(i.STUDIONAME)
+    create_mapping(i.Region, i.MASTERAMI, i.WINDOWSAMI)
 
-    sr = get_static_resources(i.StudioName, p.PublicSubnet1Id, p.VpcId, p.InfraVpcCIDR, p.GamesVpcCIDR,
+    sr = get_static_resources(i.STUDIONAME, p.PublicSubnet1Id, p.VpcId, p.InfraVpcCIDR, p.GamesVpcCIDR,
                              p.Ec2TypeMaster, p.KeyName, p.WhiteIp1)
-    dr = get_dynamic_resources(i.StudioName, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows)
+    dr = get_dynamic_resources(i.STUDIONAME, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows)
 
-    get_static_outputs([sr.s3, sr.s3Name], [sr.SGElb, sr.SGElbName], [sr.SGWindows, sr.SGWindowsName])
+    get_static_outputs([sr.s3, sr.s3Name], [sr.SGElb, sr.SGElbName], [sr.SGWindows, sr.SGWindowsName],
+                       [sr.SGMaster, sr.SGMasterName], [sr.JenkinsRole, sr.JenkinsRoleName],
+                       [sr.JenkinsProfile, sr.JenkinsProfileName], [sr.JenkinsMaster, sr.JenkinsMasterName],
+                       [sr.ElbJenkins, sr.ElbJenkinsName])
+
+    # get_dynamic_outputs(dr.d)
 
     print(t.to_json())
 
