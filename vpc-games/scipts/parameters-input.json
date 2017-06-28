@@ -23,7 +23,7 @@
     "ParameterKey": "WhiteIp1",
     "ParameterValue": "212.67.170.162/32"
   },
-  {
+   {
     "ParameterKey": "KeyName",
     "ParameterValue": "gh-misc-test"
   }    
