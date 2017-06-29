@@ -1,6 +1,7 @@
 # This script generates CF template for Jenkins stack of CBS project
 
 import argparse
+import json
 
 from troposphere import Template, Ref, FindInMap, Base64, Parameter, Output
 from troposphere.s3 import Bucket
@@ -380,7 +381,10 @@ def main():
 
     # get_dynamic_outputs(dr.d)
 
-    print(t.to_json())
-
+    # writes output to a file
+    filename = i.STUDIONAME + "Jenkins.json"
+    output = t.to_json()
+    with open(filename, 'w') as f:
+        f.write(output)
 
 main()
