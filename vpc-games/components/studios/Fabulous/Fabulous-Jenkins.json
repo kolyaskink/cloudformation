@@ -1,0 +1,402 @@
+{
+    "Description": "Python-generated template for Fabulous studio",
+    "Mappings": {
+        "JenkinsMaster": {
+            "us-west-2": {
+                "AMI": "ami-4e5c3f2e"
+            }
+        },
+        "JenkinsWindows": {
+            "us-west-2": {
+                "AMI": "ami-2ad04f4a"
+            }
+        }
+    },
+    "Outputs": {
+        "FabulousElbJenkins": {
+            "Value": {
+                "Ref": "FabulousElbJenkins"
+            }
+        },
+        "FabulousInstanceProfileJenkins": {
+            "Value": {
+                "Ref": "FabulousInstanceProfileJenkins"
+            }
+        },
+        "FabulousJenkinsMaster": {
+            "Value": {
+                "Ref": "FabulousJenkinsMaster"
+            }
+        },
+        "FabulousJenkinsRole": {
+            "Value": {
+                "Ref": "FabulousJenkinsRole"
+            }
+        },
+        "FabulousS3": {
+            "Value": {
+                "Ref": "FabulousS3"
+            }
+        },
+        "FabulousSgEc2JenkinsMaster": {
+            "Value": {
+                "Ref": "FabulousSgEc2JenkinsMaster"
+            }
+        },
+        "FabulousSgEc2JenkinsWindows": {
+            "Value": {
+                "Ref": "FabulousSgEc2JenkinsWindows"
+            }
+        },
+        "FabulousSgElb": {
+            "Value": {
+                "Ref": "FabulousSgElb"
+            }
+        }
+    },
+    "Parameters": {
+        "Ec2TypeJenkinsMaster": {
+            "Type": "String"
+        },
+        "Ec2TypeJenkinsWindows": {
+            "Type": "String"
+        },
+        "GamesVpcCIDR": {
+            "Type": "String"
+        },
+        "GhosSslCert": {
+            "Type": "String"
+        },
+        "InfraVpcCIDR": {
+            "Type": "String"
+        },
+        "KeyName": {
+            "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "PublicSubnet1Id": {
+            "Type": "String"
+        },
+        "VpcId": {
+            "Type": "String"
+        },
+        "WhiteIp1": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "FabulousElbJenkins": {
+            "Properties": {
+                "HealthCheck": {
+                    "HealthyThreshold": "3",
+                    "Interval": "30",
+                    "Target": "HTTP:80/static/19c0b418/images/headshot.png",
+                    "Timeout": "5",
+                    "UnhealthyThreshold": "5"
+                },
+                "Instances": [
+                    {
+                        "Ref": "FabulousJenkinsMaster"
+                    }
+                ],
+                "Listeners": [
+                    {
+                        "InstancePort": "80",
+                        "LoadBalancerPort": "443",
+                        "Protocol": "HTTPS",
+                        "SSLCertificateId": {
+                            "Ref": "GhosSslCert"
+                        }
+                    }
+                ],
+                "LoadBalancerName": "FabulousElbJenkins",
+                "Scheme": "internet-facing",
+                "SecurityGroups": [
+                    {
+                        "Ref": "FabulousSgElb"
+                    }
+                ],
+                "Subnets": [
+                    {
+                        "Ref": "PublicSubnet1Id"
+                    }
+                ]
+            },
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+        },
+        "FabulousInstanceProfileJenkins": {
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "FabulousJenkinsRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::InstanceProfile"
+        },
+        "FabulousJenkinsMaster": {
+            "Properties": {
+                "IamInstanceProfile": {
+                    "Ref": "FabulousInstanceProfileJenkins"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "JenkinsMaster",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "Ec2TypeJenkinsMaster"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "FabulousSgEc2JenkinsMaster"
+                    }
+                ],
+                "SubnetId": {
+                    "Ref": "PublicSubnet1Id"
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "FabulousJenkinsRole": {
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Action": "logs:*",
+                                    "Effect": "Allow",
+                                    "Resource": "arn:aws:logs:*:*:*"
+                                }
+                            ]
+                        },
+                        "PolicyName": "logs"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "ec2:DescribeTags",
+                                        "route53:GetHostedZone",
+                                        "route53:ListHostedZones",
+                                        "route53:ListResourceRecordSets",
+                                        "route53:ChangeResourceRecordSets",
+                                        "route53:GetChange"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "*"
+                                }
+                            ]
+                        },
+                        "PolicyName": "dnsupdate"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Role"
+        },
+        "FabulousJenkinsWindows0": {
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "Ec2TypeJenkinsWindows"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "FabulousSgEc2JenkinsWindows"
+                    }
+                ],
+                "SubnetId": {
+                    "Ref": "PublicSubnet1Id"
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "FabulousJenkinsWindows1": {
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "Ec2TypeJenkinsWindows"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "FabulousSgEc2JenkinsWindows"
+                    }
+                ],
+                "SubnetId": {
+                    "Ref": "PublicSubnet1Id"
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "FabulousS3": {
+            "Properties": {
+                "AccessControl": "Private"
+            },
+            "Type": "AWS::S3::Bucket"
+        },
+        "FabulousSgEc2JenkinsMaster": {
+            "Properties": {
+                "GroupDescription": "Jenkins Master EC2 SG",
+                "SecurityGroupIngress": [
+                    {
+                        "FromPort": "80",
+                        "IpProtocol": "tcp",
+                        "SourceSecurityGroupId": {
+                            "Ref": "FabulousSgElb"
+                        },
+                        "ToPort": "80"
+                    },
+                    {
+                        "FromPort": "80",
+                        "IpProtocol": "tcp",
+                        "SourceSecurityGroupId": {
+                            "Ref": "FabulousSgEc2JenkinsWindows"
+                        },
+                        "ToPort": "80"
+                    },
+                    {
+                        "FromPort": "22",
+                        "IpProtocol": "tcp",
+                        "SourceSecurityGroupId": {
+                            "Ref": "InfraVpcCIDR"
+                        },
+                        "ToPort": "22"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "GamesVpcCIDR"
+                        },
+                        "FromPort": "-1",
+                        "IpProtocol": "icmp",
+                        "ToPort": "-1"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
+        "FabulousSgEc2JenkinsWindows": {
+            "Properties": {
+                "GroupDescription": "Jenkins Windows Slave EC2 SG",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Ref": "WhiteIp1"
+                        },
+                        "FromPort": "3389",
+                        "IpProtocol": "tcp",
+                        "ToPort": "3389"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "GamesVpcCIDR"
+                        },
+                        "FromPort": "-1",
+                        "IpProtocol": "icmp",
+                        "ToPort": "-1"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
+        "FabulousSgElb": {
+            "Properties": {
+                "GroupDescription": "Enable access to the Jenkins LB",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Ref": "WhiteIp1"
+                        },
+                        "FromPort": "443",
+                        "IpProtocol": "tcp",
+                        "ToPort": "443"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
+        "FabulousSgIngressMasterSlaves": {
+            "Properties": {
+                "FromPort": "0",
+                "GroupId": {
+                    "Ref": "FabulousSgEc2JenkinsMaster"
+                },
+                "IpProtocol": "tcp",
+                "SourceSecurityGroupId": {
+                    "Ref": "FabulousSgEc2JenkinsWindows"
+                },
+                "ToPort": "65535"
+            },
+            "Type": "AWS::EC2::SecurityGroupIngress"
+        },
+        "FabulousSgIngressSlavesMaster": {
+            "Properties": {
+                "FromPort": "0",
+                "GroupId": {
+                    "Ref": "FabulousSgEc2JenkinsWindows"
+                },
+                "IpProtocol": "tcp",
+                "SourceSecurityGroupId": {
+                    "Ref": "FabulousSgEc2JenkinsMaster"
+                },
+                "ToPort": "65535"
+            },
+            "Type": "AWS::EC2::SecurityGroupIngress"
+        }
+    }
+}
