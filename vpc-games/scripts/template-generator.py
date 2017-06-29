@@ -348,7 +348,7 @@ def get_static_outputs(*argv):
                 Value=Ref(arg[0]),
                 ),
         ])
-    print(*argv)
+
 
 
 def get_dynamic_outputs(d):
