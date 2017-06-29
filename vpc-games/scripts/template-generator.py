@@ -382,7 +382,7 @@ def main():
     # get_dynamic_outputs(dr.d)
 
     # writes output to a file
-    filename = i.STUDIONAME + "Jenkins.json"
+    filename = i.STUDIONAME + "-Jenkins.json"
     output = t.to_json()
     with open(filename, 'w') as f:
         f.write(output)
