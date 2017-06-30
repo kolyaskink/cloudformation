@@ -56,9 +56,11 @@
     },
     "Parameters": {
         "Ec2TypeJenkinsMaster": {
+            "Default": "t2.small",
             "Type": "String"
         },
         "Ec2TypeJenkinsWindows": {
+            "Default": "t2.small",
             "Type": "String"
         },
         "GamesVpcCIDR": {
