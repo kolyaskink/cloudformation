@@ -22,7 +22,7 @@ t = Template()
 class Input:
     def __init__(self):
         # Parse CLI arguments
-        parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins')
+        parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins without outputs')
         parser.add_argument('--REGION', '-R', action='store', required=True)
         parser.add_argument('--STUDIONAME', '-S', action='store', required=True)
         parser.add_argument('--WINDOWS', '-W', action='store', required=True)
