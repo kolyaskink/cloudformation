@@ -23,7 +23,7 @@ t = Template()
 class Input:
     def __init__(self):
         # Parse CLI arguments
-        parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins. ___Git test___')
+        parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins.')
         parser.add_argument('--REGION', '-R', action='store', required=True)
         parser.add_argument('--STUDIONAME', '-S', action='store', required=True)
         parser.add_argument('--WINDOWS', '-W', action='store', required=True)
@@ -331,7 +331,7 @@ def get_dynamic_resources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindow
 
 # Functions
 def create_description(STUDIONAME):
-    Description = "Python-generated template for " + STUDIONAME + " studio. Test versions without proper tags and output"
+    Description = "Python-generated template for " + STUDIONAME + " studio.  ___Git test___"
     t.add_description(Description)
 
 
