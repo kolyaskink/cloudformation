@@ -1,6 +1,9 @@
 # This script generates CF template for Jenkins stack of CBS project
 # Version 1.1
 # Kirill k
+# Merge test 
+
+
 
 import argparse
 import json
