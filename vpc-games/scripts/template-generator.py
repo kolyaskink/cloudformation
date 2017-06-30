@@ -1,10 +1,7 @@
 # This script generates CF template for Jenkins stack of CBS project
 # Version 1.1
 # Kirill k
-
-
-
-
+# This is my Git tests =))
 
 import argparse
 import json
@@ -26,7 +23,7 @@ t = Template()
 class Input:
     def __init__(self):
         # Parse CLI arguments
-        parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins.')
+        parser = argparse.ArgumentParser(description='Script to generate a CF template for Studios Jenkins. ___Git test___')
         parser.add_argument('--REGION', '-R', action='store', required=True)
         parser.add_argument('--STUDIONAME', '-S', action='store', required=True)
         parser.add_argument('--WINDOWS', '-W', action='store', required=True)
