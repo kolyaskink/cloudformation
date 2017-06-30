@@ -1,5 +1,5 @@
 # This script generates CF template for Jenkins stack of CBS project
-# Version 1.0
+# Version 1.1
 # Kirill k
 
 import argparse
