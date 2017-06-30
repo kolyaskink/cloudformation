@@ -67,10 +67,12 @@ class Parametrs:
         self.Ec2TypeMaster = t.add_parameter(Parameter(
             "Ec2TypeJenkinsMaster",
             Type="String",
+            Default="t2.small",
         ))
         self.Ec2TypeWindows = t.add_parameter(Parameter(
             "Ec2TypeJenkinsWindows",
             Type="String",
+            Default="t2.small",
         ))
         self.WhiteIp1 = t.add_parameter(Parameter(
             "WhiteIp1",

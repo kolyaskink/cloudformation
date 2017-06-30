@@ -17,6 +17,19 @@ Mappings:
 
 Resources:
 
+    FabulousStudioJenkins:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/Fabulous/Fabulous-Jenkins.json
+            Parameters:
+                GamesVpcCIDR:                            !Ref HttpsFrom3
+                GhosSslCert:                             !Ref GhosSslCert
+                InfraVpcCIDR:                            !Ref InfraVpcCIDR
+                KeyName:                                 !Ref KeyName
+                PublicSubnet1Id:                         !Ref PublicSubnet1Id
+                VpcId:                                   !Ref VPCid
+                WhiteIp1:                                !Ref HttpsFrom1
+  
     TemplateStudioJenkins:
         Type: AWS::CloudFormation::Stack
         Properties:
