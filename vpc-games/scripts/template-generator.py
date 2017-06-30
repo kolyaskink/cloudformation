@@ -331,7 +331,7 @@ def get_dynamic_resources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindow
 
 # Functions
 def create_description(STUDIONAME):
-    Description = "Python-generated template for " + STUDIONAME + " studio.  ___Git test___"
+    Description = "Python-generated template for " + STUDIONAME + " studio. Version without(!) tags"
     t.add_description(Description)
 
 
