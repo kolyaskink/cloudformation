@@ -304,11 +304,11 @@
                         "ToPort": "80"
                     },
                     {
-                        "FromPort": "22",
-                        "IpProtocol": "tcp",
-                        "SourceSecurityGroupId": {
+                        "CidrIp": {
                             "Ref": "InfraVpcCIDR"
                         },
+                        "FromPort": "22",
+                        "IpProtocol": "tcp",
                         "ToPort": "22"
                     },
                     {
