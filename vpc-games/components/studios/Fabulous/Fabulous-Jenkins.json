@@ -1,5 +1,5 @@
 {
-    "Description": "Python-generated template for Fabulous studio.",
+    "Description": "Python-generated template for Fabulous studio. Version without(!) tags",
     "Mappings": {
         "JenkinsMaster": {
             "us-west-2": {
@@ -225,7 +225,7 @@
             "Properties": {
                 "ImageId": {
                     "Fn::FindInMap": [
-                        "RegionMap",
+                        "JenkinsWindows",
                         {
                             "Ref": "AWS::Region"
                         },
@@ -253,7 +253,7 @@
             "Properties": {
                 "ImageId": {
                     "Fn::FindInMap": [
-                        "RegionMap",
+                        "JenkinsWindows",
                         {
                             "Ref": "AWS::Region"
                         },
