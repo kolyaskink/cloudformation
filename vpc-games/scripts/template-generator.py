@@ -6,7 +6,7 @@
 import argparse
 import json
 
-from troposphere import Template, Ref, FindInMap, Base64, Parameter, Output
+from troposphere import Template, Ref, FindInMap, Base64, Parameter, Output, Tags
 from troposphere.s3 import Bucket
 from troposphere.ec2 import SecurityGroup, SecurityGroupIngress
 import troposphere.ec2 as ec2
@@ -256,6 +256,9 @@ class StaticResources:
             SecurityGroupIds=[Ref(s.SGMaster)],
             SubnetId=Ref(PublicSubnet1Id),
             IamInstanceProfile=Ref(s.JenkinsProfile)
+            Tags=Tags(
+                Name=Ref(s.JenkinsMasterName),
+            ),
         ))
 
         # Creating ELB for Jenkins
@@ -308,6 +311,9 @@ class DynamicResources:
                 KeyName=Ref(KeyName),
                 SecurityGroupIds=[Ref(SGWindows)],
                 SubnetId=Ref(PublicSubnet1Id)
+                Tags=Tags(
+                    Name=Ref(s.ec2name),
+                ),
             ))
             i += 1
 
