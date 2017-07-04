@@ -255,7 +255,7 @@ class StaticResources:
             KeyName=Ref(KeyName),
             SecurityGroupIds=[Ref(s.SGMaster)],
             SubnetId=Ref(PublicSubnet1Id),
-            IamInstanceProfile=Ref(s.JenkinsProfile)
+            IamInstanceProfile=Ref(s.JenkinsProfile),
             Tags=Tags(
                 Name=Ref(s.JenkinsMasterName),
             ),
@@ -310,7 +310,7 @@ class DynamicResources:
                 InstanceType=Ref(Ec2TypeWindows),
                 KeyName=Ref(KeyName),
                 SecurityGroupIds=[Ref(SGWindows)],
-                SubnetId=Ref(PublicSubnet1Id)
+                SubnetId=Ref(PublicSubnet1Id),
                 Tags=Tags(
                     Name=Ref(s.ec2name),
                 ),
