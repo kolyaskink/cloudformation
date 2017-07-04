@@ -1,5 +1,5 @@
 {
-    "Description": "Python-generated template for Fabulous studio. Version with tags",
+    "Description": "Python-generated template for Fabulous studio. Version without(!) tags",
     "Mappings": {
         "JenkinsMaster": {
             "us-west-2": {
@@ -167,9 +167,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": {
-                            "Ref": "FabulousJenkinsMaster"
-                        }
+                        "Value": "FabulousJenkinsMaster"
                     }
                 ]
             },
@@ -257,9 +255,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": {
-                            "Ref": "FabulousJenkinsWindows0"
-                        }
+                        "Value": "FabulousJenkinsWindows0"
                     }
                 ]
             },
@@ -293,9 +289,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": {
-                            "Ref": "FabulousJenkinsWindows1"
-                        }
+                        "Value": "FabulousJenkinsWindows1"
                     }
                 ]
             },
