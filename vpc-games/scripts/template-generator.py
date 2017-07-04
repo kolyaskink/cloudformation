@@ -303,7 +303,7 @@ class DynamicResources:
             s.ec2name = STUDIONAME + "JenkinsWindows" + Number
             s.d["Windows{0}".format(i)] = t.add_resource(ec2.Instance(
                 s.ec2name,
-                ImageId=FindInMap("RegionMap", Ref("AWS::Region"), "AMI"),
+                ImageId=FindInMap("JenkinsWindows", Ref("AWS::Region"), "AMI"),
                 InstanceType=Ref(Ec2TypeWindows),
                 KeyName=Ref(KeyName),
                 SecurityGroups=[Ref(SGWindows)],
