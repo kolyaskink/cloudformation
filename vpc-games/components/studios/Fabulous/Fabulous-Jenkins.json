@@ -168,6 +168,10 @@
                     {
                         "Key": "Name",
                         "Value": "FabulousJenkinsMaster"
+                    },
+                    {
+                        "Key": "Scheduler",
+                        "Value": "WorkingDays"
                     }
                 ]
             },
@@ -256,6 +260,10 @@
                     {
                         "Key": "Name",
                         "Value": "FabulousJenkinsWindows0"
+                    },
+                    {
+                        "Key": "Scheduler",
+                        "Value": "WorkingDays"
                     }
                 ]
             },
@@ -290,6 +298,10 @@
                     {
                         "Key": "Name",
                         "Value": "FabulousJenkinsWindows1"
+                    },
+                    {
+                        "Key": "Scheduler",
+                        "Value": "WorkingDays"
                     }
                 ]
             },
