@@ -157,7 +157,7 @@ class StaticResources:
                         IpProtocol="tcp",
                         FromPort="22",
                         ToPort="22",
-                        SourceSecurityGroupId=Ref(InfraVpcCIDR),
+                        CidrIp=Ref(InfraVpcCIDR),
                     ),
                     ec2.SecurityGroupRule(
                         IpProtocol="icmp",
