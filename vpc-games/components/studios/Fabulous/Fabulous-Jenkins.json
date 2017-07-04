@@ -163,7 +163,15 @@
                 ],
                 "SubnetId": {
                     "Ref": "PublicSubnet1Id"
-                }
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Ref": "FabulousJenkinsMaster"
+                        }
+                    }
+                ]
             },
             "Type": "AWS::EC2::Instance"
         },
@@ -245,7 +253,15 @@
                 ],
                 "SubnetId": {
                     "Ref": "PublicSubnet1Id"
-                }
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Ref": "FabulousJenkinsWindows0"
+                        }
+                    }
+                ]
             },
             "Type": "AWS::EC2::Instance"
         },
@@ -273,7 +289,15 @@
                 ],
                 "SubnetId": {
                     "Ref": "PublicSubnet1Id"
-                }
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Ref": "FabulousJenkinsWindows1"
+                        }
+                    }
+                ]
             },
             "Type": "AWS::EC2::Instance"
         },
