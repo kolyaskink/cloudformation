@@ -1,5 +1,5 @@
 {
-    "Description": "Python-generated template for Fabulous studio. Version without(!) tags",
+    "Description": "Python-generated template for Fabulous studio. Version with tags",
     "Mappings": {
         "JenkinsMaster": {
             "us-west-2": {
