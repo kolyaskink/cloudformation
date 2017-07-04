@@ -156,7 +156,7 @@
                 "KeyName": {
                     "Ref": "KeyName"
                 },
-                "SecurityGroups": [
+                "SecurityGroupIds": [
                     {
                         "Ref": "FabulousSgEc2JenkinsMaster"
                     }
@@ -238,7 +238,7 @@
                 "KeyName": {
                     "Ref": "KeyName"
                 },
-                "SecurityGroups": [
+                "SecurityGroupIds": [
                     {
                         "Ref": "FabulousSgEc2JenkinsWindows"
                     }
@@ -266,7 +266,7 @@
                 "KeyName": {
                     "Ref": "KeyName"
                 },
-                "SecurityGroups": [
+                "SecurityGroupIds": [
                     {
                         "Ref": "FabulousSgEc2JenkinsWindows"
                     }
