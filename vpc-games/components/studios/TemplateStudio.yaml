@@ -17,7 +17,7 @@ Mappings:
 
 Resources:
 
-    FabulousStudioJenkins:
+    FabulousJenkins:
         Type: AWS::CloudFormation::Stack
         Properties:
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/Fabulous/Fabulous-Jenkins.json
