@@ -258,6 +258,7 @@ class StaticResources:
             IamInstanceProfile=Ref(s.JenkinsProfile),
             Tags=Tags(
                 Name=s.JenkinsMasterName,
+                Scheduler="WorkingDays",
             ),
         ))
 
@@ -313,6 +314,7 @@ class DynamicResources:
                 SubnetId=Ref(PublicSubnet1Id),
                 Tags=Tags(
                     Name=s.ec2name,
+                    Scheduler="WorkingDays",
                 ),
             ))
             i += 1
