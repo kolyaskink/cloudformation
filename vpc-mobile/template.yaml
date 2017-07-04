@@ -1,0 +1,162 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+
+    Bootsptaped EC2 to redirect mobile requests
+
+Mappings:
+    AWSRegionAMI:
+        us-west-2:
+            AMI: ami-bd7beddd
+   
+
+Parameters:
+
+    InfraVpcCIDR:
+        Type: String
+
+    VPCid:
+        Type: String
+
+    KeyName:
+        Type: String
+
+    HostInstanceType:
+        Type: String
+
+    PublicSubnet1Id:
+        Type: String
+
+    GHSslCert:
+        Type: String
+
+Resources:
+
+    LB2SecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable access to the LB
+            VpcId: !Ref VPCid
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 443
+                ToPort: 443
+                CidrIp: "0.0.0.0/0"
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                CidrIp: "0.0.0.0/0"
+            Tags:
+                - Key: Name
+                  Value: sg-ghmobile-redirector-lb
+
+    EC2SecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: GhMobileRedirector SG
+            VpcId: !Ref VPCid
+            SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 80
+                ToPort: 80
+                SourceSecurityGroupId: !Ref LB2SecurityGroup
+            Tags:
+                - Key: Name
+                  Value: sg-ghmobile-redirector-ec2
+
+    EC2Instance: 
+            Type: "AWS::EC2::Instance"
+            Properties: 
+              ImageId: !FindInMap [AWSRegionAMI, !Ref 'AWS::Region', AMI]
+              KeyName: !Ref KeyName
+              IamInstanceProfile: !Ref InstanceProfile
+              InstanceType: !Ref HostInstanceType
+              SecurityGroupIds: [!Ref EC2SecurityGroup]
+              SubnetId: !Ref PublicSubnet1Id
+              Tags:
+                - Key: Name
+                  Value: GhMobileRedirector
+              UserData:
+                "Fn::Base64":
+                  !Sub |
+                    #!/bin/bash -xe
+                    yum install -y aws-cfn-bootstrap
+                    /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance --configsets default --region ${AWS::Region} 
+            Metadata: 
+              AWS::CloudFormation::Init: 
+                  default: 
+                      packages: 
+                          yum:
+                              nginx: []
+                      services:
+                          sysvinit:
+                              nginx:
+                                  enabled: "true"
+                                  ensureRunning: "true"
+                                  files: 
+                                      - "/etc/nginx/nginx.conf"
+                                  sources: 
+                                      - "/var/www/html"    
+
+
+    LoadBalanser:
+        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+        Properties:
+            Instances: [!Ref EC2Instance]
+            LoadBalancerName: lb-Mobile-Redirector
+            Listeners:
+                  - LoadBalancerPort: 443
+                    InstancePort: 80
+                    Protocol: HTTPS
+                    SSLCertificateId: !Ref GHSslCert
+            Listeners:
+                  - LoadBalancerPort: 80
+                    InstancePort: 80
+                    Protocol: HTTP
+            HealthCheck:
+                  Target: HTTP:80/
+                  HealthyThreshold: '3'
+                  UnhealthyThreshold: '5'
+                  Interval: '30'
+                  Timeout: '5'
+            Scheme: internet-facing
+            SecurityGroups: [!Ref LB2SecurityGroup]
+            Subnets: [!Ref PublicSubnet1Id]
+
+
+    InstanceProfile:
+        Type: 'AWS::IAM::InstanceProfile'
+        Properties:
+          Path: '/'
+          Roles:
+          - !Ref IAMRoleEc2
+
+    IAMRoleEc2:
+        Type: 'AWS::IAM::Role'
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - 'ec2.amazonaws.com'
+              Action:
+              - 'sts:AssumeRole'
+          Path: '/'
+          Policies:
+
+          - PolicyName: 'logs'
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Effect: Allow
+                Action:
+                - 'logs:*'
+                Resource:
+                - 'arn:aws:logs:*:*:*'
+
+
+
+
+

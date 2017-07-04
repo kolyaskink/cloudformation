@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey":"InfraVpcCIDR",
+    "ParameterValue":"10.50.2.0/24"
+  },
+  {
+    "ParameterKey": "VPCid",
+    "ParameterValue": "vpc-9ed7c8fa"
+  },
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "gh-misc"
+  },
+    {
+    "ParameterKey": "HostInstanceType",
+    "ParameterValue": "t2.small"
+  },
+    {
+    "ParameterKey": "PublicSubnet1Id",
+    "ParameterValue": "subnet-8fb2b6eb"
+  },
+   {
+    "ParameterKey": "GHSslCert",
+    "ParameterValue": "arn:aws:acm:us-west-2:777556643132:certificate/896e5609-1aac-446c-b17e-608bce984e22"
+  }
+]

@@ -253,7 +253,7 @@ class StaticResources:
             ImageId=FindInMap("JenkinsMaster", Ref("AWS::Region"), "AMI"),
             InstanceType=Ref(Ec2TypeMaster),
             KeyName=Ref(KeyName),
-            SecurityGroups=[Ref(s.SGMaster)],
+            SecurityGroupIds=[Ref(s.SGMaster)],
             SubnetId=Ref(PublicSubnet1Id),
             IamInstanceProfile=Ref(s.JenkinsProfile)
         ))
@@ -306,7 +306,7 @@ class DynamicResources:
                 ImageId=FindInMap("JenkinsWindows", Ref("AWS::Region"), "AMI"),
                 InstanceType=Ref(Ec2TypeWindows),
                 KeyName=Ref(KeyName),
-                SecurityGroups=[Ref(SGWindows)],
+                SecurityGroupIds=[Ref(SGWindows)],
                 SubnetId=Ref(PublicSubnet1Id)
             ))
             i += 1
