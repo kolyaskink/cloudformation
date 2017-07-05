@@ -403,7 +403,7 @@ def main():
 
     # get_dynamic_outputs(dr.d)
 
-    get_adhoc_outputs(sr.SGElb, sr.SGElbName)
+    get_adhoc_outputs(sr.ElbJenkins, sr.ElbJenkinsName)
 
     # writes output to a file
     filename = i.STUDIONAME + "-Jenkins.json"
