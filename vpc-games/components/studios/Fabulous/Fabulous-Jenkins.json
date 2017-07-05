@@ -13,6 +13,15 @@
         }
     },
     "Outputs": {
+        "DNSNameFabulousSgElb": {
+            "Description": "URL of the sample website",
+            "Value": {
+                "Fn::GetAtt": [
+                    "FabulousSgElb",
+                    "DNSName"
+                ]
+            }
+        },
         "FabulousElbJenkins": {
             "Value": {
                 "Ref": "FabulousElbJenkins"
