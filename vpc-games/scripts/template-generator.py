@@ -109,6 +109,9 @@ class StaticResources:
                     ),
                 ],
                 VpcId=Ref(VpcId),
+                Tags=Tags(
+                    Name=s.SGElbName,
+                ),
             ))
 
         # Slave SG
@@ -132,6 +135,9 @@ class StaticResources:
                     ),
                 ],
                 VpcId=Ref(VpcId),
+                Tags=Tags(
+                    Name=s.SGWindowsName,
+                ),
             ))
 
         # Master SG
@@ -167,6 +173,9 @@ class StaticResources:
                     ),
                 ],
                 VpcId=Ref(VpcId),
+                Tags=Tags(
+                    Name=s.SGMasterName,
+                ),
             ))
 
         # Ingress rules
