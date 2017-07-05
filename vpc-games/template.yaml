@@ -61,6 +61,7 @@ Resources:
                     StudioTemplateHttpsFrom2:              !Ref StudioTemplateHttpsFrom2
                     StudioTemplateHttpsFrom3:              !Ref StudioTemplateHttpsFrom3
                     StudioTemplateHttpsFrom4:              !Ref StudioTemplateHttpsFrom4
+                    VpcCIDR:                            !Ref VpcCIDR
                     VPCid:                  !GetAtt Vpc.Outputs.VpcId
                     InfraVpcCIDR:           !Ref InfraVpcCIDR
                     PublicSubnet1Id:        !GetAtt Vpc.Outputs.PublicSubnet1Id
