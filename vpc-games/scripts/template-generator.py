@@ -368,7 +368,6 @@ def get_adhoc_outputs(ElbJenkins, ElbJenkinsName):
     OutputName="DNSName" + ElbJenkinsName
     t.add_output(Output(
         OutputName,
-        Description="URL of the sample website",
         Value=GetAtt(ElbJenkins, "DNSName")
     ))
 
