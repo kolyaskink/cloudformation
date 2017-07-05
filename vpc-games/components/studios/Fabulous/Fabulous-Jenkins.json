@@ -358,6 +358,12 @@
                         "ToPort": "-1"
                     }
                 ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "FabulousSgEc2JenkinsMaster"
+                    }
+                ],
                 "VpcId": {
                     "Ref": "VpcId"
                 }
@@ -385,6 +391,12 @@
                         "ToPort": "-1"
                     }
                 ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "FabulousSgEc2JenkinsWindows"
+                    }
+                ],
                 "VpcId": {
                     "Ref": "VpcId"
                 }
@@ -402,6 +414,12 @@
                         "FromPort": "443",
                         "IpProtocol": "tcp",
                         "ToPort": "443"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "FabulousSgElb"
                     }
                 ],
                 "VpcId": {
