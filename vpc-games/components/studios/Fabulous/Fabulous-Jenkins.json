@@ -14,7 +14,6 @@
     },
     "Outputs": {
         "DNSNameFabulousElbJenkins": {
-            "Description": "URL of the sample website",
             "Value": {
                 "Fn::GetAtt": [
                     "FabulousElbJenkins",
