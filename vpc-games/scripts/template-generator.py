@@ -6,7 +6,7 @@
 import argparse
 import json
 
-from troposphere import Template, Ref, FindInMap, Base64, Parameter, Output, Tags
+from troposphere import Template, Ref, FindInMap, Parameter, Output, Tags, Join, GetAtt
 from troposphere.s3 import Bucket
 from troposphere.ec2 import SecurityGroup, SecurityGroupIngress
 import troposphere.ec2 as ec2
@@ -364,6 +364,15 @@ def get_static_outputs(*argv):
         ])
 
 
+def get_adhoc_outputs(SGElb, SGElbName):
+    OutputName="DNSName" + SGElbName
+    t.add_output(Output(
+        OutputName,
+        Description="URL of the sample website",
+        Value=GetAtt(SGElb, "DNSName")
+    ))
+
+
 
 def get_dynamic_outputs(d):
     for key in list(d.keys()):
@@ -393,6 +402,8 @@ def main():
                        [sr.ElbJenkins, sr.ElbJenkinsName])
 
     # get_dynamic_outputs(dr.d)
+
+    get_adhoc_outputs(sr.SGElb, sr.SGElbName)
 
     # writes output to a file
     filename = i.STUDIONAME + "-Jenkins.json"
