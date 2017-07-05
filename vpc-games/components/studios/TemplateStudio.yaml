@@ -138,5 +138,10 @@ Outputs:
     StudioTemplateGitRepoUrlSsh:
         Value: !GetAtt TemplateStudioCodeCommit.Outputs.StudioTemplateGitRepoUrlSsh
 
+    #DnsNameOutput
+
     DNSNameJenkinsStudioTemplate:
         Value: !GetAtt TemplateStudioJenkins.Outputs.DNSNameJenkinsStudioTemplate 
+
+    DNSNameFabulousElbJenkins:
+        Value: !GetAtt FabulousJenkins.Outputs.DNSNameFabulousElbJenkins

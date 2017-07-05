@@ -110,5 +110,8 @@ Outputs:
     DNSNameJenkinsStudioTemplate:
         Value: !GetAtt TemplateStudio.Outputs.DNSNameJenkinsStudioTemplate  
 
+    DNSNameFabulousElbJenkins:
+        Value: !GetAtt FabulousJenkins.Outputs.DNSNameFabulousElbJenkins
+
 
 
