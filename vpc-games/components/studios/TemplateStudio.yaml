@@ -29,6 +29,7 @@ Resources:
                 PublicSubnet1Id:                         !Ref PublicSubnet1Id
                 VpcId:                                   !Ref VPCid
                 WhiteIp1:                                !Ref HttpsFrom1
+                WhiteIp2:                                !Ref HttpsFrom2
   
     TemplateStudioJenkins:
         Type: AWS::CloudFormation::Stack
