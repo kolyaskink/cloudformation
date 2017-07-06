@@ -78,6 +78,10 @@ class Parametrs:
             "WhiteIp1",
             Type="String",
         ))
+        self.WhiteIp2 = t.add_parameter(Parameter(
+            "WhiteIp2",
+            Type="String",
+        ))
         self.GhosSslCert = t.add_parameter(Parameter(
             "GhosSslCert",
             Type="String",
@@ -90,11 +94,11 @@ class Parametrs:
 
 class StaticResources:
     def __init__(self, STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR, Ec2TypeMaster,
-                 KeyName, WhiteIp1, GhosSslCert):
+                 KeyName, WhiteIp1, WhiteIp2, GhosSslCert):
         s = self
 
         # Creating SGs
-        # ELB SG
+        # ELB SG 
         s.SGElbName = STUDIONAME + "SgElb"
         s.SGElb = t.add_resource(
             SecurityGroup(
@@ -106,6 +110,12 @@ class StaticResources:
                         FromPort="443",
                         ToPort="443",
                         CidrIp=Ref(WhiteIp1),
+                    ),
+                    ec2.SecurityGroupRule(
+                        IpProtocol="tcp",
+                        FromPort="443",
+                        ToPort="443",
+                        CidrIp=Ref(WhiteIp2),
                     ),
                 ],
                 VpcId=Ref(VpcId),
@@ -126,6 +136,12 @@ class StaticResources:
                         FromPort="3389",
                         ToPort="3389",
                         CidrIp=Ref(WhiteIp1),
+                    ),
+                    ec2.SecurityGroupRule(
+                        IpProtocol="tcp",
+                        FromPort="3389",
+                        ToPort="3389",
+                        CidrIp=Ref(WhiteIp2),
                     ),
                     ec2.SecurityGroupRule(
                         IpProtocol="icmp",
@@ -339,9 +355,9 @@ def get_parametrs():
 
 
 def get_static_resources(STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
-                         Ec2TypeMaster, KeyName, WhiteIp1, GhosSslCert):
+                         Ec2TypeMaster, KeyName, WhiteIp1, WhiteIp2, GhosSslCert):
     return StaticResources(STUDIONAME, PublicSubnet1Id, VpcId, InfraVpcCIDR, GamesVpcCIDR,
-                           Ec2TypeMaster, KeyName, WhiteIp1, GhosSslCert)
+                           Ec2TypeMaster, KeyName, WhiteIp1, WhiteIp2, GhosSslCert)
 
 
 def get_dynamic_resources(STUDIONAME, Windows, KeyName, Ec2TypeWindows, SGWindows, PublicSubnet1Id):
@@ -401,7 +417,7 @@ def main():
     create_mapping(i.Region, i.MASTERAMI, i.WINDOWSAMI)
 
     sr = get_static_resources(i.STUDIONAME, p.PublicSubnet1Id, p.VpcId, p.InfraVpcCIDR, p.GamesVpcCIDR,
-                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1, p.GhosSslCert)
+                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1, WhiteIp2, p.GhosSslCert)
     dr = get_dynamic_resources(i.STUDIONAME, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows, p.PublicSubnet1Id)
 
     get_static_outputs([sr.s3, sr.s3Name], [sr.SGElb, sr.SGElbName], [sr.SGWindows, sr.SGWindowsName],
