@@ -22,7 +22,7 @@ Resources:
         Properties:
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/Fabulous/Fabulous-Jenkins.json
             Parameters:
-                GamesVpcCIDR:                            !Ref HttpsFrom3
+                GamesVpcCIDR:                            !Ref VpcCIDR
                 GhosSslCert:                             !Ref GhosSslCert
                 InfraVpcCIDR:                            !Ref InfraVpcCIDR
                 KeyName:                                 !Ref KeyName
@@ -95,6 +95,9 @@ Parameters:
         Type: String
 
     S3BucketStudioTemplateName:
+        Type: String
+
+    VpcCIDR:
         Type: String
 
     KeyName:

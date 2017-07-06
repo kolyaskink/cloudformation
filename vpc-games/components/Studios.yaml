@@ -54,6 +54,9 @@ Parameters:
     S3BucketStudioTemplateName:
         Type: String
 
+    VpcCIDR:
+        Type: String
+
 Resources:
 
     TemplateStudio:
@@ -61,6 +64,7 @@ Resources:
         Properties:
             TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/vpc-games/components/studios/TemplateStudio.yaml
             Parameters:
+                VpcCIDR:                            !Ref VpcCIDR
                 StudioTemplateGitRepoName:                !Ref StudioTemplateGitRepoName
                 HttpsFrom1:                               !Ref StudioTemplateHttpsFrom1
                 HttpsFrom2:                               !Ref StudioTemplateHttpsFrom2                
