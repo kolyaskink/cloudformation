@@ -1,5 +1,5 @@
 {
-    "Description": "Python-generated template for Fabulous studio. Version without(!) tags",
+    "Description": "Python-generated template for Fabulous studio. Version new Windows AMI",
     "Mappings": {
         "JenkinsMaster": {
             "us-west-2": {
@@ -8,7 +8,7 @@
         },
         "JenkinsWindows": {
             "us-west-2": {
-                "AMI": "ami-2ad04f4a"
+                "AMI": "ami-26081b5f"
             }
         }
     },
