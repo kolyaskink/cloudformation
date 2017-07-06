@@ -91,6 +91,9 @@
         },
         "WhiteIp1": {
             "Type": "String"
+        },
+        "WhiteIp2": {
+            "Type": "String"
         }
     },
     "Resources": {
@@ -384,6 +387,14 @@
                     },
                     {
                         "CidrIp": {
+                            "Ref": "WhiteIp2"
+                        },
+                        "FromPort": "3389",
+                        "IpProtocol": "tcp",
+                        "ToPort": "3389"
+                    },
+                    {
+                        "CidrIp": {
                             "Ref": "GamesVpcCIDR"
                         },
                         "FromPort": "-1",
@@ -410,6 +421,14 @@
                     {
                         "CidrIp": {
                             "Ref": "WhiteIp1"
+                        },
+                        "FromPort": "443",
+                        "IpProtocol": "tcp",
+                        "ToPort": "443"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "WhiteIp2"
                         },
                         "FromPort": "443",
                         "IpProtocol": "tcp",
