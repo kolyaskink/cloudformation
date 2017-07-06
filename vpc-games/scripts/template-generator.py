@@ -417,7 +417,7 @@ def main():
     create_mapping(i.Region, i.MASTERAMI, i.WINDOWSAMI)
 
     sr = get_static_resources(i.STUDIONAME, p.PublicSubnet1Id, p.VpcId, p.InfraVpcCIDR, p.GamesVpcCIDR,
-                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1, WhiteIp2, p.GhosSslCert)
+                             p.Ec2TypeMaster, p.KeyName, p.WhiteIp1, p.WhiteIp2, p.GhosSslCert)
     dr = get_dynamic_resources(i.STUDIONAME, i.Windows, p.KeyName, p.Ec2TypeWindows, sr.SGWindows, p.PublicSubnet1Id)
 
     get_static_outputs([sr.s3, sr.s3Name], [sr.SGElb, sr.SGElbName], [sr.SGWindows, sr.SGWindowsName],
