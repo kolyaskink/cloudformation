@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Version 2.0
 
