@@ -13,12 +13,15 @@ Mappings:
 Parameters:
 
     InfraJenkinsIp:
+        Type: String
         Default: 10.51.2.0/24
 
     VpcCIDR:
+        Type: String
         Default: 10.51.2.0/24
 
     PublicSubnet1Id:
+        Type: String
         Default: 10.51.2.0/24
 
     KeyName:
