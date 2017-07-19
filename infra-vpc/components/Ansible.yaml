@@ -20,6 +20,9 @@ Parameters:
         Type: String
         Default: 10.51.2.0/24
 
+    VPCid:
+        Type: String
+      
     PublicSubnet1Id:
         Type: String
         Default: 10.51.2.0/24
