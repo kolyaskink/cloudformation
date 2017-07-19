@@ -46,6 +46,17 @@ Resources:
                 BastionHostInstanceType:    !Ref BastionHostInstanceType
                 PublicSubnet1Id:            !GetAtt Vpc.Outputs.PublicSubnet1Id
 
+    Ansible:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: !Sub https://s3.amazonaws.com/${CFS3Name}/infra-vpc/components/Ansible.yaml
+            Parameters:
+                VPCid:                      !GetAtt Vpc.Outputs.VpcId
+                KeyName:                    !Ref KeyName
+                PublicSubnet1Id:            !GetAtt Vpc.Outputs.PublicSubnet1Id
+                VpcCIDR:                    !Ref VpcCIDR
+                InfraJenkinsIp:             !Ref InfraJenkinsIp
+
 
 Parameters:
 
@@ -162,7 +173,11 @@ Parameters:
             - t2.micro
             - t2.small
             - m1.small
-        Description: Enter t2.micro, t2.small, or m1.small. Default is t2.micro.                
+        Description: Enter t2.micro, t2.small, or m1.small. Default is t2.micro.     
+
+    InfraJenkinsIp:
+        Type: String
+        Default: 34.210.58.117/32           
 
 Outputs:
 
